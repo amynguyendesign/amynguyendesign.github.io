@@ -1,10 +1,13 @@
 import './TopNav.css';
+import { Link } from 'react-router-dom';
+
 
 function TopNav() {
   return (
     <header className="container">
             <div> home </div>
-            <div> work </div>
+            <Link to="/work"> work </Link>
+
             <div> play </div>
     </header>
   );
