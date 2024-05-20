@@ -1,9 +1,18 @@
 .container {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     width: 80%;
     margin: 0 auto;
     height: 75px;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.25rem;
+}
+
+.links {
+    display: flex;
+    flex-direction: row;
+    width: 40%;
+    justify-content: space-between;
 }

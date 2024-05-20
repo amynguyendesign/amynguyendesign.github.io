@@ -1,10 +1,10 @@
 .App {
-  color: var(--main-bg-color);
-  font-family: Caslon Old Face,serif
+  color: black;
+  font-family: "Cormorant Garamond", serif
 }
 
-.App-logo {
-  height: 40vmin;
+.pic {
+  height: 183px;
   pointer-events: none;
 }
 
@@ -29,4 +29,19 @@
 
 .small {
   font-size: 0.75rem;
+}
+
+.appContainer {
+  width: 80%;
+  height: auto;
+  margin: 0 auto;
+}
+.introSection {
+  font-size: 1.25rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  gap: 36px;
+  margin-top: 14vw;
 }
