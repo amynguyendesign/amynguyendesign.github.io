@@ -4,7 +4,7 @@
 }
 
 .pic {
-  height: 183px;
+  height: 21%;
   pointer-events: none;
 }
 
@@ -43,5 +43,5 @@
   align-items: center;
   justify-content: space-around;
   gap: 36px;
-  margin-top: 14vw;
+  margin-top: 10%;
 }
