@@ -15,7 +15,7 @@ function App() {
         <div className="introSection">
           <img src="amy.png" className="pic" alt="logo" />
           <div className="introText"> 
-            <p>Welcome to my portfolio! So happy you're here, despite the look on my face in this photo. </p>
+            <p>Welcome to my portfolio! Super excited you're here, even if my face in this photo doesn't show it. </p>
             <b>I’m Amy, a design engineer based in San Francisco.</b>
             <p>I like arranging things in ways that spark joy.</p>
           </div>
