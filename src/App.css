@@ -1,16 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 body {
   font-family: 'Inter', sans-serif;
-  padding: var(--body-padding);; /* Padding that affects the corner brackets */
+  padding: var(--body-padding); /* Padding that affects the corner brackets */
   margin: 0;
   box-sizing: border-box;
-  color: var(--primary-color)
+  color: var(--primary-color);
 }
 
 .corner-brackets {
   position: relative;
-  height: calc(100vh - var(--body-padding)*2); /* Adjust height based on body padding */
+  height: calc(100vh - (2 * var(--body-padding))); /* Adjust height based on body padding */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center the content vertically */
 }
 
 .corner-brackets::before,
@@ -23,28 +25,41 @@ body {
 }
 
 .corner-brackets::before {
-  top: -46px; /* Position just below the top padding */
+  top: 0; /* Position just below the top padding */
   right: 0;
   border-width: 2px 2px 0 0; /* Top-right corner */
 }
 
 .corner-brackets::after {
-  bottom: var(--body-padding); /* 40px above the bottom of the viewport, accounting for padding */
+  bottom: var(--body-padding); /* Position just above the bottom padding */
   left: 0;
   border-width: 0 0 2px 2px; /* Bottom-left corner */
 }
 
-/* Style the content as needed */
-.content h1 {
-  font-size: 24px;
-  margin-bottom: 10px;
+.headline1 {
+  font-size: 30px;
+  font-weight: 500;
 }
 
-.content p {
-  font-size: 18px;
+.headline2 {
+  font-size: 30px;
+  font-weight: 300;
 }
 
-.headline1{
-  font-size: 36px;
-  font-weight: 600;
+.content {
+  text-align: left; /* Keep the text left-aligned */
+  align-items: flex-start; /* Align content to the left within the flex container */
+  display: flex;
+  flex-direction: column;
+}
+
+.bodyText {
+  font-size: 16px;
+  font-weight: 300;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  line-height: 1.5;
 }
