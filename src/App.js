@@ -1,29 +1,39 @@
 import './App.css';
 import TopNav from './components/TopNav/TopNav';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import WorkPage from './components/WorkPage/WorkPage';
+import './global.css';
 
-function App() {
+function HomePage() {
   return (
-    <Router>
-    <div className="App">
-      <TopNav/>
-        <Routes>
-          <Route path="/work" element={<WorkPage />} />
-        </Routes>
-      <div className='appContainer'>
-        <div className="introSection">
-          <img src="amy.png" className="pic" alt="logo" />
-          <div className="introText"> 
-            <p>Welcome to my portfolio! Super excited you're here, even if my face in this photo doesn't show it. </p>
-            <b>I’m Amy, a design engineer based in San Francisco.</b>
-            <p>I like arranging things in ways that spark joy.</p>
-          </div>
-        </div>
-      </div>
+    <div className="corner-brackets">
+    {/* Your content here */}
+    <div className="content">
+      <div className='headline1'>coding + designing</div>
+      <div className='headline2'>in San Francisco or at a decaf-serving coffee shop near you.</div>
     </div>
-    </Router>
+  </div>
   );
 }
 
-export default App;
+function App() {
+  const location = useLocation();
+
+  return (
+    <div className="App">
+      <TopNav />
+      <Routes>
+        <Route path="/work" element={<WorkPage />} />
+      </Routes>
+      {location.pathname !== '/work' && <HomePage />}
+    </div>
+  );
+}
+
+export default function WrappedApp() {
+  return (
+    <Router>
+      <App />
+    </Router>
+  );
+}

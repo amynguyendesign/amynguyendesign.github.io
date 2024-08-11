@@ -1,3 +1,5 @@
 :root {
     --main-bg-color: #efefef;
+    --body-padding: 67px; /* Define the body padding variable */
+    --primary-color: #5D3A15;
   }

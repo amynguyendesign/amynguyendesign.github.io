@@ -1,22 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 .container {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
     align-items: center;
-    width: 80%;
-    margin: 0 auto;
-    height: 75px;
-    font-family: "Cormorant Garamond", serif;
-    font-size: 1.25rem;
-}
-
-.links {
-    display: flex;
-    flex-direction: row;
-    width: 40%;
     justify-content: space-between;
+    width: 100%;
+    margin: 0 auto;
 }
 
-.hpLogo {
-    font-weight: bold;
+
+.text, .name {
+    white-space: nowrap;
+    margin: 0 10px;
+}
+
+.text {
+    font-size: 1.2em;
+    text-decoration: none;
+}
+
+.name {
+    font-size: 25px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    color: var(--primary-color);
 }

@@ -1,47 +1,50 @@
-.App {
-  color: black;
-  font-family: "Cormorant Garamond", serif
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  padding: var(--body-padding);; /* Padding that affects the corner brackets */
+  margin: 0;
+  box-sizing: border-box;
+  color: var(--primary-color)
 }
 
-.pic {
-  height: 284px;
-  pointer-events: none;
+.corner-brackets {
+  position: relative;
+  height: calc(100vh - var(--body-padding)*2); /* Adjust height based on body padding */
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.corner-brackets::before,
+.corner-brackets::after {
+  content: '';
+  position: absolute;
+  width: 20px; /* Width of the bracket */
+  height: 20px; /* Fixed height for the bracket */
+  border: 1px solid var(--primary-color); /* Color and thickness of the bracket */
 }
 
-.App-link {
-  color: #61dafb;
+.corner-brackets::before {
+  top: -46px; /* Position just below the top padding */
+  right: 0;
+  border-width: 2px 2px 0 0; /* Top-right corner */
 }
 
-.heart {
-  color: #ff0000;
+.corner-brackets::after {
+  bottom: var(--body-padding); /* 40px above the bottom of the viewport, accounting for padding */
+  left: 0;
+  border-width: 0 0 2px 2px; /* Bottom-left corner */
 }
 
-.small {
-  font-size: 0.75rem;
+/* Style the content as needed */
+.content h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
 }
 
-.appContainer {
-  width: 80%;
-  height: auto;
-  margin: 0 auto;
+.content p {
+  font-size: 18px;
 }
-.introSection {
-  font-size: 1.25rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-around;
-  gap: 36px;
-  margin-top: 10%;
+
+.headline1{
+  font-size: 36px;
+  font-weight: 600;
 }
