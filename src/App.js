@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-route
 import WorkPage from './components/WorkPage/WorkPage';
 import { Link } from 'react-router-dom';
 import './global.css';
+import Footer from './components/Footer/Footer';
 
 function HomePage() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/work" element={<WorkPage />} />
       </Routes>
       {location.pathname !== '/work' && <HomePage />}
+      <Footer />
     </div>
   );
 }
