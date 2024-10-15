@@ -6,17 +6,17 @@ import './global.css';
 
 function HomePage() {
   return (
-    <div className="corner-brackets">
-      <div className="content">
-        <div className='headline1'>coding + designing</div>
+    // <div className="corner-brackets">
+      <div className="homeContainer">
+        <div className='headline1'>pushing pixels</div>
         <div className='headline2'>in San Francisco or at a decaf-serving coffee shop near you.</div>
         <ul className='bodyText'>
-          <li>I made this website and a few other things   </li>    
-          Also working on some other fun things
-          <li> Startup founders: book a UX walkthrough/ product feedback session here </li>
+          <li>I designed and coded this website and a few other things   </li>    
+          <li> Also doing some other fun things outside of work</li>   
+          <li> Occasionally I advise on UX and help with product review</li>   
         </ul>
       </div>
-    </div>
+    // </div>
   );
 }
 

@@ -5,36 +5,37 @@ body {
   margin: 0;
   box-sizing: border-box;
   color: var(--primary-color);
+  height: 100%;
 }
 
-.corner-brackets {
+/* .corner-brackets {
   position: relative;
-  height: calc(100vh - (2 * var(--body-padding))); /* Adjust height based on body padding */
+  height: calc(100vh - (2 * var(--body-padding))); 
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Center the content vertically */
+  justify-content: center; 
 }
 
 .corner-brackets::before,
 .corner-brackets::after {
   content: '';
   position: absolute;
-  width: 20px; /* Width of the bracket */
-  height: 20px; /* Fixed height for the bracket */
-  border: 1px solid var(--primary-color); /* Color and thickness of the bracket */
+  width: 20px; 
+  height: 20px; 
+  border: 1px solid var(--primary-color); 
 }
 
 .corner-brackets::before {
-  top: 0; /* Position just below the top padding */
+  top: 0; 
   right: 0;
-  border-width: 2px 2px 0 0; /* Top-right corner */
+  border-width: 2px 2px 0 0; 
 }
 
 .corner-brackets::after {
-  bottom: var(--body-padding); /* Position just above the bottom padding */
+  bottom: var(--body-padding);
   left: 0;
-  border-width: 0 0 2px 2px; /* Bottom-left corner */
-}
+  border-width: 0 0 2px 2px; 
+} */
 
 .headline1 {
   font-size: 30px;
@@ -46,11 +47,13 @@ body {
   font-weight: 300;
 }
 
-.content {
-  text-align: left; /* Keep the text left-aligned */
-  align-items: flex-start; /* Align content to the left within the flex container */
+.homeContainer {
+  text-align: left;
+  align-items: flex-start;
   display: flex;
   flex-direction: column;
+  height: 80vh;
+  justify-content: center;
 }
 
 .bodyText {
