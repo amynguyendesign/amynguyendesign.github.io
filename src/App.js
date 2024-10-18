@@ -10,13 +10,11 @@ function HomePage() {
   return (
     // <div className="corner-brackets">
       <div className="homeContainer">
-        <div className='headline1'>pushing pixels & writing code</div>
-        <div className='headline2'>in San Francisco or at a decaf-serving coffee shop near you.</div>
+        <div className='headline1'>Pushing pixels, writing code</div>
+        <div className='headline2'>and probably convincing you to increase that <span className='inlineCode'> border-radius</span> just a tiiiny bit more</div>
         <ul className='bodyText'>
-        <li>Currently a full-time fullstack engineer  </li>    
-          <li>I designed and coded this website <Link to="/work" className="link">and a few other things</Link>  </li>    
-          <li> Also doing  <Link to="/play" className="link">some other fun things</Link> outside of work</li>   
-          <li> Love chatting about art, books, life & tech. <Link to="/contact" className="link"> You, too? </Link></li>   
+        <li> Hi! It's Amy! I've spent the past 3 years building education tools as a full-time fullstack engineer.  </li>    
+        <li> Prior to that, I was at Stanford studying Computer Science and avoiding caterpillars (seriously, they were everywhere!) </li>
         </ul>
       </div>
     // </div>

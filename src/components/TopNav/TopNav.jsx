@@ -5,7 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 function TopNav() {
   const location = useLocation();
   
-  const isSubPage = location.pathname !== '/';
+  // const isSubPage = location.pathname !== '/';
 
   return (
     <header className="container">
@@ -13,13 +13,13 @@ function TopNav() {
         <div>amy nguyen</div>
       </a>
       
-      {isSubPage && (
+      {/* {isSubPage && ( */}
         <div className='subPagesContainer'>
           <Link to="/work" className="text"> work </Link>
           <Link to="/play" className="text"> play </Link>
           <Link to="/contact" className="text"> contact </Link>
         </div>
-      )}
+      {/* )} */}
     </header>
   );
 }

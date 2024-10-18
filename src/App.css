@@ -38,12 +38,12 @@ body {
 } */
 
 .headline1 {
-  font-size: 30px;
+  font-size: 28px;
   font-weight: 500;
 }
 
 .headline2 {
-  font-size: 30px;
+  font-size: 22px;
   font-weight: 300;
 }
 
@@ -71,4 +71,8 @@ ul {
   color: var(--primary-color);
   font-weight: 400;
   text-underline-offset: 3px;
+}
+
+.inlineCode {
+  font-family: 'Courier New', Courier, monospace;
 }
