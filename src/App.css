@@ -8,35 +8,6 @@ body {
   height: 100%;
 }
 
-/* .corner-brackets {
-  position: relative;
-  height: calc(100vh - (2 * var(--body-padding))); 
-  display: flex;
-  flex-direction: column;
-  justify-content: center; 
-}
-
-.corner-brackets::before,
-.corner-brackets::after {
-  content: '';
-  position: absolute;
-  width: 20px; 
-  height: 20px; 
-  border: 1px solid var(--primary-color); 
-}
-
-.corner-brackets::before {
-  top: 0; 
-  right: 0;
-  border-width: 2px 2px 0 0; 
-}
-
-.corner-brackets::after {
-  bottom: var(--body-padding);
-  left: 0;
-  border-width: 0 0 2px 2px; 
-} */
-
 .headline1 {
   font-size: 28px;
   font-weight: 500;
