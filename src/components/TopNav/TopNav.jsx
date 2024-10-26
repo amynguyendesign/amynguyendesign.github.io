@@ -1,25 +1,28 @@
+import React from 'react';
 import './TopNav.css';
-import '../../global.css';
-import { Link, useLocation } from 'react-router-dom';
+import burgerIcon from '../../assets/burger.png';
+import { Link } from 'react-router-dom';
 
-function TopNav() {
-  const location = useLocation();
-  
-  // const isSubPage = location.pathname !== '/';
-
+function TopNav({ navRef, menuOpen, toggleMenu }) {
   return (
-    <header className="container">
+    <header className="container" ref={navRef}>
       <a className="hpLogo name" href="/">
         <div>amy nguyen</div>
       </a>
-      
-      {/* {isSubPage && ( */}
-        <div className='subPagesContainer'>
-          <Link to="/work" className="text"> work </Link>
-          <Link to="/play" className="text"> play </Link>
-          <Link to="/contact" className="text"> contact </Link>
+
+      <div className={`subPagesContainer ${menuOpen ? 'open' : ''}`}>
+        <div className="menuItem">
+        <Link to="/work" className="text"> work </Link>
         </div>
-      {/* )} */}
+        <div className="menuItem">
+        <Link to="/play" className="text"> play </Link> </div>
+        <div className="menuItem">
+        <Link to="/contact" className="text"> contact </Link> </div>
+      </div>
+
+      <div className="burger" onClick={toggleMenu}>
+        <img src={burgerIcon} alt="burger"/>
+      </div>
     </header>
   );
 }

@@ -1,8 +1,8 @@
 import './App.css';
 import TopNav from './components/TopNav/TopNav';
+import { useState, useRef, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import WorkPage from './components/WorkPage/WorkPage';
-import { Link } from 'react-router-dom';
 import './global.css';
 import Footer from './components/Footer/Footer';
 
@@ -21,10 +21,26 @@ function HomePage() {
 
 function App() {
   const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navRef = useRef(null);
+
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+
+  // Close menu if clicked outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (navRef.current && !navRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <div className="App">
-      <TopNav />
+      <TopNav navRef={navRef} menuOpen={menuOpen} toggleMenu={toggleMenu}  />
       <Routes>
         <Route path="/work" element={<WorkPage />} />
       </Routes>
