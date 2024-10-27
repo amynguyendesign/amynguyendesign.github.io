@@ -9,6 +9,12 @@ body {
   min-width: 320px;
 }
 
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 .headline1 {
   font-size: 28px;
   font-weight: 500;
@@ -47,4 +53,9 @@ ul {
 
 .inlineCode {
   font-family: 'Courier New', Courier, monospace;
+}
+
+
+.content {
+  flex: 1; 
 }
