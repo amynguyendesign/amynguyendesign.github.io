@@ -11,10 +11,10 @@ function HomePage() {
   return (
       <div className="homeContainer">
         <div className='headline1'>Pushing pixels, writing code</div>
-        <div className='headline2'>and probably convincing you to increase that <span className='inlineCode'> border-radius</span> just a tiiiny bit more ♡</div>
+        <div className='headline2'>and probably convincing you to increase that <span className='inlineCode'> border-radius</span> just a tiiiny bit more</div>
         <ul className='bodyText'>
         <li> Hi! I'm Amy! I've spent the past 3 years building education tools as a full-time fullstack engineer.  </li>    
-        <li> Prior to that, I was at Stanford studying Computer Science.  </li>
+        <li> Prior to that, I was at Stanford studying Computer Science ♡ </li>
         </ul>
       </div>
   );
