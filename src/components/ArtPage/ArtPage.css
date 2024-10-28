@@ -1,76 +1,130 @@
 .art-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    text-align: center;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+}
+
+.art-title {
+  font-size: 32px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  color: #6B4F3E; 
+}
+
+/* Responsive adjustments for gallery grid */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  max-width: 1000px; 
+  width: 100%;
+  margin: 0 auto; 
+  justify-items: center;
+  margin-top: 24px;
+}
+
+.gallery-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.gallery-item:hover {
+  transform: scale(1.05);
+}
+
+.painting-image {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  transition: opacity 0.3s ease;
+}
+
+.inlineCode {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.bodyText {
+  font-size: 16px;
+  font-weight: 300;
+}
+
+/* Lightbox styling */
+.lightbox {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.lightbox img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 10px;
+}
+
+/* Media queries for responsiveness */
+
+/* For tablets and medium-sized screens */
+@media (max-width: 768px) {
   .art-title {
-    font-size: 32px;
-    margin-top: 30px;
-    margin-bottom: 30px;
-    color: #6B4F3E; 
-  }
-  
-  .gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-    max-width: 1000px; 
-    width: 100%;
-    margin: 0 auto; 
-    justify-items: center; 
-    margin-top: 24px
-  }
-  
-  .gallery-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    border-radius: 10px;
-    transition: transform 0.3s ease;
-    cursor: pointer;
-  }
-  
-  .gallery-item:hover {
-    transform: scale(1.05);
-  }
-  
-  .painting-image {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-    transition: opacity 0.3s ease;
+    font-size: 24px;
   }
 
-  .inlineCode {
-    font-family: 'Courier New', Courier, monospace;
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
   }
 
   .bodyText {
-    font-size: 16px;
-    font-weight: 300;
+    font-size: 14px;
   }
-  
-  /* Lightbox styling */
-  .lightbox {
-    display: flex;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
+}
+
+/* For mobile screens */
+@media (max-width: 480px) {
+  .art-page {
+    padding: 10px;
   }
-  
+
+  .art-title {
+    font-size: 20px;
+    margin: 20px 0;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr); /* Enforce two columns on small screens */
+    gap: 8px;
+    max-width: 100%; /* Fit grid to mobile width */
+  }
+
+  .gallery-item {
+    border-radius: 5px; /* Smaller border-radius for mobile */
+  }
+
+  .painting-image {
+    max-width: 100%; /* Ensure images stay within bounds */
+    height: auto;
+  }
+
+  .bodyText {
+    font-size: 12px;
+  }
+
   .lightbox img {
-    max-width: 90%;
-    max-height: 90%;
-    border-radius: 10px;
+    max-width: 95%;
+    max-height: 85%;
   }
-  
+}
