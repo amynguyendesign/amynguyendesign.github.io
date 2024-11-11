@@ -40,6 +40,11 @@ function App() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+   // Close menu on route change
+   useEffect(() => {
+    setMenuOpen(false);
+  }, [location]);
+
   return (
     <div className="wrapper">
       <TopNav navRef={navRef} menuOpen={menuOpen} toggleMenu={toggleMenu}  />    

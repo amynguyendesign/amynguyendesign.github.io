@@ -16,9 +16,8 @@ function ArtPage() {
 
   return (
     <div className="art-page">
-            <div className="bodyText art-title">I paint sometimes.
-      {/* <div className="bodyText">
-      There’s no <span className="inlineCode">cmd + z </span>in watercolor painting, and it’s much less forgiving of mistakes than pushing pixels. I love it.<br/>*/}
+      <div> I paint sometimes. </div>
+            <div>
  
       <div className="gallery-grid">
         {paintings.map((painting, index) => (
