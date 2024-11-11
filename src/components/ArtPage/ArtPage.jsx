@@ -16,7 +16,7 @@ function ArtPage() {
 
   return (
     <div className="art-page">
-            <div className="bodyText art-title">I paint often and will post more pics here, so check back! ♡
+            <div className="bodyText art-title">I paint sometimes.
       {/* <div className="bodyText">
       There’s no <span className="inlineCode">cmd + z </span>in watercolor painting, and it’s much less forgiving of mistakes than pushing pixels. I love it.<br/>*/}
  

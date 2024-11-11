@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import WorkPage from './components/WorkPage/WorkPage';
 import ArtPage from './components/ArtPage/ArtPage';
+import ContactPage from './components/ContactPage/ContactPage';
 import './global.css';
 import Footer from './components/Footer/Footer';
 
@@ -49,7 +50,10 @@ function App() {
       <Routes>
         <Route path="/art" element={<ArtPage />} />
       </Routes>
-      {(location.pathname !== '/work' && location.pathname !== '/art')  && <HomePage />}
+      <Routes>
+        <Route path="/contact" element={<ContactPage />} />
+      </Routes>
+      {(location.pathname !== '/work' && location.pathname !== '/art' && location.pathname !== '/contact')  && <HomePage />}
       </div>
       <Footer />
     </div>
