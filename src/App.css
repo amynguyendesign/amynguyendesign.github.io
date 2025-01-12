@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 body {
   font-family: 'Inter', sans-serif;
-  padding: var(--body-padding); /* Padding that affects the corner brackets */
+  /* padding: var(--body-padding); */
   margin: 0;
   box-sizing: border-box;
   color: var(--primary-color);
@@ -58,4 +58,13 @@ ul {
 
 .content {
   flex: 1; 
+}
+.patternContainer {
+  text-align: center; 
+}
+
+.pattern {
+  display: inline-block; 
+  width: 100%; 
+  height: auto; 
 }

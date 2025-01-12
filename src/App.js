@@ -6,6 +6,7 @@ import WorkPage from './components/WorkPage/WorkPage';
 import ArtPage from './components/ArtPage/ArtPage';
 import ContactPage from './components/ContactPage/ContactPage';
 import './global.css';
+import patternImage from './assets/pattern.png';
 import Footer from './components/Footer/Footer';
 
 function HomePage() {
@@ -47,6 +48,9 @@ function App() {
 
   return (
     <div className="wrapper">
+      <div className='patternContainer'>
+      <img className='pattern' src={patternImage} alt="Pattern" /> 
+      </div>
       <TopNav navRef={navRef} menuOpen={menuOpen} toggleMenu={toggleMenu}  />    
         <div className="content">
       <Routes>

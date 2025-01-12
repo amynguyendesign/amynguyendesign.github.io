@@ -7,7 +7,7 @@ function TopNav({ navRef, menuOpen, toggleMenu }) {
   return (
     <header className="container" ref={navRef}>
       <a className="hpLogo name" href="/">
-        <div>amy nguyen ☀︎</div>
+        <div>Amy Nguyen </div>
       </a>
 
       <div className={`subPagesContainer ${menuOpen ? 'open' : ''}`}>
