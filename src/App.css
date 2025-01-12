@@ -16,22 +16,20 @@ body {
 }
 
 .headline1 {
-  font-size: 28px;
-  font-weight: 500;
-}
-
-.headline2 {
   font-size: 22px;
-  font-weight: 300;
+  font-weight: 400;
 }
 
 .homeContainer {
-  text-align: left;
-  align-items: flex-start;
+  align-items: center;
   display: flex;
   flex-direction: column;
-  height: 80vh;
+  height: 30vh;
   justify-content: center;
+}
+
+.homeContainer p {
+  line-height: 0.5; 
 }
 
 .bodyText {

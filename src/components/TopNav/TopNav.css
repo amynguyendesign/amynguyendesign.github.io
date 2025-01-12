@@ -24,12 +24,12 @@
   }
   
   .text {
-    font-size: 1em;
+    font-size: 16px;
     text-decoration: none;
   }
   
   .name {
-    font-size: 22px;
+    font-size: 20px;
     font-family: 'Inter', sans-serif;
     text-decoration: none;
   }
