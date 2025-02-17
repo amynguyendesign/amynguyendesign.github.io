@@ -1,9 +1,11 @@
 :root {
     --main-bg-color: #efefef;
     --body-padding: 67px; 
-    --primary-color: black;
+    --primary-color: #5B2E2E;
+    --header-height: 80px; 
+    --footer-height: 80px;
     --body-text {
       font-size: 16px;
       font-weight: 300;
-    }
+    };
   }

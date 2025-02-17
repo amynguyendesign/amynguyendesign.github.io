@@ -1,15 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+
 .footer {
+    padding: 5vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    text-align: center;
     font-size: 0.8rem;
     opacity: 0.4;
     font-family: 'Inter', sans-serif;
-    position: relative;
-    padding: 20px 0; 
-    text-align: center; 
-    width: 100%; 
 }
-
 
 @media (max-width: 1024px) {
     .footer {

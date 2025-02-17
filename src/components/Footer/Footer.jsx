@@ -5,8 +5,8 @@ function Footer() {
 
   return (
     <footer className="footer">
-    <div> Coded with lots of giggles ✿ </div>
-     <div>  © Amy Nguyen 2024</div>
+      <div>  © Amy Nguyen 2025</div>
+      <div> Hand-coded and designed with one too many iterations </div>
     </footer>
   );
 }

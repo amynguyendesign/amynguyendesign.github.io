@@ -6,15 +6,14 @@ import WorkPage from './components/WorkPage/WorkPage';
 import ArtPage from './components/ArtPage/ArtPage';
 import ContactPage from './components/ContactPage/ContactPage';
 import './global.css';
-import patternImage from './assets/pattern.png';
 import Footer from './components/Footer/Footer';
 
 function HomePage() {
   return (
       <div className="homeContainer">
-        <p className='headline1'>Design-First Engineering. User-First Everything</p>
-        <p>Hi! I’m Amy, a full-stack engineer based in San Francisco.  I’ve spent the past three years creating tools that make learning fun. </p>    
-        <p> Before that, I studied Computer Science at Stanford with a focus on Human-Computer Interaction. </p>
+        <div className='headline1'>Design-First Engineering. User-First Everything</div>
+        <p>Hi! I’m Amy, a full-stack engineer based in San Francisco.  I’ve spent the past three years creating tools that make learning fun.     
+         Before that, I studied Computer Science at Stanford with a focus on Human-Computer Interaction. </p>
       </div>
   );
 }
@@ -45,9 +44,6 @@ function App() {
 
   return (
     <div className="wrapper">
-      <div className='patternContainer'>
-      <img className='pattern' src={patternImage} alt="Pattern" /> 
-      </div>
       <TopNav navRef={navRef} menuOpen={menuOpen} toggleMenu={toggleMenu}  />    
         <div className="content">
       <Routes>
@@ -62,10 +58,6 @@ function App() {
       {(location.pathname !== '/work' && location.pathname !== '/art' && location.pathname !== '/contact')  && <HomePage />}
       </div>
       <Footer />
-
-      <div className='patternContainer'>
-      <img className='pattern' src={patternImage} alt="Pattern" /> 
-      </div>
     </div>
   );
 }
