@@ -48,3 +48,52 @@ body {
   max-width: 800px;
   margin-bottom: 15px;
 }
+
+.pixel-grid {
+  display: grid;
+  grid-template-columns: repeat(30, 40px); 
+  grid-template-rows: repeat(3, 40px); 
+  /* gap: 2px;  */
+  justify-content: center;
+  /* padding: 20px; */
+  width: 100%;
+}
+
+/* Individual Blocks */
+.pixel {
+  width: 35px;
+  height: 35px;
+  border-radius: 5px;
+}
+
+/* Colors */
+.dark {
+  background-color: #5B2E2E;
+  box-shadow: 2px 2px 4px rgba(91, 46, 46, 0.3);
+}
+
+.semi-dark {
+  background-color: #967171;
+  box-shadow: 1.5px 1.5px 3px rgba(150, 113, 113, 0.3);
+}
+
+.medium {
+  background-color: #B76E79;
+  box-shadow: 2px 2px 3px rgba(183, 110, 121, 0.4);
+}
+
+.light {
+  background-color: #F0C6C7;
+  box-shadow: 1px 1px 2px rgba(240, 198, 199, 0.4);
+}
+
+.empty {
+  background-color: transparent; /* Keeps empty spaces */
+}
+
+.block {
+  width: 120px;
+  position: absolute;
+  bottom: 14vw;
+  right: 29vw;
+}

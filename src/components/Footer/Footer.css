@@ -2,7 +2,7 @@
 
 
 .footer {
-    padding: 5vw;
+    padding: 0 5vw 5vw 5vw;
     display: flex;
     justify-content: space-between;
     align-items: center;

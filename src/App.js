@@ -6,6 +6,7 @@ import WorkPage from './components/WorkPage/WorkPage';
 import ArtPage from './components/ArtPage/ArtPage';
 import ContactPage from './components/ContactPage/ContactPage';
 import './global.css';
+import block from './assets/pixel-block.png';
 import Footer from './components/Footer/Footer';
 
 function HomePage() {
@@ -57,7 +58,112 @@ function App() {
       </Routes>
       {(location.pathname !== '/work' && location.pathname !== '/art' && location.pathname !== '/contact')  && <HomePage />}
       </div>
-      <Footer />
+      {/* <img src={block} className="block"/> */}
+      <div class="pixel-grid">
+     {/* Row 1 */}
+    <div class="pixel empty"></div> 
+    <div class="pixel dark"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div>
+    <div class="pixel empty"></div>
+    <div class="pixel medium"></div>
+    <div class="pixel empty"></div>
+
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div>
+    <div class="pixel empty"></div>
+    <div class="pixel empty"></div>
+    <div class="pixel empty"></div>
+
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel light"></div> 
+    <div class="pixel empty"></div>
+    <div class="pixel empty"></div>
+    <div class="pixel empty"></div>
+    <div class="pixel empty"></div>
+
+     {/* Row 2 */}
+     <div class="pixel light"></div> 
+    <div class="pixel medium"></div> 
+    <div class="pixel medium"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div>
+    <div class="pixel medium"></div>
+    <div class="pixel medium"></div>
+    <div class="pixel empty"></div>
+
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div>
+    <div class="pixel empty"></div>
+    <div class="pixel empty"></div>
+    <div class="pixel empty"></div>
+
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel semi-dark"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel semi-dark"></div> 
+    <div class="pixel dark"></div>
+    <div class="pixel empty"></div>
+    <div class="pixel empty"></div>
+    <div class="pixel empty"></div>
+
+     {/* Row 3 */}
+     <div class="pixel semi-dark"></div> 
+    <div class="pixel semi-dark"></div> 
+    <div class="pixel medium"></div> 
+    <div class="pixel medium"></div> 
+    <div class="pixel semi-dark"></div> 
+    <div class="pixel semi-dark"></div> 
+    <div class="pixel light"></div>
+    <div class="pixel light"></div>
+    <div class="pixel light"></div>
+    <div class="pixel semi-dark"></div>
+
+    <div class="pixel dark"></div> 
+    <div class="pixel dark"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel light"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel medium"></div>
+    <div class="pixel medium"></div>
+    <div class="pixel dark"></div>
+    <div class="pixel empty"></div>
+
+    <div class="pixel empty"></div> 
+    <div class="pixel empty"></div> 
+    <div class="pixel semi-dark"></div> 
+    <div class="pixel semi-dark"></div> 
+    <div class="pixel medium"></div> 
+    <div class="pixel medium"></div> 
+    <div class="pixel empty"></div>
+    <div class="pixel medium"></div>
+    <div class="pixel medium"></div>
+    <div class="pixel medium"></div>
+
+</div>
+<Footer />
     </div>
   );
 }
