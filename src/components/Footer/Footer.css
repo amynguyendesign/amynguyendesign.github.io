@@ -3,13 +3,12 @@
 .footer {
   padding: 0 5vw 5vw 5vw;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  height: 60px;
   text-align: center;
   font-size: 0.8rem;
   opacity: 0.4;
-  font-family: "Inter", sans-serif;
+  
 }
 
 @media (max-width: 1024px) {

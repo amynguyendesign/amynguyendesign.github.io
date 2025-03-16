@@ -17,14 +17,14 @@ import Footer from "./components/Footer/Footer";
 function HomePage() {
   return (
     <div className="homeContainer">
-      <div className="headline1">Design-First Engineering.</div>
-      <div className="headline1">
+      <div className="headline1">Design-First Engineering. <br/>
         Always<span className="accent">.</span>{" "}
       </div>
       <p>
         Meet Amy -- Engineer. Designer at heart. Stanford-trained. San
         Francisco-based.
       </p>
+      <p className="homepageCTA"> See my work. </p>
     </div>
   );
 }
@@ -70,6 +70,7 @@ function App() {
           location.pathname !== "/art" &&
           location.pathname !== "/contact" && <HomePage />}
       </div>
+
       {/* <Footer /> */}
     </div>
   );

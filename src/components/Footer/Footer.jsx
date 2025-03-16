@@ -4,8 +4,7 @@ import "./Footer.css";
 function Footer() {
   return (
     <footer className="footer">
-      <div> © Amy Nguyen 2025</div>
-      <div> Hand-coded and designed with one too many iterations </div>
+      <div> Design + code by yours truly. © 2025 </div>
     </footer>
   );
 }

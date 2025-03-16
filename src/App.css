@@ -4,22 +4,21 @@ body {
   box-sizing: border-box;
   color: var(--primary-color);
   height: 100vh; /* Full viewport height */
-  overflow: hidden;
   min-width: 320px;
+  background-color: var(--main-bg-color);
 }
 
 .wrapper {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Ensures wrapper fills the screen */
-  overflow: hidden;
+  min-height: 100vh;
 }
 
 .content {
   flex-grow: 1; /* Pushes footer down */
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   text-align: left;
   padding: var(--body-padding); /* Keeps some space inside */
 }
@@ -27,9 +26,10 @@ body {
 .homeContainer {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
+  align-items: center;
+  text-align: center;
   color: var(--primary-color);
+  gap: 2vw;
 }
 
 .headline1 {
@@ -54,6 +54,17 @@ body {
     dotEnter 1.7s ease-out forwards,
     dotFloat 5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
   animation-delay: 0s, 1.7s;
+}
+
+.homepageCTA {
+  border: solid 0.5px #CACACA;
+  width: 210px;
+  height: 70px;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;     
+  text-align: center;
 }
 
 @keyframes dotEnter {
