@@ -51,9 +51,9 @@ body {
   display: inline-block;
   opacity: 0;
   animation:
-    dotEnter 1.2s ease-out forwards,
+    dotEnter 1.7s ease-out forwards,
     dotFloat 5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-  animation-delay: 0s, 1.2s;
+  animation-delay: 0s, 1.7s;
 }
 
 @keyframes dotEnter {
