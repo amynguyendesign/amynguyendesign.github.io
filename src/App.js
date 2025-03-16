@@ -12,9 +12,9 @@ import Footer from './components/Footer/Footer';
 function HomePage() {
   return (
       <div className="homeContainer">
-        <div className='headline1'>Design-First Engineering. User-First Everything</div>
-        <p>Hi! I’m Amy, a full-stack engineer based in San Francisco.  I’ve spent the past three years creating tools that make learning fun.     
-         Before that, I studied Computer Science at Stanford with a focus on Human-Computer Interaction. </p>
+        <div className='headline1'>Design-First Engineering. </div>
+        <div className='headline1'>Always. </div>
+        <p>Meet Amy -- Engineer. Designer at heart. Stanford-trained. San Francisco-based.</p>
       </div>
   );
 }
@@ -58,112 +58,7 @@ function App() {
       </Routes>
       {(location.pathname !== '/work' && location.pathname !== '/art' && location.pathname !== '/contact')  && <HomePage />}
       </div>
-      {/* <img src={block} className="block"/> */}
-      <div class="pixel-grid">
-     {/* Row 1 */}
-    <div class="pixel empty"></div> 
-    <div class="pixel dark"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div>
-    <div class="pixel empty"></div>
-    <div class="pixel medium"></div>
-    <div class="pixel empty"></div>
-
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div>
-    <div class="pixel empty"></div>
-    <div class="pixel empty"></div>
-    <div class="pixel empty"></div>
-
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel light"></div> 
-    <div class="pixel empty"></div>
-    <div class="pixel empty"></div>
-    <div class="pixel empty"></div>
-    <div class="pixel empty"></div>
-
-     {/* Row 2 */}
-     <div class="pixel light"></div> 
-    <div class="pixel medium"></div> 
-    <div class="pixel medium"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div>
-    <div class="pixel medium"></div>
-    <div class="pixel medium"></div>
-    <div class="pixel empty"></div>
-
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div>
-    <div class="pixel empty"></div>
-    <div class="pixel empty"></div>
-    <div class="pixel empty"></div>
-
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel semi-dark"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel semi-dark"></div> 
-    <div class="pixel dark"></div>
-    <div class="pixel empty"></div>
-    <div class="pixel empty"></div>
-    <div class="pixel empty"></div>
-
-     {/* Row 3 */}
-     <div class="pixel semi-dark"></div> 
-    <div class="pixel semi-dark"></div> 
-    <div class="pixel medium"></div> 
-    <div class="pixel medium"></div> 
-    <div class="pixel semi-dark"></div> 
-    <div class="pixel semi-dark"></div> 
-    <div class="pixel light"></div>
-    <div class="pixel light"></div>
-    <div class="pixel light"></div>
-    <div class="pixel semi-dark"></div>
-
-    <div class="pixel dark"></div> 
-    <div class="pixel dark"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel light"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel medium"></div>
-    <div class="pixel medium"></div>
-    <div class="pixel dark"></div>
-    <div class="pixel empty"></div>
-
-    <div class="pixel empty"></div> 
-    <div class="pixel empty"></div> 
-    <div class="pixel semi-dark"></div> 
-    <div class="pixel semi-dark"></div> 
-    <div class="pixel medium"></div> 
-    <div class="pixel medium"></div> 
-    <div class="pixel empty"></div>
-    <div class="pixel medium"></div>
-    <div class="pixel medium"></div>
-    <div class="pixel medium"></div>
-
-</div>
-<Footer />
+{/* <Footer /> */}
     </div>
   );
 }
