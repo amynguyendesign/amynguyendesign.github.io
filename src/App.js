@@ -12,8 +12,8 @@ import Footer from './components/Footer/Footer';
 function HomePage() {
   return (
       <div className="homeContainer">
-        <div className='headline1'>Design-First Engineering. </div>
-        <div className='headline1'>Always. </div>
+        <div className='headline1'>Design-First Engineering.</div>
+        <div className='headline1'>Always<span className='accent'>.</span> </div>
         <p>Meet Amy -- Engineer. Designer at heart. Stanford-trained. San Francisco-based.</p>
       </div>
   );

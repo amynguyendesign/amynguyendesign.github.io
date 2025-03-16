@@ -45,3 +45,34 @@ body {
   max-width: 800px;
   margin-bottom: 15px;
 }
+
+.accent {
+  color: var(--accent-color);
+  display: inline-block;
+  opacity: 0;
+  animation:
+    dotEnter 1.2s ease-out forwards,
+    dotFloat 5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  animation-delay: 0s, 1.2s;
+}
+
+@keyframes dotEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Gentle float */
+@keyframes dotFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px); /* small movement = smoother */
+  }
+}
