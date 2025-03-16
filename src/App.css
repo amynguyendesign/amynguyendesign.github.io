@@ -1,5 +1,5 @@
 body {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   margin: 0;
   box-sizing: border-box;
   color: var(--primary-color);
@@ -34,9 +34,9 @@ body {
 
 .headline1 {
   font-size: 64px;
-  font-weight: 600; 
+  font-weight: 600;
   line-height: 1.2;
-  margin-bottom: 15px; 
+  margin-bottom: 15px;
 }
 
 .homeContainer p {
@@ -69,7 +69,8 @@ body {
 
 /* Gentle float */
 @keyframes dotFloat {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {

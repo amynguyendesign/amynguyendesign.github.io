@@ -1,12 +1,12 @@
 :root {
-    --main-bg-color: #FBF9F7;
-    --body-padding: 67px; 
-    --primary-color: black;
-    --header-height: 80px; 
-    --footer-height: 80px;
-    --accent-color: #10069F;
-    --body-text {
-      font-size: 16px;
-      font-weight: 300;
-    };
+  --main-bg-color: #fbf9f7;
+  --body-padding: 67px;
+  --primary-color: black;
+  --header-height: 80px;
+  --footer-height: 80px;
+  --accent-color: #10069f;
+  --body-text {
+    font-size: 16px;
+    font-weight: 300;
   }
+}

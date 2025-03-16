@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap");
 
 .container {
   display: flex;
@@ -9,74 +9,79 @@
   box-sizing: border-box;
   padding: 5vw;
   /* position: fixed; */
-  }
-  
+}
+
+.subPagesContainer {
+  display: flex;
+  gap: 6vw;
+}
+
+.subPagesContainer.open {
+  display: block;
+}
+
+.text,
+.name {
+  white-space: nowrap;
+  margin: 0 10px;
+  color: var(--primary-color);
+}
+
+.text {
+  font-size: 18px;
+  text-decoration: none;
+  font-weight: 400;
+}
+
+.name {
+  font-size: 28px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.text.active {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  width: 38px;
+}
+
+@media (max-width: 768px) {
   .subPagesContainer {
-    display: flex;
-    gap: 15px;
-  }
-  
-  .subPagesContainer.open {
-    display: block;
-  }
-  
-  .text, .name {
-    white-space: nowrap;
-    margin: 0 10px;
-    color: var(--primary-color);
-  }
-  
-  .text {
-    font-size: 1rem;
-    text-decoration: none;
-  }
-  
-  .name {
-    font-size: 20px;
-    font-family: 'Inter', sans-serif;
-    text-decoration: none;
-  }
-  
-  .burger {
     display: none;
     flex-direction: column;
-    gap: 5px;
-    cursor: pointer;
-    width: 38px;
+    position: absolute;
+    top: 106px;
+    right: 45px;
+    background-color: white;
+    padding: 10px 0px 10px 0px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
   }
-  
-  @media (max-width: 768px) {
-    .subPagesContainer {
-      display: none;
-      flex-direction: column;
-      position: absolute;
-      top: 106px; 
-      right: 45px;
-      background-color: white; 
-      padding: 10px 0px 10px 0px;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-      text-align: center;
-    }
-    .burger {
-      display: flex; 
-    }
-  
-    .subPagesContainer.open {
-      display: flex; 
-    }
-
-    .menuItem {
-        padding: 10px 0px 10px 0px;
-
-    }
-    .menuItem:hover {
-        background-color: rgba(177, 146, 112, 0.198);
-        font-weight: 600;
-    }
+  .burger {
+    display: flex;
   }
-  @media (max-width: 480px) {
+
+  .subPagesContainer.open {
+    display: flex;
+  }
+
+  .menuItem {
+    padding: 10px 0px 10px 0px;
+  }
+  .menuItem:hover {
+    background-color: rgba(177, 146, 112, 0.198);
+    font-weight: 600;
+  }
+}
+@media (max-width: 480px) {
   .container {
     padding-bottom: 16px;
-
-}}
-  
+  }
+}
