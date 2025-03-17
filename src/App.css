@@ -88,3 +88,16 @@ body {
     transform: translateY(-5px); /* small movement = smoother */
   }
 }
+
+.fadeSlideIn {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeSlideUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeSlideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

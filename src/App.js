@@ -16,7 +16,7 @@ import Footer from "./components/Footer/Footer";
 
 function HomePage() {
   return (
-    <div className="homeContainer">
+    <div className="homeContainer fadeSlideIn">
       <div className="headline1">Design-First Engineering. <br/>
         Always<span className="accent">.</span>{" "}
       </div>
