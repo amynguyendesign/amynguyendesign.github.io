@@ -21,6 +21,7 @@ body {
   align-items: center;
   text-align: left;
   padding: var(--body-padding); /* Keeps some space inside */
+  /* justify-content: center; */
 }
 
 .homeContainer {
@@ -92,7 +93,7 @@ body {
 .fadeSlideIn {
   opacity: 0;
   transform: translateY(20px);
-  animation: fadeSlideUp 0.8s ease-out forwards;
+  animation: fadeSlideUp 2s ease-out forwards;
 }
 
 @keyframes fadeSlideUp {
@@ -100,4 +101,10 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.link {
+  color: #10069F;
+  font-weight: 700;
+  text-decoration: underline;
 }

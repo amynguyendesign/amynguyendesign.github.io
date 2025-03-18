@@ -15,7 +15,7 @@ function ArtPage() {
 
   return (
     <div className="art-page">
-      <div> I paint sometimes. </div>
+      <div className="headline1 fadeSlideIn"> I paint sometimes<span className="accent">.</span> </div>
       <div>
         <div className="gallery-grid">
           {paintings.map((painting, index) => (
