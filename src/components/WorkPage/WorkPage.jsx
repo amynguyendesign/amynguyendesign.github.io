@@ -3,8 +3,9 @@ import "./WorkPage.css";
 function WorkPage() {
   return (
     <div className="homeContainer">
+      <div className="headline1">Selected Work<span className="accent">.</span></div>
       {" "}
-      I'm still coding this page hehe -- check back later!{" "}
+      The portfolio paradox: too busy building to show what I built. Come back soon.{" "}
     </div>
   );
 }
