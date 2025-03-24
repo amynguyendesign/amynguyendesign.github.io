@@ -29,6 +29,21 @@ function TopNav({ navRef, menuOpen, toggleMenu }) {
   ))}
 </div>
 
+<div className={`desktopMenu`}>
+  {["work", "art", "about", "contact", "bookshelf"].map((path) => (
+    <Link
+      key={path}
+      to={`/${path}`}
+      className={`menuItem ${currentPath === `/${path}` ? "active" : ""}`}
+    >
+      <span className="text">
+        {path}
+        {currentPath === `/${path}` && <span className="active">.</span>}
+      </span>
+    </Link>
+  ))}
+</div>
+
       {menuOpen && <div className="menuOverlay" onClick={toggleMenu}></div>}
 
       <div className={`burger ${menuOpen ? "open" : ""}`} onClick={toggleMenu}>

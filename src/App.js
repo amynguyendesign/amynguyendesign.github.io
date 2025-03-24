@@ -10,8 +10,8 @@ import {
 import WorkPage from "./components/WorkPage/WorkPage";
 import ArtPage from "./components/ArtPage/ArtPage";
 import ContactPage from "./components/ContactPage/ContactPage";
+import AboutPage from "./components/AboutPage/AboutPage";
 import "./global.css";
-import block from "./assets/pixel-block.png";
 import Footer from "./components/Footer/Footer";
 
 function HomePage() {
@@ -66,9 +66,13 @@ function App() {
         <Routes>
           <Route path="/contact" element={<ContactPage />} />
         </Routes>
+        <Routes>
+          <Route path="/about" element={<AboutPage />} />
+        </Routes>
         {location.pathname !== "/work" &&
           location.pathname !== "/art" &&
-          location.pathname !== "/contact" && <HomePage />}
+          location.pathname !== "/contact" &&
+          location.pathname !== "/about" && <HomePage />}
       </div>
 
       {/* <Footer /> */}

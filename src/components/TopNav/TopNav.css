@@ -120,7 +120,7 @@
   text-align: left;
   text-decoration: none;
   color: var(--primary-color);
-  border-bottom: 0.5px solid #eaeaea;
+  border-bottom: none;
   cursor: pointer;
 }
 
@@ -132,6 +132,17 @@
 .menuItem.active .text {
   color: var(--accent-color);
   font-weight: 600;
+}
+
+.desktopMenu {
+  display: flex;
+  gap: 6vw;
+}
+
+@media (max-width: 768px) {
+  .desktopMenu {
+    display: none;
+  }
 }
 
 @media (min-width: 769px) {
