@@ -75,7 +75,7 @@ function App() {
           location.pathname !== "/about" && <HomePage />}
       </div>
 
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 }

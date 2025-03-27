@@ -1,10 +1,12 @@
 import "./AboutPage.css";
+import pic from "../../assets/amy.jpg";
 
 function AboutPage() {
   return (
-    <div className="subpageContainer fadeSlideIn">
-      <div className="headline1">
-        About me<span className="accent">.</span>
+    <div className="homeContainer fadeSlideIn">
+      <div className="headline1 aboutPhotoWrapper">
+        <div>About me<span className="accent">.</span></div>
+        <img src={pic} alt="Amy" className="aboutPhotoEnd" />
       </div>
       <div className="leftText">
         <p>

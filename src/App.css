@@ -3,7 +3,6 @@ body {
   margin: 0;
   box-sizing: border-box;
   color: var(--primary-color);
-  height: 100vh; /* Full viewport height */
   min-width: 320px;
   background-color: var(--main-bg-color);
 }
@@ -20,8 +19,7 @@ body {
   flex-direction: column;
   align-items: center;
   text-align: left;
-  padding: var(--body-padding); /* Keeps some space inside */
-  /* justify-content: center; */
+  justify-content: center;
 }
 
 .homeContainer {
@@ -31,6 +29,8 @@ body {
   text-align: center;
   color: var(--primary-color);
   gap: 2vw;
+  padding-bottom: 10vh;
+
 }
 
 .headline1 {
@@ -38,6 +38,7 @@ body {
   font-weight: 600;
   line-height: 1.2;
   margin-bottom: 15px;
+  text-align: center;
 }
 
 .homeContainer p {

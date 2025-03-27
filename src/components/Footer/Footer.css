@@ -1,33 +1,29 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
-
 .footer {
-  padding: 0 5vw 5vw 5vw;
+  padding: 40px 5vw;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
   text-align: center;
-  font-size: 0.8rem;
-  opacity: 0.4;
-  
+  font-size: 0.875rem;
+  color: var(--primary-color);
+  opacity: 0.5;
+  border-top: 1px solid #eaeaea;
 }
 
-@media (max-width: 1024px) {
-  .footer {
-    font-size: 0.7rem;
-    padding: 15px 0;
-  }
+.footer span {
+  font-weight: 500;
 }
 
 @media (max-width: 768px) {
   .footer {
-    font-size: 0.65rem;
-    padding: 10px 0;
+    font-size: 0.75rem;
+    padding: 30px 5vw;
   }
 }
 
 @media (max-width: 480px) {
   .footer {
-    font-size: 0.6rem;
-    padding: 8px 0;
+    font-size: 0.7rem;
+    padding: 24px 5vw;
   }
 }
