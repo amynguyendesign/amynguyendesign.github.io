@@ -26,7 +26,10 @@ function ContactPage() {
         .<br />
         If you want to nerd out about books, design, tech — or debate whether{" "}
         <span className="comicSans">Comic Sans</span> is ever acceptable,{" "}
-        <a className="linkStyle" href="mailto:amy@example.com">
+        <a
+          className="linkStyle"
+          href="mailto:&#110;&#103;&#117;&#121;&#101;&#110;&#97;&#108;&#64;&#97;&#108;&#117;&#109;&#110;&#105;&#46;&#115;&#116;&#97;&#110;&#102;&#111;&#114;&#100;&#46;&#101;&#100;&#117;"
+        >
           shoot me an email
         </a>
         .
