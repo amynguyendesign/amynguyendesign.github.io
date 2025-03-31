@@ -20,6 +20,7 @@ function ContactPage() {
           className="linkStyle"
           href="https://www.linkedin.com/in/amynguyen"
           target="_blank"
+          rel="noopener noreferrer"
         >
           LinkedIn
         </a>
