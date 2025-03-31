@@ -92,6 +92,7 @@ body {
 .homepageWorkSection {
   margin-top: 100vh;
   padding-top: 4rem;
+  min-height: 85vh;
 }
 
 @keyframes dotEnter {
