@@ -1,7 +1,3 @@
-.comicSans {
-  font-family: "Comic Sans MS", "Comic Sans", cursive;
-  font-weight: bold;
-}
 .linkStyle {
   color: var(--accent-color);
   font-weight: 600;
