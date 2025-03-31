@@ -23,11 +23,11 @@ function ArtPage() {
         VSCode — more photos to come. Play is how I train my eye, test my
         instincts, and stay curious. It’s how I practice noticing patterns.{" "}
         <br />
-        Every new thing feels new… until you hit critical mass. That point where
-        the patterns click, and everything starts to make sense — that’s the
-        moment I chase. <br />
+        Every new thing feels new… until you hit critical mass. Then the
+        patterns click, and everything starts to make sense... fast — that’s the moment
+        I chase. <br />
         It’s not about outcomes. Or at least, I try really hard for it not to
-        be. (Not hard enough, clearly, since I felt the need to say that.)
+        be. (Not hard enough, clearly, since I still felt the need to say that.)
       </div>
       <div className="gallery-grid">
         {paintings.map((painting, index) => (

@@ -5,7 +5,7 @@ function Footer() {
   return (
     <footer className="footer">
       <div>
-        <span> Designed and coded </span> by Amy Nguyen © 2025.
+        <span> Designed and Coded </span> by Amy Nguyen © 2025.
       </div>
     </footer>
   );

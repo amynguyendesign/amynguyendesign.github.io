@@ -29,7 +29,7 @@ function TopNav({ navRef, menuOpen, toggleMenu, setScrollToWork }) {
   return (
     <header className="container" ref={navRef}>
       <a className="name" href="/">
-        <div>Amy Nguyen</div>
+        <div>Amy Nguyen.</div>
       </a>
 
       {/* Desktop menu */}
