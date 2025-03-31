@@ -10,7 +10,7 @@ function ContactPage() {
   }, []);
 
   return (
-    <div className="contactPage">
+    <div className="homeContainer">
       <div className="headline1 fadeSlideIn">
         Get in touch<span className="accent">.</span>
       </div>
