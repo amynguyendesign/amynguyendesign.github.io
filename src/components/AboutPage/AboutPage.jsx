@@ -24,8 +24,8 @@ function AboutPage() {
 
         <p>
           With no prior technical experience, I started from scratch — Calculus
-          I, Physics I, my first lines of code. It gave me a new mental
-          framework —- one that rewired how I solve problems and build solutions.
+          I, Physics I, my first lines of code. I gained a new mental
+          framework -- one that rewired how I solve problems and how I build solutions.
         </p>
 
         <p>
