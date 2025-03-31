@@ -5,7 +5,7 @@ function ContactPage() {
   useEffect(() => {
     window.scrollTo({
       top: document.body.scrollHeight,
-      behavior: "smooth", // can also try "auto" for instant scroll
+      behavior: "smooth",
     });
   }, []);
 

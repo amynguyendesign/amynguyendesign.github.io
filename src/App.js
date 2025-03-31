@@ -54,16 +54,22 @@ function HomePage({ workRef, scrollToWork, setScrollToWork }) {
           Selected Work<span className="accent">.</span>
         </div>{" "}
         <div>
-          The portfolio paradox: too busy building to show what I built. Project
-          write-ups coming soon. Check out my other pages like{" "}
+          The portfolio paradox: making things faster than I can document them.
+          <br />
+          Project write-ups are on the way — but in the meantime, check out my
+          other pages:{" "}
           <Link to="/play" className="linkStyle">
             play
-          </Link>{" "}
-          or{" "}
+          </Link>
+          ,{" "}
           <Link to="/about" className="linkStyle">
             about
           </Link>{" "}
-          in the meantime.
+          and{" "}
+           <Link to="/contact" className="linkStyle">
+            contact
+          </Link>
+          ,
         </div>
       </div>
     </>
