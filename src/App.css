@@ -23,14 +23,14 @@ body {
 }
 
 .homeContainer {
+  min-height: 70vh;
   display: flex;
   flex-direction: column;
+  justify-content: center; /* vertical centering */
   align-items: center;
   text-align: center;
-  color: var(--primary-color);
   gap: 2vw;
-  padding-bottom: 10vh;
-
+  box-sizing: border-box;
 }
 
 .headline1 {
@@ -52,21 +52,25 @@ body {
   color: var(--accent-color);
   display: inline-block;
   opacity: 0;
-  animation:
-    dotEnter 1.7s ease-out forwards,
+  animation: dotEnter 1.7s ease-out forwards,
     dotFloat 5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
   animation-delay: 0s, 1.7s;
 }
 
 .homepageCTA {
-  border: solid 0.5px #CACACA;
+  border: solid 0.5px #cacaca;
   width: 210px;
   height: 70px;
   font-size: 18px;
   display: flex;
   justify-content: center;
-  align-items: center;     
+  align-items: center;
   text-align: center;
+}
+
+.homepageWorkSection {
+  margin-top: 100vh;
+  padding-top: 4rem;
 }
 
 @keyframes dotEnter {
@@ -105,7 +109,7 @@ body {
 }
 
 .link {
-  color: #10069F;
+  color: #10069f;
   font-weight: 700;
   text-decoration: underline;
 }

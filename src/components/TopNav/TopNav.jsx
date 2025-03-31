@@ -1,11 +1,30 @@
+// ✅ TopNav.jsx — Final Version
+
 import React from "react";
 import "./TopNav.css";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
-function TopNav({ navRef, menuOpen, toggleMenu }) {
+function TopNav({ navRef, menuOpen, toggleMenu, setScrollToWork }) {
   const location = useLocation();
   const currentPath = location.pathname;
-  console.log("currentPath", currentPath);
+  const navigate = useNavigate();
+
+  const handleWorkClick = (e) => {
+    e.preventDefault();
+
+    if (location.pathname === "/") {
+      // Already on homepage — set scroll trigger
+      setScrollToWork(true);
+    } else {
+      // Navigate home, then scroll after HomePage mounts
+      setScrollToWork(true);
+      navigate("/");
+    }
+
+    if (window.innerWidth < 768) {
+      toggleMenu();
+    }
+  };
 
   return (
     <header className="container" ref={navRef}>
@@ -13,38 +32,43 @@ function TopNav({ navRef, menuOpen, toggleMenu }) {
         <div>Amy Nguyen</div>
       </a>
 
+      {/* Desktop menu */}
+      <div className="desktopMenu">
+        {["work", "art", "about", "contact", "bookshelf"].map((path) => (
+          <Link
+            key={path}
+            to={path === "work" ? "/" : `/${path}`}
+            onClick={path === "work" ? handleWorkClick : undefined}
+            className={`menuItem ${currentPath === `/${path}` ? "active" : ""}`}
+          >
+            <span className="text">
+              {path}
+              {currentPath === `/${path}` && <span className="active">.</span>}
+            </span>
+          </Link>
+        ))}
+      </div>
+
+      {/* Mobile menu */}
       <div className={`sidebarMenu ${menuOpen ? "open" : ""}`}>
-  {["work", "art", "about", "contact", "bookshelf"].map((path) => (
-    <Link
-      key={path}
-      to={`/${path}`}
-      onClick={toggleMenu}
-      className={`menuItem ${currentPath === `/${path}` ? "active" : ""}`}
-    >
-      <span className="text">
-        {path}
-        {currentPath === `/${path}` && <span className="active">.</span>}
-      </span>
-    </Link>
-  ))}
-</div>
+        {["work", "art", "about", "contact", "bookshelf"].map((path) => (
+          <Link
+            key={path}
+            to={path === "work" ? "/" : `/${path}`}
+            onClick={path === "work" ? handleWorkClick : toggleMenu}
+            className={`menuItem ${currentPath === `/${path}` ? "active" : ""}`}
+          >
+            <span className="text">
+              {path}
+              {currentPath === `/${path}` && <span className="active">.</span>}
+            </span>
+          </Link>
+        ))}
+      </div>
 
-<div className={`desktopMenu`}>
-  {["work", "art", "about", "contact", "bookshelf"].map((path) => (
-    <Link
-      key={path}
-      to={`/${path}`}
-      className={`menuItem ${currentPath === `/${path}` ? "active" : ""}`}
-    >
-      <span className="text">
-        {path}
-        {currentPath === `/${path}` && <span className="active">.</span>}
-      </span>
-    </Link>
-  ))}
-</div>
-
-      {menuOpen && <div className="menuOverlay" onClick={toggleMenu}></div>}
+      {menuOpen && window.innerWidth < 768 && (
+        <div className="menuOverlay" onClick={toggleMenu}></div>
+      )}
 
       <div className={`burger ${menuOpen ? "open" : ""}`} onClick={toggleMenu}>
         <span></span>

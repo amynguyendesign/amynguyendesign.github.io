@@ -1,24 +1,24 @@
-  .leftText {
-    text-align: left;
-    max-width: 60ch;
-    margin: 0 auto;
-    font-size: 1.05rem;
-    line-height: 1.75;
-  }
+.leftText {
+  text-align: left;
+  max-width: 60ch;
+  margin: 0 auto;
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
 
-  .aboutPhotoWrapper {
-    display: flex;
-        margin-top: 3rem;
-        align-items: center;
-        gap: 0%;
-        width: 100%;
-        justify-content: space-between;
-  }
-  
-  .aboutPhotoEnd {
-    width: 180px;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 9999px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  }
+.aboutPhotoWrapper {
+  display: flex;
+  margin-top: 3rem;
+  align-items: center;
+  gap: 0%;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.aboutPhotoEnd {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 9999px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}

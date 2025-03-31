@@ -8,42 +8,49 @@
   margin: 0 auto;
   box-sizing: border-box;
   padding: 5vw;
-  /* position: fixed; */
 }
 
-.subPagesContainer {
-  display: flex;
-  gap: 6vw;
-}
-
-.subPagesContainer.open {
-  display: block;
-}
-
-.text,
-.name {
-  white-space: nowrap;
-  margin: 0 10px;
-  color: var(--primary-color);
-}
-
-.text {
-  font-size: 18px;
-  text-decoration: none;
-  font-weight: 400;
-}
-
+/* Brand name */
 .name {
   font-size: 28px;
   font-weight: 500;
   text-decoration: none;
+  color: var(--primary-color);
+  white-space: nowrap;
 }
 
-.text.active {
+/* Menu item shared styles */
+.menuItem {
+  display: block;
+  text-decoration: none;
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+.menuItem .text {
+  font-size: 18px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.menuItem.active .text {
   color: var(--accent-color);
   font-weight: 600;
 }
 
+/* ---------- Desktop Menu ---------- */
+.desktopMenu {
+  display: flex;
+  gap: 6vw;
+}
+
+@media (max-width: 768px) {
+  .desktopMenu {
+    display: none;
+  }
+}
+
+/* ---------- Burger Icon ---------- */
 .burger {
   display: none;
   flex-direction: column;
@@ -57,12 +64,11 @@
 .burger span {
   height: 2px;
   width: 100%;
-  background-color: var(--accent-color); /* blue */
+  background-color: var(--accent-color);
   border-radius: 1px;
   transition: all 0.3s ease-in-out;
 }
 
-/* Open state animation */
 .burger.open span:nth-child(1) {
   transform: rotate(45deg) translateY(8px);
 }
@@ -75,6 +81,7 @@
   transform: rotate(-45deg) translateY(-8px);
 }
 
+/* ---------- Mobile Sidebar Menu ---------- */
 .sidebarMenu {
   position: fixed;
   top: 0;
@@ -90,17 +97,6 @@
   transition: right 0.3s ease-in-out;
   z-index: 10;
 }
-.menuOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5); /* adjust opacity if needed */
-  z-index: 5;
-  backdrop-filter: blur(1px); /* optional, fancy */
-  transition: opacity 0.3s ease-in-out;
-}
 
 .sidebarMenu.open {
   right: 0;
@@ -108,79 +104,39 @@
 
 .sidebarMenu .menuItem {
   padding: 26px 42px;
-  text-align: left;
   border-bottom: solid 0.5px #eaeaea;
   margin-left: -30px;
   margin-right: -30px;
 }
 
-.menuItem {
-  display: block;
-  padding: 27px 0;
-  text-align: left;
-  text-decoration: none;
-  color: var(--primary-color);
-  border-bottom: none;
-  cursor: pointer;
-}
-
-.menuItem .text {
-  font-size: 18px;
-  font-weight: 400;
-}
-
-.menuItem.active .text {
-  color: var(--accent-color);
+.menuItem:hover .text {
+  background-color: #f2f4ff;
   font-weight: 600;
 }
 
-.desktopMenu {
-  display: flex;
-  gap: 6vw;
-}
-
-@media (max-width: 768px) {
-  .desktopMenu {
-    display: none;
-  }
-}
-
+/* Hide sidebar on desktop */
 @media (min-width: 769px) {
   .sidebarMenu {
-    display: none;
+    display: none !important;
   }
 }
 
+/* Overlay (optional) */
+.menuOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 5;
+  backdrop-filter: blur(1px);
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Show burger only on mobile */
 @media (max-width: 768px) {
-  .subPagesContainer {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    top: 106px;
-    right: 45px;
-    background-color: white;
-    padding: 10px 0px 10px 0px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
   .burger {
     display: flex;
-  }
-
-  .subPagesContainer.open {
-    display: flex;
-  }
-
-  .menuItem {
-    padding: 10px 0px 10px 0px;
-  }
-  .menuItem:hover {
-    background-color: #f2f4ff;;
-    font-weight: 600;
-  }
-}
-@media (max-width: 480px) {
-  .container {
-    padding-bottom: 16px;
   }
 }
