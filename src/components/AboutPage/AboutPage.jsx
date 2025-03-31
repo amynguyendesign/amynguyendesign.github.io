@@ -3,7 +3,7 @@ import pic from "../../assets/amy.jpg";
 
 function AboutPage() {
   return (
-    <div className="homeContainer fadeSlideIn">
+    <div className="homeContainer aboutContainer fadeSlideIn">
       <div className="headline1 aboutPhotoWrapper">
         <div>
           About me<span className="accent">.</span>

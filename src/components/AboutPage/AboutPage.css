@@ -6,7 +6,6 @@
   line-height: 1.75;
 }
 
-/* PHOTO + HEADING WRAPPER */
 .aboutPhotoWrapper {
   display: flex;
   align-items: center;
@@ -16,7 +15,10 @@
   gap: 0%;
 }
 
-/* PROFILE PHOTO */
+.aboutContainer {
+  padding-bottom: 5vw;
+}
+
 .aboutPhotoEnd {
   width: 180px;
   height: 180px;
@@ -25,7 +27,6 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* --- MOBILE TWEAKS --- */
 @media (max-width: 768px) {
   .aboutPhotoWrapper {
     flex-direction: column;

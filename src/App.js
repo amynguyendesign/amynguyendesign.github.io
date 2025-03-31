@@ -52,7 +52,7 @@ function HomePage({ workRef, scrollToWork, setScrollToWork }) {
         <div className="headline1">
           Selected Work<span className="accent">.</span>
         </div>{" "}
-        The portfolio paradox: too busy building to show what I built. Come back
+        The portfolio paradox: too busy building to show what I built. Coming
         soon. <div></div>
       </div>
     </>
@@ -98,7 +98,7 @@ function App() {
           <Route path="/work" element={<WorkPage />} />
         </Routes>
         <Routes>
-          <Route path="/art" element={<ArtPage />} />
+          <Route path="/play" element={<ArtPage />} />
         </Routes>
         <Routes>
           <Route path="/contact" element={<ContactPage />} />
@@ -107,7 +107,7 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
         </Routes>
         {location.pathname !== "/work" &&
-          location.pathname !== "/art" &&
+          location.pathname !== "/play" &&
           location.pathname !== "/contact" &&
           location.pathname !== "/about" && (
             <HomePage

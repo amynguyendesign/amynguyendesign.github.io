@@ -14,27 +14,35 @@ function ArtPage() {
   const closeLightbox = () => setLightboxImage(null);
 
   return (
-    <div className="art-page">
+    <div className="play-page homeContainer">
       <div className="headline1 fadeSlideIn">
-        {" "}
-        I paint sometimes<span className="accent">.</span>{" "}
+        Play<span className="accent">.</span>
       </div>
-      <div>
-        <div className="gallery-grid">
-          {paintings.map((painting, index) => (
-            <div
-              key={index}
-              className="gallery-item"
-              onClick={() => openLightbox(painting)}
-            >
-              <img
-                src={painting}
-                alt={`Painting ${index + 1}`}
-                className="painting-image"
-              />
-            </div>
-          ))}
-        </div>
+      <div className="leftText">
+        This is where the side quests live. Painting, crocheting, customizing my
+        VSCode — more photos to come. Play is how I train my eye, test my
+        instincts, and stay curious. It’s how I practice noticing patterns.{" "}
+        <br />
+        Every new thing feels new… until you hit critical mass. That point where
+        the patterns click, and everything starts to make sense — that’s the
+        moment I chase. <br />
+        It’s not about outcomes. Or at least, I try really hard for it not to
+        be. (Not hard enough, clearly, since I felt the need to say that.)
+      </div>
+      <div className="gallery-grid">
+        {paintings.map((painting, index) => (
+          <div
+            key={index}
+            className="gallery-item"
+            onClick={() => openLightbox(painting)}
+          >
+            <img
+              src={painting}
+              alt={`Painting ${index + 1}`}
+              className="painting-image"
+            />
+          </div>
+        ))}
       </div>
 
       {lightboxImage && (
