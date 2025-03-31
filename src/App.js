@@ -52,8 +52,8 @@ function HomePage({ workRef, scrollToWork, setScrollToWork }) {
         <div className="headline1">
           Selected Work<span className="accent">.</span>
         </div>{" "}
-        The portfolio paradox: too busy building to show what I built. Coming
-        soon. <div></div>
+        The portfolio paradox: too busy building to show what I built. Project
+        write-ups coming soon. <div></div>
       </div>
     </>
   );

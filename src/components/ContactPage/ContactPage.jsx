@@ -16,13 +16,20 @@ function ContactPage() {
       </div>
       <p className="contactIntro">
         I’m on{" "}
-        <a href="https://www.linkedin.com/in/amynguyen" target="_blank">
+        <a
+          className="linkStyle"
+          href="https://www.linkedin.com/in/amynguyen"
+          target="_blank"
+        >
           LinkedIn
         </a>
         .<br />
         If you want to nerd out about books, design, tech — or debate whether{" "}
         <span className="comicSans">Comic Sans</span> is ever acceptable,{" "}
-        <a href="mailto:amy@example.com">shoot me an email</a>.
+        <a className="linkStyle" href="mailto:amy@example.com">
+          shoot me an email
+        </a>
+        .
       </p>
     </div>
   );
