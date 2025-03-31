@@ -6,6 +6,7 @@ import {
   Route,
   Routes,
   useLocation,
+  Link,
 } from "react-router-dom";
 import WorkPage from "./components/WorkPage/WorkPage";
 import ArtPage from "./components/ArtPage/ArtPage";
@@ -52,8 +53,18 @@ function HomePage({ workRef, scrollToWork, setScrollToWork }) {
         <div className="headline1">
           Selected Work<span className="accent">.</span>
         </div>{" "}
-        The portfolio paradox: too busy building to show what I built. Project
-        write-ups coming soon. <div></div>
+        <div>
+          The portfolio paradox: too busy building to show what I built. Project
+          write-ups coming soon. Check out my other pages like{" "}
+          <Link to="/play" className="linkStyle">
+            play
+          </Link>{" "}
+          or{" "}
+          <Link to="/about" className="linkStyle">
+            about
+          </Link>{" "}
+          in the meantime.
+        </div>
       </div>
     </>
   );

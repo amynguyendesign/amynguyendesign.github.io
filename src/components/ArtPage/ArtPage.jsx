@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ArtPage.css";
 import painting1 from "../../assets/cactus.jpg";
 import painting2 from "../../assets/onions.JPG";
@@ -7,6 +7,9 @@ import painting4 from "../../assets/coffee.jpg";
 import painting5 from "../../assets/spatula.JPG";
 
 function ArtPage() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, []);
   const paintings = [painting1, painting2, painting3, painting4, painting5];
   const [lightboxImage, setLightboxImage] = useState(null);
 
@@ -24,8 +27,8 @@ function ArtPage() {
         instincts, and stay curious. It’s how I practice noticing patterns.{" "}
         <br />
         Every new thing feels new… until you hit critical mass. Then the
-        patterns click, and everything starts to make sense... fast — that’s the moment
-        I chase. <br />
+        patterns click, and everything starts to make sense... fast — that’s the
+        moment I chase. <br />
         It’s not about outcomes. Or at least, I try really hard for it not to
         be. (Not hard enough, clearly, since I still felt the need to say that.)
       </div>

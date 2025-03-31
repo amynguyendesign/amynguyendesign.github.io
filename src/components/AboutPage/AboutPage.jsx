@@ -1,7 +1,11 @@
 import "./AboutPage.css";
+import { useEffect } from "react";
 import pic from "../../assets/amy.jpg";
 
 function AboutPage() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, []);
   return (
     <div className="homeContainer aboutContainer fadeSlideIn">
       <div className="headline1 aboutPhotoWrapper">
