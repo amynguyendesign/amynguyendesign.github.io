@@ -56,7 +56,7 @@ function HomePage({ workRef, scrollToWork, setScrollToWork }) {
         <div>
           The portfolio paradox: making things faster than I can document them.
           <br />
-          Project write-ups are on the way — but in the meantime, check out my
+          Project write-ups are on the way -- in the meantime, check out my
           other pages:{" "}
           <Link to="/play" className="linkStyle">
             play

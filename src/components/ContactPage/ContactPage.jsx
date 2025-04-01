@@ -25,7 +25,7 @@ function ContactPage() {
           LinkedIn
         </a>
         .<br />
-        If you want to nerd out about books, design, tech — or debate whether
+        If you want to nerd out about books, design, tech -- or debate whether
         Comic Sans is ever acceptable,{" "}
         <a
           className="linkStyle"
