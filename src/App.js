@@ -69,7 +69,7 @@ function HomePage({ workRef, scrollToWork, setScrollToWork }) {
            <Link to="/contact" className="linkStyle">
             contact
           </Link>
-          ,
+          .
         </div>
       </div>
     </>
