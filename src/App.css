@@ -33,14 +33,6 @@ body {
   box-sizing: border-box;
 }
 
-.headline1 {
-  font-size: 64px;
-  font-weight: 600;
-  line-height: 1.2;
-  margin-bottom: 15px;
-  text-align: center;
-}
-
 .homeContainer p {
   font-size: 1rem;
   line-height: 1.6;
