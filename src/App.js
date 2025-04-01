@@ -58,13 +58,13 @@ function HomePage({ workRef, scrollToWork, setScrollToWork }) {
           <br />
           Project write-ups are on the way -- in the meantime, check out my
           other pages:{" "}
-          <Link to="/play" className="linkStyle">
+          <Link to="/about" className="linkStyle">
+            about
+          </Link>,
+          {" "}<Link to="/play" className="linkStyle">
             play
           </Link>
           ,{" "}
-          <Link to="/about" className="linkStyle">
-            about
-          </Link>{" "}
           and{" "}
            <Link to="/contact" className="linkStyle">
             contact
