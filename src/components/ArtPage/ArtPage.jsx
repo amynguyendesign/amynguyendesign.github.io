@@ -5,12 +5,13 @@ import painting2 from "../../assets/onions.JPG";
 import painting3 from "../../assets/sf.jpg";
 import painting4 from "../../assets/coffee.jpg";
 import painting5 from "../../assets/spatula.JPG";
+import painting6 from "../../assets/bird.jpg"
 
 function ArtPage() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
-  const paintings = [painting1, painting2, painting3, painting4, painting5];
+  const paintings = [painting1, painting2, painting3, painting4, painting5, painting6];
   const [lightboxImage, setLightboxImage] = useState(null);
 
   const openLightbox = (image) => setLightboxImage(image);
