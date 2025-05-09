@@ -23,9 +23,8 @@ function ArtPage() {
         Play<span className="accent">.</span>
       </div>
       <div className="leftText">
-        This is where the side quests live. Painting, crocheting, customizing my
-        VSCode, etc. — more photos to come. Play is how I train my eye, test my
-        instincts, and stay curious. It’s how I practice noticing patterns.{" "}
+        My favorite rabbit holes live here: painting, crocheting, writing book reviews. Play is how I train my eye, test my
+        instincts, and practice noticing patterns.{" "}
         <br />
         It’s not about outcomes. Or at least, I try really hard for it not to
         be. (Not hard enough apparently, since I still felt the need to say that.)
