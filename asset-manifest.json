@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/static/css/main.93edb67f.css",
+    "main.css": "/static/css/main.35b44ed7.css",
     "main.js": "/static/js/main.ac02fc2c.js",
     "static/js/496.0320d045.chunk.js": "/static/js/496.0320d045.chunk.js",
     "static/media/crochet-red.jpg": "/static/media/crochet-red.79d82f562ba0d0cf3d60.jpg",
@@ -16,12 +16,12 @@
     "static/media/spatula.JPG": "/static/media/spatula.07d239d14b12873fe274.JPG",
     "static/media/onions.JPG": "/static/media/onions.0db85dc89105f4a719ad.JPG",
     "index.html": "/index.html",
-    "main.93edb67f.css.map": "/static/css/main.93edb67f.css.map",
+    "main.35b44ed7.css.map": "/static/css/main.35b44ed7.css.map",
     "main.ac02fc2c.js.map": "/static/js/main.ac02fc2c.js.map",
     "496.0320d045.chunk.js.map": "/static/js/496.0320d045.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.93edb67f.css",
+    "static/css/main.35b44ed7.css",
     "static/js/main.ac02fc2c.js"
   ]
 }
