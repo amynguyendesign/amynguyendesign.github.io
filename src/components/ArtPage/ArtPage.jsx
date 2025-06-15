@@ -75,7 +75,7 @@ function ArtPage() {
       {/* Crochet */}
       <div ref={crochetRef} className={`section crochet-section ${crochetVisible ? 'visible' : ''}`}>
         <h2>Threadwork</h2>
-        <p className="subtitleContainer">Crochet comes really easy for my brain for some reason. The way it builds just makes sense to me.</p>
+        <p className="subtitleContainer">Crochet comes really easy to my brain for some reason. The way it builds just makes sense to me.</p>
         <div className="crochet-grid">
           {crochet.map((item, index) => (
             <div key={index} className="gallery-item" onClick={() => openLightbox(item)}>
