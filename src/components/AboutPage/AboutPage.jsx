@@ -30,7 +30,7 @@ function AboutPage() {
           Today, I work at the intersection of engineering and design. I care
           about clarity, structure, and intention -- whether in a line of code,
           a layout decision, or a spacing that’s off by 2px and now I can’t
-          unsee it. Drawn to patterns—visual, conceptual, structural—I have a gut feeling for how things align, when they work, and where they break. I care deeply about aesthetics, and about the quiet magic that comes from things crafted with intention.
+          unsee it. Drawn to patterns -- visual, conceptual and structural, I have a gut feeling for how things align, when they work, and where they break. I care deeply about aesthetics, and about the quiet magic that comes from things crafted with intention.
         </p>
 
         <p>
