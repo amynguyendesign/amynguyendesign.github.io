@@ -17,8 +17,7 @@ function AboutPage() {
       <div className="leftText">
         <p>
           I entered Stanford with a background in writing and literature, but
-          chose to pursue Computer Science because it stretched me in the
-          opposite direction. I wanted to round out my thinking -- to push
+          chose to pursue Computer Science because I wanted to push
           myself toward a type of intellectual challenge I hadn’t yet mastered.
         </p>
 
@@ -34,10 +33,7 @@ function AboutPage() {
         </p>
 
         <p>
-          I’ve never fit neatly into a single category and I’ve stopped trying
-          to. The common thread across my work is care: for visuals, for
-          usability, and for the people on the other end. Mostly, I just want to
-          understand jokes from as many fields as possible.
+        I’ve never fit neatly into one box — and I’ve stopped trying to. A systems thinker, if you will. Mostly, I just want to know enough across fields to get all the jokes.
         </p>
       </div>
     </div>
