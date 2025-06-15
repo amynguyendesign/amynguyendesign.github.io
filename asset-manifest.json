@@ -1,22 +1,27 @@
 {
   "files": {
-    "main.css": "/static/css/main.5bc56a5c.css",
-    "main.js": "/static/js/main.c57f90f4.js",
+    "main.css": "/static/css/main.76fbffcb.css",
+    "main.js": "/static/js/main.cf470e41.js",
     "static/js/496.0320d045.chunk.js": "/static/js/496.0320d045.chunk.js",
+    "static/media/crochet-red.jpg": "/static/media/crochet-red.79d82f562ba0d0cf3d60.jpg",
+    "static/media/crochet-blue.jpg": "/static/media/crochet-blue.b7490c804a403a8c0158.jpg",
+    "static/media/crochet-pink.jpg": "/static/media/crochet-pink.c9078664417196ba0ca8.jpg",
     "static/media/sf.jpg": "/static/media/sf.9163ca82a0d12324eb46.jpg",
     "static/media/amy.jpg": "/static/media/amy.fe6fb0b3f1a42cc6ebe9.jpg",
+    "static/media/crochet-beige.jpg": "/static/media/crochet-beige.adc8f5d5591b2f39f454.jpg",
     "static/media/bird.jpg": "/static/media/bird.0f8056c05da83239a02d.jpg",
     "static/media/coffee.jpg": "/static/media/coffee.71180238c2b2bbc3d915.jpg",
     "static/media/cactus.jpg": "/static/media/cactus.2a523896c032479bcd4d.jpg",
+    "static/media/crochet-purple.jpeg": "/static/media/crochet-purple.1d22b397abd93ee97b41.jpeg",
     "static/media/spatula.JPG": "/static/media/spatula.07d239d14b12873fe274.JPG",
     "static/media/onions.JPG": "/static/media/onions.0db85dc89105f4a719ad.JPG",
     "index.html": "/index.html",
-    "main.5bc56a5c.css.map": "/static/css/main.5bc56a5c.css.map",
-    "main.c57f90f4.js.map": "/static/js/main.c57f90f4.js.map",
+    "main.76fbffcb.css.map": "/static/css/main.76fbffcb.css.map",
+    "main.cf470e41.js.map": "/static/js/main.cf470e41.js.map",
     "496.0320d045.chunk.js.map": "/static/js/496.0320d045.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.5bc56a5c.css",
-    "static/js/main.c57f90f4.js"
+    "static/css/main.76fbffcb.css",
+    "static/js/main.cf470e41.js"
   ]
 }
