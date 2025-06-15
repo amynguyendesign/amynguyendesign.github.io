@@ -117,7 +117,7 @@ body {
 
 @media (max-width: 480px) {
   .homeContainer {
-    min-height: calc(100vh - 77px)
+    min-height: 86vh
   }
 }
 
