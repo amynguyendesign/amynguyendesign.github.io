@@ -29,13 +29,9 @@ function HomePage({ workRef, scrollToWork, setScrollToWork }) {
     <>
       <div className="homeContainer fadeSlideIn">
         <div className="headline1">
-          Design-First Engineering. <br />
-          Always<span className="accent">.</span>{" "}
+          Engineer. Designer. <br />
+          Stanford-trained. SF-based<span className="accent">.</span>{" "}
         </div>
-        <p>
-          Meet Amy -- Engineer. Designer at heart. Stanford-trained. San
-          Francisco-based.
-        </p>
         <p
           className="homepageCTA"
           onClick={() => {

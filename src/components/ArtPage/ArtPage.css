@@ -142,7 +142,7 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .playHero .headline1 { font-size: 3rem; }
+  .headline1 { font-size: 3rem; }
   .playHero p { font-size: 0.95rem; }
 
   .gallery-grid, .book-grid, .crochet-grid {
@@ -161,7 +161,7 @@
     padding: 5vh 4vw;
   }
 
-  .playHero .headline1 { font-size: 2.5rem; }
+  .headline1 { font-size: 2.1rem; }
   .gallery-grid, .book-grid {
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
