@@ -88,7 +88,7 @@ function ArtPage() {
       {/* Book Reviews */}
       <div ref={booksRef} className={`section books-section ${booksVisible ? 'visible' : ''}`}>
         <h2>Wordwork</h2>
-        <p className="subtitleContainer">I grew up reading. Reading is pretty much all I’ve ever known. Now, as an adult, I’m starting to reason through it — pulling out themes and patterns that feel relevant to life.</p>
+        <p className="subtitleContainer">Reading is pretty much all I’ve ever known growing up. As an adult, I’m starting to reason through it — pulling out themes and patterns that feel relevant to life.</p>
         <p> Coming soon. </p>
         {/* <div className="book-grid">
           {books.map((book, index) => (
