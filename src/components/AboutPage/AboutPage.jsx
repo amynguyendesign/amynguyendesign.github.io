@@ -33,7 +33,7 @@ function AboutPage() {
         </p>
 
         <p>
-        I’ve never fit neatly into one box — and I’ve stopped trying to. A systems thinker, if you will. Mostly, I just want to know enough across fields to get all the jokes.
+        I’ve never fit neatly into one box — and I’ve stopped trying to. A systems thinker, if you will. Mostly, I just want to know enough across fields to understand all the jokes and memes.
         </p>
       </div>
     </div>
