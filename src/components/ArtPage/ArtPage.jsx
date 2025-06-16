@@ -62,7 +62,7 @@ function ArtPage() {
       {/* Paintings */}
       <div ref={paintRef} className={`section paintings-section ${paintVisible ? 'visible' : ''}`}>
         <h2>Brushwork</h2>
-        <p className="subtitleContainer">I dabbled in a bunch of mediums — oil, acrylic, and others — but eventually settled on watercolor. I like its softness and transparency, even though it’s delicate and takes a lot of skill to get right.</p>
+        <p className="subtitleContainer">I dabbled in a bunch of mediums: oil, acrylic, digital, ... but eventually settled on watercolor. I like its softness and transparency.</p>
         <div className="gallery-grid">
           {paintings.map((painting, index) => (
             <div key={index} className="gallery-item" onClick={() => openLightbox(painting)}>
@@ -75,7 +75,7 @@ function ArtPage() {
       {/* Crochet */}
       <div ref={crochetRef} className={`section crochet-section ${crochetVisible ? 'visible' : ''}`}>
         <h2>Threadwork</h2>
-        <p className="subtitleContainer">Crochet comes really easy to my brain for some reason. The way it builds just makes sense to me.</p>
+        <p className="subtitleContainer">Crocheting comes really easily to me for some reason. The way it builds just makes sense to my brain.</p>
         <div className="crochet-grid">
           {crochet.map((item, index) => (
             <div key={index} className="gallery-item" onClick={() => openLightbox(item)}>
@@ -88,7 +88,7 @@ function ArtPage() {
       {/* Book Reviews */}
       <div ref={booksRef} className={`section books-section ${booksVisible ? 'visible' : ''}`}>
         <h2>Wordwork</h2>
-        <p className="subtitleContainer">Reading is pretty much all I’ve ever known growing up. As an adult, I’m starting to reason through it — pulling out themes and patterns that feel relevant to life.</p>
+        <p className="subtitleContainer">I grew up on books. As an adult though, I see more of the life inside the words -- the kind of things that only make sense once you’ve lived a little yourself.</p>
         <p> Coming soon. </p>
         {/* <div className="book-grid">
           {books.map((book, index) => (
