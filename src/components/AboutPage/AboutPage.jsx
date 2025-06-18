@@ -22,14 +22,14 @@ function AboutPage() {
         </p>
 
         <p>
-          With no prior technical experience, I started from scratch: multivariable calculus, first-order logic, my first lines of code. I gained a new mental framework -- one that rewired how I solve problems and build solutions.
+          With no prior technical experience, I started from scratch: multivariable calculus, first-order logic, my first lines of code. I gained a new mental framework that rewired how I solve problems and build solutions.
         </p>
 
         <p>
           Today, I work at the intersection of engineering and design. I care
           about clarity, structure, and intention -- whether in a line of code,
           a layout decision, or a spacing that’s off by 2px and now I can’t
-          unsee it. Drawn to patterns -- visual, conceptual and structural, I have a gut feeling for how things align, when they work, and where they break. I care deeply about aesthetics, and about the quiet magic that comes from things crafted with intention.
+          unsee it. Drawn to patterns: visual, conceptual and structural, I have a gut feeling for how things align, when they work, and where they break. I care deeply about aesthetics, and about the quiet magic that comes from things crafted with intention.
         </p>
 
         <p>

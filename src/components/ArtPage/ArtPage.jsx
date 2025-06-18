@@ -55,9 +55,7 @@ function ArtPage() {
         <div className="headline1">
           Play<span className="accent">.</span>
         </div>
-        <p>My favorite rabbit holes live here: painting, crocheting, writing book reviews. Play is how I train my eye, test my instincts, and practice noticing patterns.</p>
-        <p>It’s not about outcomes. Or at least, I try really hard for it not to be. (Not hard enough apparently, since I still felt the need to say that.)</p>
-      </div>
+          <p>It’s fascinating how many cool things there are to do in life. Play is how I train my eye, test my instincts, and practice noticing patterns.</p>      </div>
 
       {/* Paintings */}
       <div ref={paintRef} className={`section paintings-section ${paintVisible ? 'visible' : ''}`}>
@@ -88,7 +86,7 @@ function ArtPage() {
       {/* Book Reviews */}
       <div ref={booksRef} className={`section books-section ${booksVisible ? 'visible' : ''}`}>
         <h2>Wordwork</h2>
-        <p className="subtitleContainer">I grew up on books. As an adult though, I see more of the life inside the words -- the kind of things that only make sense once you’ve lived a little yourself.</p>
+        <p className="subtitleContainer">I grew up on books. A few of them have really stuck with me over time.</p>
         <p> Coming soon. </p>
         {/* <div className="book-grid">
           {books.map((book, index) => (
