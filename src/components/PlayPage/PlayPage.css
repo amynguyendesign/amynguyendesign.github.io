@@ -5,6 +5,9 @@
   align-items: center;
   text-align: center;
   width: 100%;
+  scroll-snap-type: y mandatory; /* Snap vertically */
+  overflow-y: scroll; /* Enable vertical scrolling */
+  height: 100vh; /* Fullscreen container */
 }
 
 /* Hero section */
@@ -29,6 +32,49 @@
 .playHero p {
   max-width: 60ch;
   margin-bottom: 1.5rem;
+}
+
+/* Down Arrow for Scrolling */
+.scroll-down-arrow {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 2s ease-in-out infinite;
+  cursor: pointer;
+}
+
+.scroll-down-arrow span {
+  width: 24px;
+  height: 24px;
+  border: solid 2px #000;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes fadeIn {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: translateY(0) rotate(45deg);
+  }
+  50% {
+    transform: translateY(10px) rotate(45deg);
+  }
+  100% {
+    transform: translateY(0) rotate(45deg);
+  }
 }
 
 /* Section blocks */
@@ -138,6 +184,12 @@
   width: 100%;
   height: 100%;
   border-radius: 20px;
+}
+
+/* Ensure each section snaps into view */
+.play-page > div {
+  scroll-snap-align: start; /* Snap to the start of each section */
+  height: 100vh; /* Fullscreen sections */
 }
 
 /* Responsive adjustments */

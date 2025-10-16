@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./ArtPage.css";
+import "./PlayPage.css";
 import painting1 from "../../assets/cactus.jpg";
 import painting2 from "../../assets/onions.JPG";
 import painting3 from "../../assets/sf.jpg";
@@ -30,9 +30,24 @@ function useInView(threshold = 0.3) {
   return [ref, isVisible];
 }
 
-function ArtPage() {
+function PlayPage() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
+  }, []);
+
+  useEffect(() => {
+    const smoothScrollToHero = () => {
+      const heroSection = document.querySelector(".playHero");
+      if (heroSection) {
+          const heroPosition = heroSection.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({
+            top: heroPosition,
+            behavior: "smooth",
+          });
+      }
+    };
+
+    smoothScrollToHero();
   }, []);
 
   const paintings = [painting1, painting2, painting3, painting4, painting5, painting6];
@@ -54,8 +69,23 @@ function ArtPage() {
       <div className="playHero fadeSlideIn">
         <div className="headline1">
           Play<span className="accent">.</span>
+
         </div>
-          <p>It’s fascinating how many cool things there are to do in life. Play is how I train my eye, test my instincts, and practice noticing patterns.</p>      </div>
+          <p>Do any craft long enough, and you'll see patterns beyond the work itself. I also just really respect pure craftsmanship of any kind.</p>
+                <div
+        className="scroll-down-arrow"
+        onClick={() => {
+          const nextSection = document.querySelector(".paintings-section");
+          if (nextSection) {
+            nextSection.scrollIntoView({ behavior: "smooth" });
+          }
+        }}
+      >
+        ↓
+      </div>
+      </div>
+
+
 
       {/* Paintings */}
       <div ref={paintRef} className={`section paintings-section ${paintVisible ? 'visible' : ''}`}>
@@ -107,4 +137,4 @@ function ArtPage() {
   );
 }
 
-export default ArtPage;
+export default PlayPage;

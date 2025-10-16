@@ -9,7 +9,7 @@ import {
   Link,
 } from "react-router-dom";
 import WorkPage from "./components/WorkPage/WorkPage";
-import ArtPage from "./components/ArtPage/ArtPage";
+import PlayPage from "./components/PlayPage/PlayPage";
 import ContactPage from "./components/ContactPage/ContactPage";
 import AboutPage from "./components/AboutPage/AboutPage";
 import "./global.css";
@@ -41,7 +41,7 @@ function HomePage({ workRef, scrollToWork, setScrollToWork }) {
           }}
           style={{ cursor: "pointer" }}
         >
-          See my work.
+          See my work ↓
         </p>{" "}
       </div>
 
@@ -111,7 +111,7 @@ function App() {
           <Route path="/work" element={<WorkPage />} />
         </Routes>
         <Routes>
-          <Route path="/play" element={<ArtPage />} />
+          <Route path="/play" element={<PlayPage />} />
         </Routes>
         <Routes>
           <Route path="/contact" element={<ContactPage />} />

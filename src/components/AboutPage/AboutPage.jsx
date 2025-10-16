@@ -22,7 +22,7 @@ function AboutPage() {
         </p>
 
         <p>
-          With no prior technical experience, I started from scratch: multivariable calculus, first-order logic, my first lines of code. I gained a new mental framework that rewired how I solve problems and build solutions.
+          With no prior technical experience, I started from scratch: multivariable calculus, first-order logic, my first lines of code. I gained a new mental framework that rewired how I solve problems.
         </p>
 
         <p>
@@ -33,7 +33,7 @@ function AboutPage() {
         </p>
 
         <p>
-        I’ve never fit neatly into any one box, and I’ve stopped trying to. A systems thinker, if you will. Ultimately though, I just want to understand as many jokes from as many fields as possible.
+        I thrive at the intersection of disciplines. These days I think they call that being a poly-hyphenate. Ultimately though, I just want to understand as many jokes from as many fields as possible.
         </p>
       </div>
     </div>
