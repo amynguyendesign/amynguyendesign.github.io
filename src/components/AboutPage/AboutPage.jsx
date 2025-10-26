@@ -26,7 +26,7 @@ function AboutPage() {
         </p>
 
         <p>
-          Today, I work at the intersection of software engineering and product design. I take pride in my work and strive to refine my craft. Drawn to patterns: visual, conceptual and structural, I have a gut feeling for how things align, when they work, and where they break.
+          Today, I work at the intersection of software engineering and product design. I take pride in my work and continually strive to refine my craft. Drawn to patterns: visual, conceptual and structural, I have a gut feeling for how things align, when they work, and where they break.
         </p>
 
         <p>I also care deeply about aesthetics, and about the quiet magic that comes from things crafted with intention.</p>
