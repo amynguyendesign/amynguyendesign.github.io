@@ -36,7 +36,7 @@
 /* Down Arrow for Scrolling */
 .scroll-down-arrow {
   position: absolute;
-  bottom: 20px;
+  bottom: 30%;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -240,9 +240,5 @@
   .gallery-grid, .book-grid {
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
-  }
-
-  .scroll-down-arrow {
-    bottom: 30%;
   }
 }
