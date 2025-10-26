@@ -5,9 +5,8 @@
   align-items: center;
   text-align: center;
   width: 100%;
-  scroll-snap-type: y proximity; /* Use proximity for smoother snapping */
-  overflow-y: scroll; /* Enable vertical scrolling */
-  height: 100vh; /* Fullscreen container */
+  overflow-y: visible;
+  height: auto;
 }
 
 /* Hero section */
@@ -186,16 +185,23 @@
   border-radius: 20px;
 }
 
-/* Ensure each section snaps into view */
+/* Set minimum height for sections */
 .play-page > div {
-  scroll-snap-align: start; /* Snap to the start of each section */
-  height: 100vh; /* Fullscreen sections */
+  min-height: 100vh;
 }
 
-/* Disable snapping on mobile for smoother scrolling */
+/* Mobile responsive styles */
 @media (max-width: 768px) {
   .play-page {
     scroll-snap-type: none;
+    height: auto;
+    overflow-y: visible;
+  }
+  
+  .play-page > div {
+    scroll-snap-align: none;
+    height: auto;
+    min-height: 100vh;
   }
 }
 
@@ -207,6 +213,16 @@
   .gallery-grid, .book-grid, .crochet-grid {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     width: 90%;
+  }
+
+  /* Increase bottom padding for sections on mobile */
+  .section {
+    padding-bottom: 100px;
+  }
+
+  /* Additional padding for last section to prevent footer overlap */
+  .section:last-child {
+    padding-bottom: 140px;
   }
 }
 
