@@ -241,4 +241,8 @@
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
   }
+
+  .scroll-down-arrow {
+    bottom: 30%;
+  }
 }
