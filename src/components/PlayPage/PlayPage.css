@@ -5,7 +5,7 @@
   align-items: center;
   text-align: center;
   width: 100%;
-  scroll-snap-type: y mandatory; /* Snap vertically */
+  scroll-snap-type: y proximity; /* Use proximity for smoother snapping */
   overflow-y: scroll; /* Enable vertical scrolling */
   height: 100vh; /* Fullscreen container */
 }
@@ -190,6 +190,13 @@
 .play-page > div {
   scroll-snap-align: start; /* Snap to the start of each section */
   height: 100vh; /* Fullscreen sections */
+}
+
+/* Disable snapping on mobile for smoother scrolling */
+@media (max-width: 768px) {
+  .play-page {
+    scroll-snap-type: none;
+  }
 }
 
 /* Responsive adjustments */
