@@ -71,7 +71,7 @@ function PlayPage() {
           Play<span className="accent">.</span>
 
         </div>
-          <p>Do any craft long enough, and you'll see patterns beyond the work itself. I also just really respect pure craftsmanship of any kind.</p>
+          <p>Do any craft long enough, and you'll see patterns beyond the work itself. I’ve come to really admire pure craftsmanship, no matter the medium.</p>
                 <div
         className="scroll-down-arrow"
         onClick={() => {
