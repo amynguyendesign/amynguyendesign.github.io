@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./PlayPage.css";
+import "./ArtPage.css";
 import painting1 from "../../assets/cactus.jpg";
 import painting2 from "../../assets/onions.JPG";
 import painting3 from "../../assets/sf.jpg";
@@ -68,10 +68,10 @@ function PlayPage() {
       {/* Hero */}
       <div className="playHero fadeSlideIn">
         <div className="headline1">
-          Play<span className="accent">.</span>
+          Art<span className="accent">.</span>
 
         </div>
-          <p>Do any craft long enough, and you'll see patterns beyond the work itself. I’ve come to really admire pure craftsmanship, no matter the medium.</p>
+          <p>A collection of paintings across oil, watercolor, acrylic, and ink.</p>
                 <div
         className="scroll-down-arrow"
         onClick={() => {
@@ -89,8 +89,6 @@ function PlayPage() {
 
       {/* Paintings */}
       <div ref={paintRef} className={`section paintings-section ${paintVisible ? 'visible' : ''}`}>
-        <h2>Brushwork</h2>
-        <p className="subtitleContainer">I dabbled in a bunch of mediums: oil, acrylic, digital, ... but eventually settled on watercolor. I like its softness and transparency.</p>
         <div className="gallery-grid">
           {paintings.map((painting, index) => (
             <div key={index} className="gallery-item" onClick={() => openLightbox(painting)}>
@@ -100,8 +98,7 @@ function PlayPage() {
         </div>
       </div>
 
-      {/* Crochet */}
-      <div ref={crochetRef} className={`section crochet-section ${crochetVisible ? 'visible' : ''}`}>
+      {/* <div ref={crochetRef} className={`section crochet-section ${crochetVisible ? 'visible' : ''}`}>
         <h2>Threadwork</h2>
         <p className="subtitleContainer">Crocheting comes really easily to me for some reason. The way it builds just makes sense to my brain.</p>
         <div className="crochet-grid">
@@ -113,11 +110,10 @@ function PlayPage() {
         </div>
       </div>
 
-      {/* Book Reviews */}
       <div ref={booksRef} className={`section books-section ${booksVisible ? 'visible' : ''}`}>
         <h2>Wordwork</h2>
         <p className="subtitleContainer">I grew up on books. A few of them have really stuck with me over time.</p>
-        <p> Coming soon. </p>
+        <p> Coming soon. </p> */}
         {/* <div className="book-grid">
           {books.map((book, index) => (
             <div key={index} className="book-item">
@@ -125,15 +121,14 @@ function PlayPage() {
             </div>
           ))}
         </div> */}
-      </div>
+      {/* </div> */}
 
-      {/* Lightbox */}
       {lightboxImage && (
         <div className="lightbox" onClick={closeLightbox}>
           <img src={lightboxImage} alt="Enlarged work" />
         </div>
       )}
-    </div>
+     </div>
   );
 }
 

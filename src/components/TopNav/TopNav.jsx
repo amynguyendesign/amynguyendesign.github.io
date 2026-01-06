@@ -34,7 +34,7 @@ function TopNav({ navRef, menuOpen, toggleMenu, setScrollToWork }) {
 
       {/* Desktop menu */}
       <div className="desktopMenu">
-        {["work", "play", "about", "contact"].map((path) => (
+        {["work", "art", "about", "contact"].map((path) => (
           <Link
             key={path}
             to={path === "work" ? "/" : `/${path}`}
@@ -51,7 +51,7 @@ function TopNav({ navRef, menuOpen, toggleMenu, setScrollToWork }) {
 
       {/* Mobile menu */}
       <div className={`sidebarMenu ${menuOpen ? "open" : ""}`}>
-        {["work", "play", "about", "contact"].map((path) => (
+        {["work", "art", "about", "contact"].map((path) => (
           <Link
             key={path}
             to={path === "work" ? "/" : `/${path}`}

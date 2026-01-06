@@ -9,7 +9,7 @@ import {
   Link,
 } from "react-router-dom";
 import WorkPage from "./components/WorkPage/WorkPage";
-import PlayPage from "./components/PlayPage/PlayPage";
+import ArtPage from "./components/ArtPage/ArtPage";
 import ContactPage from "./components/ContactPage/ContactPage";
 import AboutPage from "./components/AboutPage/AboutPage";
 import "./global.css";
@@ -57,8 +57,8 @@ function HomePage({ workRef, scrollToWork, setScrollToWork }) {
           <Link to="/about" className="linkStyle">
             about
           </Link>,
-          {" "}<Link to="/play" className="linkStyle">
-            play
+          {" "}<Link to="/art" className="linkStyle">
+            art
           </Link>
           ,{" "}
           and{" "}
@@ -109,26 +109,20 @@ function App() {
       <div className="content">
         <Routes>
           <Route path="/work" element={<WorkPage />} />
-        </Routes>
-        <Routes>
-          <Route path="/play" element={<PlayPage />} />
-        </Routes>
-        <Routes>
+          <Route path="/art" element={<ArtPage />} />
           <Route path="/contact" element={<ContactPage />} />
-        </Routes>
-        <Routes>
           <Route path="/about" element={<AboutPage />} />
+          <Route
+            path="/"
+            element={
+              <HomePage
+                workRef={workRef}
+                scrollToWork={scrollToWork}
+                setScrollToWork={setScrollToWork}
+              />
+            }
+          />
         </Routes>
-        {location.pathname !== "/work" &&
-          location.pathname !== "/play" &&
-          location.pathname !== "/contact" &&
-          location.pathname !== "/about" && (
-            <HomePage
-              workRef={workRef}
-              scrollToWork={scrollToWork}
-              setScrollToWork={setScrollToWork}
-            />
-          )}
       </div>
 
       <Footer />
