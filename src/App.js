@@ -50,8 +50,6 @@ function HomePage({ workRef, scrollToWork, setScrollToWork }) {
           Selected Work<span className="accent">.</span>
         </div>{" "}
         <div>
-          The portfolio paradox: making things faster than I can document them.
-          <br />
           Project write-ups are on the way -- in the meantime, check out my
           other pages:{" "}
           <Link to="/about" className="linkStyle">

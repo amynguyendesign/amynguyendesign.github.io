@@ -14,8 +14,8 @@ function ContactPage() {
       <div className="headline1 fadeSlideIn">
         Get in touch<span className="accent">.</span>
       </div>
-      <p className="contactIntro">
-                If you want to nerd out about books, design, tech -- or debate whether
+      <div className="contactIntro">
+        If you want to discuss design, tech, culture -- or debate whether
         Comic Sans is ever acceptable,{" "}
         <a
           className="linkStyle"
@@ -23,10 +23,23 @@ function ContactPage() {
           target="_blank"
           rel="noopener noreferrer"
         >
-         DM me on LinkedIn
+          message me on LinkedIn
+        </a>
+        .
+      </div>
+
+      <div className="contactIntro">
+        You can also keep up with what I'm reading on {" "}
+        <a
+          className="linkStyle"
+          href="https://goodreads.com/amynlha"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Goodreads
         </a>
         .<br />
-      </p>
+      </div>
     </div>
   );
 }

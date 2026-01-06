@@ -4,8 +4,20 @@ import pic from "../../assets/amy.jpg";
 
 function AboutPage() {
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "auto" });
+    const smoothScrollToHero = () => {
+      const heroSection = document.querySelector(".aboutContainer");
+      if (heroSection) {
+        const heroPosition = heroSection.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({
+          top: heroPosition,
+          behavior: "smooth",
+        });
+      }
+    };
+
+    smoothScrollToHero();
   }, []);
+
   return (
     <div className="homeContainer aboutContainer fadeSlideIn">
       <div className="headline1 aboutPhotoWrapper">
