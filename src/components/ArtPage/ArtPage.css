@@ -133,11 +133,20 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
 }
 
+.gallery-item {
+  position: relative;
+  overflow: hidden;
+}
+
 .painting-image {
   width: 100%;
-  max-height: 300px;
-  object-fit: cover;
-  border-radius: 20px;
+  height: 100%; /* Ensure it fills the grid item */
+  object-fit: cover; /* Expand and crop to fill the rectangle */
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover .painting-image {
+  transform: scale(1.05); /* Slight zoom effect on hover */
 }
 
 .book-image {

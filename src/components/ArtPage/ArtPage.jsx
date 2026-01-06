@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./ArtPage.css";
-import painting1 from "../../assets/cactus.jpg";
-import painting2 from "../../assets/onions.JPG";
-import painting3 from "../../assets/sf.jpg";
-import painting4 from "../../assets/coffee.jpg";
-import painting5 from "../../assets/spatula.JPG";
-import painting6 from "../../assets/bird.jpg";
+import cactus from "../../assets/cactus.jpg";
+import onions from "../../assets/onions.JPG";
+import sf from "../../assets/sf.jpg";
+import coffee from "../../assets/coffee.jpg";
+import spatula from "../../assets/spatula.JPG";
+import bird from "../../assets/bird.jpg";
+import graphite from "../../assets/graphite.jpg";
+import chocolate from "../../assets/chocolate.JPG"
+import metal from "../../assets/metal.jpg"
+import surreal from "../../assets/surreal.jpg"
 import crochet1 from "../../assets/crochet-red.jpg"
 import crochet2 from "../../assets/crochet-blue.jpg"
 import crochet3 from "../../assets/crochet-pink.jpg"
@@ -50,7 +54,7 @@ function PlayPage() {
     smoothScrollToHero();
   }, []);
 
-  const paintings = [painting1, painting2, painting3, painting4, painting5, painting6];
+  const paintings = [onions, graphite, cactus, sf, metal, spatula, bird, chocolate, coffee, surreal];
   const crochet = [crochet1, crochet2, crochet3, crochet5, crochet4];
  // const books = [painting4, painting3, painting2, painting1, painting5, painting6];
 
@@ -71,7 +75,7 @@ function PlayPage() {
           Art<span className="accent">.</span>
 
         </div>
-          <p>A collection of paintings across oil, watercolor, acrylic, and ink.</p>
+          <p>A collection of works and studies across oil, watercolor, acrylic, and graphite.</p>
                 <div
         className="scroll-down-arrow"
         onClick={() => {
