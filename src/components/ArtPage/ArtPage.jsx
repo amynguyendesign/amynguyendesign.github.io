@@ -10,6 +10,7 @@ import graphite from "../../assets/graphite.jpg";
 import chocolate from "../../assets/chocolate.JPG"
 import metal from "../../assets/metal.jpg"
 import surreal from "../../assets/surreal.jpg"
+import toast from "../../assets/toast.jpg"
 import crochet1 from "../../assets/crochet-red.jpg"
 import crochet2 from "../../assets/crochet-blue.jpg"
 import crochet3 from "../../assets/crochet-pink.jpg"
@@ -54,7 +55,7 @@ function PlayPage() {
     smoothScrollToHero();
   }, []);
 
-  const paintings = [onions, graphite, cactus, sf, metal, spatula, bird, chocolate, coffee, surreal];
+  const paintings = [graphite, onions , cactus, sf, chocolate, spatula, bird, metal, coffee, surreal, toast];
   const crochet = [crochet1, crochet2, crochet3, crochet5, crochet4];
  // const books = [painting4, painting3, painting2, painting1, painting5, painting6];
 
