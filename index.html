@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Amy Nguyen</title>
   <meta name="description" content="Amy Nguyen - Engineer. Designer. Stanford-trained. SF-based." />
-  <link rel="icon" type="image/png" href="https://amynguyen.studio/favicon-96x96.png" sizes="96x96" />
-  <link rel="icon" type="image/svg+xml" href="https://amynguyen.studio/favicon.svg" />
-  <link rel="apple-touch-icon" sizes="180x180" href="https://amynguyen.studio/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" href="./images/favicon-96x96.png" sizes="96x96" />
   <meta property="og:title" content="Amy Nguyen" />
   <meta property="og:description" content="Engineer. Designer. Stanford-trained. SF-based." />
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-DHB2BNWHZG"></script>
@@ -53,17 +51,17 @@ function App() {
   };
 
   const artImages = [
-    { src: './src/assets/graphite.jpg', title: 'Graphite', medium: 'Graphite', alt: 'Graphite' },
-    { src: './src/assets/onions.JPG', title: 'Onions', medium: 'Watercolor', alt: 'Onions' },
-    { src: './src/assets/cactus.jpg', title: 'Cactus', medium: 'Watercolor', alt: 'Cactus' },
-    { src: './src/assets/sf.jpg', title: 'San Francisco', medium: 'Watercolor', alt: 'SF' },
-    { src: './src/assets/chocolate.JPG', title: 'Chocolate', medium: 'Oil', alt: 'Chocolate' },
-    { src: './src/assets/spatula.JPG', title: 'Spatula', medium: 'Watercolor', alt: 'Spatula' },
-    { src: './src/assets/bird.jpg', title: 'Bird', medium: 'Watercolor', alt: 'Bird' },
-    { src: './src/assets/metal.jpg', title: 'Metal', medium: 'Acrylic', alt: 'Metal' },
-    { src: './src/assets/coffee.jpg', title: 'Coffee', medium: 'Watercolor', alt: 'Coffee' },
-    { src: './src/assets/surreal.jpg', title: 'Surreal', medium: 'Oil', alt: 'Surreal' },
-    { src: './src/assets/toast.jpg', title: 'Toast', medium: 'Watercolor', alt: 'Toast' },
+    { src: './images/graphite.jpg', title: 'Graphite Study', medium: 'Graphite', alt: 'Graphite' },
+    { src: './images/onions.JPG', title: 'Onions', medium: 'Watercolor', alt: 'Onions' },
+    { src: './images/cactus.jpg', title: 'Cactus', medium: 'Watercolor', alt: 'Cactus' },
+    { src: './images/sf.jpg', title: 'San Francisco', medium: 'Watercolor', alt: 'SF' },
+    { src: './images/chocolate.JPG', title: 'Chocolate', medium: 'Oil', alt: 'Chocolate' },
+    { src: './images/spatula.JPG', title: 'Spatula', medium: 'Watercolor', alt: 'Spatula' },
+    { src: './images/bird.jpg', title: 'Bird', medium: 'Watercolor', alt: 'Bird' },
+    { src: './images/metal.jpg', title: 'Metal', medium: 'Acrylic', alt: 'Metal' },
+    { src: './images/coffee.jpg', title: 'Coffee', medium: 'Watercolor', alt: 'Coffee' },
+    { src: './images/surreal.jpg', title: 'Surreal', medium: 'Oil', alt: 'Surreal' },
+    { src: './images/toast.jpg', title: 'Toast', medium: 'Watercolor', alt: 'Toast' },
   ];
 
   const tabs = [
@@ -162,6 +160,8 @@ function App() {
     window.addEventListener('keydown', handleTwKey);
     return () => window.removeEventListener('keydown', handleTwKey);
   }, []);
+
+
 
   return (
     <div className="w-full flex flex-col items-center"
@@ -552,7 +552,7 @@ function App() {
                     </div>
                     <div style={{ width: 40, height: 1, background: '#3A3020', margin: '8px 0', opacity: 0.15 }} />
                   </div>
-                  <img src="./src/assets/amy.jpg" alt="Amy"
+                  <img src="./images/amy.jpg" alt="Amy"
                     className="tw-about-photo" style={{ width: 130, float: 'right', marginLeft: 14, marginBottom: 10, border: '1.5px solid #3A3020', filter: 'sepia(5%) contrast(95%)', transform: 'rotate(1.5deg)', boxShadow: 'none' }} />
                   <div className="tw-selectable" style={{ fontSize: 11, color: '#2A2418', lineHeight: '20px', letterSpacing: '0.03em', fontWeight: 600 }}>
                     <p style={{ marginBottom: 8 }}>I entered Stanford with a background in writing and literature, but chose to pursue Computer Science because I wanted to push myself toward an intellectual challenge I hadn't yet mastered.</p>
