@@ -242,6 +242,7 @@ function App() {
           .tw-content-col { justify-content: center !important; flex: 1 !important; padding-top: 8px !important; }
           .tw-footer { padding-bottom: 2px !important; padding-top: 0 !important; font-size: 8px !important; }
           .tw-page-home { padding: 14px 16px 10px !important; overflow: hidden !important; }
+          .tw-prompt { margin-top: 2px !important; }
           .tw-page-art { padding: 14px 14px !important; }
           .tw-page-about { padding: 14px 16px !important; }
           .tw-page-contact { padding: 14px 16px 10px !important; }
@@ -250,10 +251,10 @@ function App() {
           .tw-art-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 6px !important; }
           .tw-about-photo { width: 70px !important; margin-left: 8px !important; margin-bottom: 6px !important; }
           .tw-outer { padding-left: 0 !important; padding-right: 0 !important; max-width: 100% !important; }
-          .tw-ear-tabs { gap: 1px !important; top: -2.5% !important; }
-          .tw-ear-tabs > div { width: 40px !important; height: 16px !important; }
-          .tw-ear-tabs > div svg { width: 40px !important; height: 16px !important; }
-          .tw-ear-tabs > div > div { font-size: 6px !important; }
+          .tw-ear-tabs { gap: 1px !important; top: -4.5% !important; }
+          .tw-ear-tabs > div { width: 54px !important; height: 20px !important; }
+          .tw-ear-tabs > div svg { width: 54px !important; height: 20px !important; }
+          .tw-ear-tabs > div > div { font-size: 8px !important; }
           .tw-easter-egg { transform: translate(-50%, -50%) scale(0.7) !important; max-width: 65% !important; }
         }
 
@@ -269,6 +270,7 @@ function App() {
           .tw-content-col { justify-content: center !important; flex: 1 !important; padding-top: 4px !important; }
           .tw-footer { padding-bottom: 1px !important; padding-top: 0 !important; font-size: 7px !important; }
           .tw-page-home { padding: 10px 12px 8px !important; overflow: hidden !important; }
+          .tw-prompt { margin-top: -6px !important; }
           .tw-page-art { padding: 10px 10px !important; }
           .tw-page-about { padding: 10px 12px !important; }
           .tw-page-contact { padding: 10px 12px 8px !important; }
@@ -277,10 +279,10 @@ function App() {
           .tw-art-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 4px !important; }
           .tw-about-photo { width: 55px !important; margin-left: 6px !important; margin-bottom: 4px !important; }
           .tw-outer { padding-left: 0 !important; padding-right: 0 !important; }
-          .tw-ear-tabs { gap: 0px !important; top: -2% !important; }
-          .tw-ear-tabs > div { width: 34px !important; height: 14px !important; margin-left: -1px !important; }
-          .tw-ear-tabs > div svg { width: 34px !important; height: 14px !important; }
-          .tw-ear-tabs > div > div { font-size: 5px !important; }
+          .tw-ear-tabs { gap: 0px !important; top: -4% !important; }
+          .tw-ear-tabs > div { width: 48px !important; height: 18px !important; margin-left: -1px !important; }
+          .tw-ear-tabs > div svg { width: 48px !important; height: 18px !important; }
+          .tw-ear-tabs > div > div { font-size: 7px !important; }
           .tw-easter-egg { transform: translate(-50%, -50%) scale(0.55) !important; max-width: 60% !important; }
         }
 
@@ -288,12 +290,13 @@ function App() {
         @media (max-width: 380px) {
           .tw-typewriter-wrap { width: 100% !important; }
           .tw-page-home, .tw-page-about, .tw-page-contact, .tw-page-art { font-size: 8px !important; line-height: 14px !important; padding: 8px 8px !important; }
+          .tw-prompt { margin-top: 2px !important; }
           .tw-name { font-size: 12px !important; }
           .tw-about-photo { width: 45px !important; }
           .tw-art-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 3px !important; }
-          .tw-ear-tabs > div { width: 28px !important; height: 12px !important; }
-          .tw-ear-tabs > div svg { width: 28px !important; height: 12px !important; }
-          .tw-ear-tabs > div > div { font-size: 4px !important; }
+          .tw-ear-tabs > div { width: 40px !important; height: 16px !important; }
+          .tw-ear-tabs > div svg { width: 40px !important; height: 16px !important; }
+          .tw-ear-tabs > div > div { font-size: 6px !important; }
           .tw-easter-egg { display: none !important; }
         }
       `}</style>
@@ -340,19 +343,60 @@ function App() {
       )}
 
       <div className="w-full flex-1 flex flex-col items-center px-4 tw-outer tw-main-wrapper"
-        style={{ maxWidth: 900, position: 'relative', zIndex: 2, height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        style={{ maxWidth: 900, position: 'relative', zIndex: 2, height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
 
         {/* ====== TYPEWRITER WITH CONTENT ON PAPER ====== */}
-        <div className="tw-content-col" style={{ width: '100%', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', overflow: 'visible', paddingTop: '2vw' }}>
+        <div className="tw-content-col" style={{ width: '100%', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', overflow: 'visible' }}>
           <div className="tw-typewriter-wrap" style={{ position: 'relative', width: '75%', margin: '0 auto' }}>
             {/* Typewriter PNG — full image */}
             <img src="./typewriter_cropped.png" alt="Typewriter" 
               style={{ width: '100%', display: 'block', pointerEvents: 'none', position: 'relative', zIndex: 9 }} />
 
+            {/* Invisible keyboard overlay — tapping shows cute characters + easter egg */}
+            <div className="tw-keyboard-overlay" style={{
+              position: 'absolute',
+              top: '58%', left: '14%', right: '14%', bottom: '8%',
+              zIndex: 11, cursor: 'pointer',
+              display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gridTemplateRows: 'repeat(3, 1fr)',
+            }}>
+              {[...Array(15)].map((_, i) => {
+                const cuteChars = ['♡', '★', '✿', '☁', '♪', '✦', '◡', '⊹', '✧', '❀', '✩', '·', '✶', '☂', '☼'];
+                return (
+                  <div key={i} style={{ width: '100%', height: '100%' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const char = cuteChars[i % cuteChars.length];
+                      setDeskTyped(char);
+                      const pick = easterEggs[Math.floor(Math.random() * easterEggs.length)];
+                      setEasterEggArt(pick);
+                      track('typewriter_tap', { key: char, device: window.innerWidth <= 768 ? 'mobile' : 'desktop' });
+                      track('easter_egg', { art_label: pick.label });
+                      const isMobile = window.innerWidth <= 768;
+                      let randTop, randLeft;
+                      if (isMobile) {
+                        const mobilePositions = [
+                          { top: 65, left: 58 }, { top: 68, left: 62 },
+                          { top: 70, left: 55 }, { top: 66, left: 65 },
+                          { top: 72, left: 60 }, { top: 67, left: 68 },
+                        ];
+                        const pos = mobilePositions[Math.floor(Math.random() * mobilePositions.length)];
+                        randTop = pos.top;
+                        randLeft = pos.left;
+                      } else {
+                        randTop = 62 + Math.floor(Math.random() * 15);
+                        randLeft = 55 + Math.floor(Math.random() * 25);
+                      }
+                      setEasterEggPos({ top: randTop, left: randLeft });
+                    }}
+                  />
+                );
+              })}
+            </div>
+
             {/* Ear tabs — hand-drawn wobbly outlines matching the illustration */}
             <div className="tw-ear-tabs" style={{
               position: 'absolute',
-              top: '-2.8%', left: '24%', right: '24%',
+              top: '-2.5%', left: '24%', right: '24%',
               display: 'flex', justifyContent: 'flex-end', gap: -1,
               zIndex: 12, paddingRight: 0,
             }}>
@@ -442,7 +486,7 @@ function App() {
                     </div>
 
                     {/* Interactive type prompt */}
-                    <div style={{ marginTop: 28 }}>
+                    <div className="tw-prompt" style={{ marginTop: 28 }}>
                       {!deskTyped ? (
                         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, animation: 'promptGlow 2s ease-in-out infinite' }}>
                           <span style={{ fontSize: 10, color: '#8A7A60', letterSpacing: '0.06em', fontWeight: 500, fontFamily: '"Courier New", monospace' }}>
