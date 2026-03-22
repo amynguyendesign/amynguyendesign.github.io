@@ -53,17 +53,17 @@ function App() {
   };
 
   const artImages = [
-    { src: 'https://amynguyen.studio/static/media/graphite.a0fe48fff446ac745639.jpg', title: 'Graphite Study', medium: 'Graphite', alt: 'Graphite' },
-    { src: 'https://amynguyen.studio/static/media/onions.0db85dc89105f4a719ad.JPG', title: 'Onions', medium: 'Watercolor', alt: 'Onions' },
-    { src: 'https://amynguyen.studio/static/media/cactus.2a523896c032479bcd4d.jpg', title: 'Cactus', medium: 'Watercolor', alt: 'Cactus' },
-    { src: 'https://amynguyen.studio/static/media/sf.9163ca82a0d12324eb46.jpg', title: 'San Francisco', medium: 'Watercolor', alt: 'SF' },
-    { src: 'https://amynguyen.studio/static/media/chocolate.ca90901e9e1b3cfc2538.JPG', title: 'Chocolate', medium: 'Oil', alt: 'Chocolate' },
-    { src: 'https://amynguyen.studio/static/media/spatula.07d239d14b12873fe274.JPG', title: 'Spatula', medium: 'Watercolor', alt: 'Spatula' },
-    { src: 'https://amynguyen.studio/static/media/bird.0f8056c05da83239a02d.jpg', title: 'Bird', medium: 'Watercolor', alt: 'Bird' },
-    { src: 'https://amynguyen.studio/static/media/metal.3114b2d4ece250d3dd7b.jpg', title: 'Metal', medium: 'Acrylic', alt: 'Metal' },
-    { src: 'https://amynguyen.studio/static/media/coffee.71180238c2b2bbc3d915.jpg', title: 'Coffee', medium: 'Watercolor', alt: 'Coffee' },
-    { src: 'https://amynguyen.studio/static/media/surreal.427f77941cf22dee4708.jpg', title: 'Surreal', medium: 'Oil', alt: 'Surreal' },
-    { src: 'https://amynguyen.studio/static/media/toast.8b53acd2e910aa85e5ad.jpg', title: 'Toast', medium: 'Watercolor', alt: 'Toast' },
+    { src: './assets/graphite.jpg', title: 'Graphite Study', medium: 'Graphite', alt: 'Graphite' },
+    { src: './assets/onions.JPG', title: 'Onions', medium: 'Watercolor', alt: 'Onions' },
+    { src: './assets/cactus.jpg', title: 'Cactus', medium: 'Watercolor', alt: 'Cactus' },
+    { src: './assets/sf.jpg', title: 'San Francisco', medium: 'Watercolor', alt: 'SF' },
+    { src: './assets/chocolate.JPG', title: 'Chocolate', medium: 'Oil', alt: 'Chocolate' },
+    { src: './assets/spatula.JPG', title: 'Spatula', medium: 'Watercolor', alt: 'Spatula' },
+    { src: './assets/bird.jpg', title: 'Bird', medium: 'Watercolor', alt: 'Bird' },
+    { src: './assets/metal.jpg', title: 'Metal', medium: 'Acrylic', alt: 'Metal' },
+    { src: './assets/coffee.jpg', title: 'Coffee', medium: 'Watercolor', alt: 'Coffee' },
+    { src: './assets/surreal.jpg', title: 'Surreal', medium: 'Oil', alt: 'Surreal' },
+    { src: './assets/toast.jpg', title: 'Toast', medium: 'Watercolor', alt: 'Toast' },
   ];
 
   const tabs = [
@@ -162,8 +162,6 @@ function App() {
     window.addEventListener('keydown', handleTwKey);
     return () => window.removeEventListener('keydown', handleTwKey);
   }, []);
-
-
 
   return (
     <div className="w-full flex flex-col items-center"
@@ -554,7 +552,7 @@ function App() {
                     </div>
                     <div style={{ width: 40, height: 1, background: '#3A3020', margin: '8px 0', opacity: 0.15 }} />
                   </div>
-                  <img src="https://amynguyen.studio/static/media/amy.fe6fb0b3f1a42cc6ebe9.jpg" alt="Amy"
+                  <img src="./assets/amy.jpg" alt="Amy"
                     className="tw-about-photo" style={{ width: 130, float: 'right', marginLeft: 14, marginBottom: 10, border: '1.5px solid #3A3020', filter: 'sepia(5%) contrast(95%)', transform: 'rotate(1.5deg)', boxShadow: 'none' }} />
                   <div className="tw-selectable" style={{ fontSize: 11, color: '#2A2418', lineHeight: '20px', letterSpacing: '0.03em', fontWeight: 600 }}>
                     <p style={{ marginBottom: 8 }}>I entered Stanford with a background in writing and literature, but chose to pursue Computer Science because I wanted to push myself toward an intellectual challenge I hadn't yet mastered.</p>
