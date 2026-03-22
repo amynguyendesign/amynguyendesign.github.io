@@ -107,15 +107,15 @@ function App() {
 
   // Typewriter keyboard handler - single letter easter egg
   const easterEggs = [
-    { art: '  /)_/)\n ( . .)\n / づ♡', label: 'hi there' },
-    { art: ' ૮ ˶ᵔ ᵕ ᵔ˶ ა', label: 'sending warmth' },
-    { art: '  ☆  ☆  ☆\n ☆  ♡  ☆\n  ☆  ☆  ☆', label: 'stars for you' },
-    { art: '  ∧＿∧\n( ･ω･)\nっ  c', label: 'cup of tea?' },
-    { art: ' ⊹ ˚₊ ⊹\n  ♡\n ⊹ ˚₊ ⊹', label: 'a little sparkle' },
-    { art: '  @}->--', label: 'a rose for you' },
-    { art: ' ❀ ❁ ✿ ❀\n✿ ❀ ❁ ✿\n ❁ ✿ ❀ ❁', label: 'a garden' },
-    { art: '♡♡♡\n♡♡\n♡', label: 'heart cascade' },
-    { art: '✩ . ✩ . ✩\n . ✩ . ✩ .\n✩ . ✩ . ✩', label: 'starfield' },
+    { art: '  /)_/)\n ( . .)\n / づ♡' },
+    { art: '  ☆  ☆  ☆\n ☆  ♡  ☆\n  ☆  ☆  ☆' },
+    { art: '  ∧＿∧\n( ･ω･)\nっ  c' },
+    { art: ' ⊹ ˚₊ ⊹\n  ♡\n ⊹ ˚₊ ⊹' },
+    { art: ' ❀ ❁ ✿ ❀\n✿ ❀ ❁ ✿\n ❁ ✿ ❀ ❁' },
+    { art: '♡♡♡\n♡♡\n♡' },
+    { art: '✩ . ✩ . ✩\n . ✩ . ✩ .\n✩ . ✩ . ✩' },
+    { art: '⋆˚✿˖°' },
+    { art: '⋆☁︎｡⋆｡ ☾' },
   ];
 
   React.useEffect(() => {
@@ -131,28 +131,27 @@ function App() {
         const pick = easterEggs[Math.floor(Math.random() * easterEggs.length)];
         setEasterEggArt(pick);
         track('typewriter_key', { key: key, device: 'desktop' });
-        track('easter_egg', { art_label: pick.label });
-        // Random position — mobile-aware safe zones
+        track('easter_egg', {});
+        // Random position — mobile: top-right only, desktop: includes top-right
         const isMobile = window.innerWidth <= 768;
         let randTop, randLeft;
         if (isMobile) {
-          // Mobile: paper is small, text takes top ~55%
-          // Safe: bottom-right quadrant, avoid page number (bottom center)
-          const mobilePositions = [
-            { top: 65, left: 58 },
-            { top: 68, left: 62 },
-            { top: 70, left: 55 },
-            { top: 66, left: 65 },
-            { top: 72, left: 60 },
-            { top: 67, left: 68 },
+          // Mobile: top-right of paper, clamped to stay in bounds
+          randTop = Math.max(10, Math.min(18, 10 + Math.floor(Math.random() * 10)));
+          randLeft = Math.max(70, Math.min(82, 70 + Math.floor(Math.random() * 12)));
+        } else {
+          // Desktop: random across safe zones including top-right
+          const desktopPositions = [
+            // Bottom-right (original) — clamped to stay in bounds
+            { top: Math.min(75, 62 + Math.floor(Math.random() * 13)), left: Math.min(78, 55 + Math.floor(Math.random() * 23)) },
+            { top: Math.min(75, 62 + Math.floor(Math.random() * 13)), left: Math.min(78, 55 + Math.floor(Math.random() * 23)) },
+            // Top-right (new) — clamped to stay in bounds
+            { top: Math.max(12, 12 + Math.floor(Math.random() * 12)), left: Math.min(78, 60 + Math.floor(Math.random() * 20)) },
+            { top: Math.max(12, 12 + Math.floor(Math.random() * 10)), left: Math.min(80, 65 + Math.floor(Math.random() * 18)) },
           ];
-          const pos = mobilePositions[Math.floor(Math.random() * mobilePositions.length)];
+          const pos = desktopPositions[Math.floor(Math.random() * desktopPositions.length)];
           randTop = pos.top;
           randLeft = pos.left;
-        } else {
-          // Desktop: bottom-right quadrant only, well below text
-          randTop = 62 + Math.floor(Math.random() * 15);
-          randLeft = 55 + Math.floor(Math.random() * 25);
         }
         setEasterEggPos({ top: randTop, left: randLeft });
       }
@@ -370,21 +369,24 @@ function App() {
                       const pick = easterEggs[Math.floor(Math.random() * easterEggs.length)];
                       setEasterEggArt(pick);
                       track('typewriter_tap', { key: char, device: window.innerWidth <= 768 ? 'mobile' : 'desktop' });
-                      track('easter_egg', { art_label: pick.label });
+                      track('easter_egg', {});
                       const isMobile = window.innerWidth <= 768;
                       let randTop, randLeft;
                       if (isMobile) {
-                        const mobilePositions = [
-                          { top: 65, left: 58 }, { top: 68, left: 62 },
-                          { top: 70, left: 55 }, { top: 66, left: 65 },
-                          { top: 72, left: 60 }, { top: 67, left: 68 },
+                        // Mobile: top-right of paper, clamped to stay in bounds
+                        randTop = Math.max(10, Math.min(18, 10 + Math.floor(Math.random() * 10)));
+                        randLeft = Math.max(70, Math.min(82, 70 + Math.floor(Math.random() * 12)));
+                      } else {
+                        // Desktop: random including top-right
+                        const desktopPositions = [
+                          { top: 62 + Math.floor(Math.random() * 15), left: 55 + Math.floor(Math.random() * 25) },
+                          { top: 62 + Math.floor(Math.random() * 15), left: 55 + Math.floor(Math.random() * 25) },
+                          { top: 8 + Math.floor(Math.random() * 15), left: 60 + Math.floor(Math.random() * 20) },
+                          { top: 10 + Math.floor(Math.random() * 12), left: 65 + Math.floor(Math.random() * 18) },
                         ];
-                        const pos = mobilePositions[Math.floor(Math.random() * mobilePositions.length)];
+                        const pos = desktopPositions[Math.floor(Math.random() * desktopPositions.length)];
                         randTop = pos.top;
                         randLeft = pos.left;
-                      } else {
-                        randTop = 62 + Math.floor(Math.random() * 15);
-                        randLeft = 55 + Math.floor(Math.random() * 25);
                       }
                       setEasterEggPos({ top: randTop, left: randLeft });
                     }}
@@ -537,9 +539,9 @@ function App() {
                           <path d="M 1 12 Q 0 10 1 2 Q 2 0.5 6 1 Q 20 0 34 1 Q 38 0.5 39 2 Q 40 10 39 12 Q 20 13 1 12 Z"
                             fill="rgba(200,184,156,0.5)" stroke="#3A3020" strokeWidth="0.6" strokeLinejoin="round" />
                         </svg>
-                        <div style={{ position: 'relative', padding: '8px 12px 6px', zIndex: 2 }}>
-                          <div style={{ whiteSpace: 'pre', textAlign: 'center', fontSize: 9, lineHeight: 1.15, color: '#3A3020', fontFamily: '"Courier New", monospace', letterSpacing: '0.03em' }}>{easterEggArt.art}</div>
-                          <div style={{ marginTop: 8, fontSize: 7, color: '#8A7A60', letterSpacing: '0.1em', textTransform: 'uppercase', textAlign: 'center', fontFamily: '"Courier New", monospace' }}>{easterEggArt.label}</div>
+                        <div style={{ position: 'relative', padding: '10px 14px 10px', zIndex: 2 }}>
+                          <div style={{ whiteSpace: 'pre', textAlign: 'center', fontSize: 14, lineHeight: 1.2, color: '#3A3020', fontFamily: '"Courier New", monospace', letterSpacing: '0.03em' }}>{easterEggArt.art}</div>
+                          
                         </div>
                       </div>
                     </div>
