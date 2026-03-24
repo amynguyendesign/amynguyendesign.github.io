@@ -95,17 +95,17 @@ function App() {
   };
 
   const artImages = [
-    { src: 'assets/graphite.jpg', title: 'Graphite Study', medium: 'Graphite', alt: 'Graphite' },
-    { src: 'assets/onions.JPG', title: 'Onions', medium: 'Watercolor', alt: 'Onions' },
-    { src: 'assets/cactus.jpg', title: 'Cactus', medium: 'Watercolor', alt: 'Cactus' },
-    { src: 'assets/sf.jpg', title: 'San Francisco', medium: 'Watercolor', alt: 'SF' },
-    { src: 'assets/chocolate.JPG', title: 'Chocolate', medium: 'Oil', alt: 'Chocolate' },
-    { src: 'assets/spatula.JPG', title: 'Spatula', medium: 'Watercolor', alt: 'Spatula' },
-    { src: 'assets/bird.jpg', title: 'Bird', medium: 'Watercolor', alt: 'Bird' },
-    { src: 'assets/metal.jpg', title: 'Metal', medium: 'Acrylic', alt: 'Metal' },
-    { src: 'assets/coffee.jpg', title: 'Coffee', medium: 'Watercolor', alt: 'Coffee' },
-    { src: 'assets/surreal.jpg', title: 'Surreal', medium: 'Oil', alt: 'Surreal' },
-    { src: 'assets/toast.jpg', title: 'Toast', medium: 'Watercolor', alt: 'Toast' },
+    { src: 'src/assets/graphite.jpg', title: 'Graphite Study', medium: 'Graphite', alt: 'Graphite' },
+    { src: 'src/assets/onions.JPG', title: 'Onions', medium: 'Watercolor', alt: 'Onions' },
+    { src: 'src/assets/cactus.jpg', title: 'Cactus', medium: 'Watercolor', alt: 'Cactus' },
+    { src: 'src/assets/sf.jpg', title: 'San Francisco', medium: 'Watercolor', alt: 'SF' },
+    { src: 'src/assets/chocolate.JPG', title: 'Chocolate', medium: 'Oil', alt: 'Chocolate' },
+    { src: 'src/assets/spatula.JPG', title: 'Spatula', medium: 'Watercolor', alt: 'Spatula' },
+    { src: 'src/assets/bird.jpg', title: 'Bird', medium: 'Watercolor', alt: 'Bird' },
+    { src: 'src/assets/metal.jpg', title: 'Metal', medium: 'Acrylic', alt: 'Metal' },
+    { src: 'src/assets/coffee.jpg', title: 'Coffee', medium: 'Watercolor', alt: 'Coffee' },
+    { src: 'src/assets/surreal.jpg', title: 'Surreal', medium: 'Oil', alt: 'Surreal' },
+    { src: 'src/assets/toast.jpg', title: 'Toast', medium: 'Watercolor', alt: 'Toast' },
   ];
 
   const tabs = [
@@ -649,9 +649,9 @@ function App() {
                     </div>
                     <div style={{ width: 40, height: 1, background: '#3A3020', margin: '8px 0', opacity: 0.15 }} />
                   </div>
-                  <img src="assets/amy.jpg" alt="Amy"
+                  <img src="src/assets/amy.jpg" alt="Amy"
                     className="tw-about-photo" style={{ width: 130, float: 'right', marginLeft: 14, marginBottom: 10, border: '1.5px solid #3A3020', filter: 'sepia(5%) contrast(95%)', transform: 'rotate(1.5deg)', boxShadow: 'none', cursor: 'pointer' }} 
-                    onClick={() => { setLightboxImg('assets/amy.jpg'); track('art_lightbox_open', { image: 'Amy Photo', medium: 'Photo' }); }} />
+                    onClick={() => { setLightboxImg('src/assets/amy.jpg'); track('art_lightbox_open', { image: 'Amy Photo', medium: 'Photo' }); }} />
                   <div className="tw-selectable" style={{ fontSize: 11, color: '#2A2418', lineHeight: '20px', letterSpacing: '0.03em', fontWeight: 600 }}>
                     <p style={{ marginBottom: 8 }}>I entered Stanford with a background in writing and literature, but chose to pursue Computer Science because I wanted to push myself toward an intellectual challenge I hadn't yet mastered.</p>
                     <p style={{ marginBottom: 8 }}>With no prior technical experience, I started from scratch: multivariable calculus, first-order logic, my first lines of code. Computer Science gave me a second language for thinking: decompose, debug, build.</p>
