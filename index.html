@@ -6,10 +6,11 @@
   <title>Amy Nguyen</title>
   <meta name="description" content="Amy Nguyen - Engineer. Designer. Stanford-trained. SF-based." />
   <link rel="icon" type="image/x-icon" href="./favicon.png" />
-  <!-- <link rel="icon" type="image/png" href="./favicon-96x96.png" sizes="96x96" /> -->
   <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
   <meta property="og:title" content="Amy Nguyen" />
   <meta property="og:description" content="Engineer. Designer. Stanford-trained. SF-based." />
+
+  <!-- Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-DHB2BNWHZG"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -17,111 +18,114 @@
     gtag('js', new Date());
     gtag('config', 'G-DHB2BNWHZG');
   </script>
+
+  <!-- React + Babel -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body, #root { width: 100%; height: 100%; overflow: hidden; }
-    body { font-family: "Courier New", Courier, monospace; font-size: 22px; }
-    .w-full { width: 100%; }
-    .flex { display: flex; }
-    .flex-1 { flex: 1; }
-    .flex-col { flex-direction: column; }
-    .items-center { align-items: center; }
-    .px-4 { padding-left: 1rem; padding-right: 1rem; }
-    .cursor-pointer { cursor: pointer; }
-  </style>
 
-  <style>
-    /* Adjust tab text and image caption sizes */
-    .tw-page-home, .tw-page-about, .tw-page-contact, .tw-page-art {
-      font-size: 15px !important;
-      line-height: 22px !important;
-    }
-    .tw-name {
-      font-size: 32px !important;
-    }
-    .tw-footer {
-      font-size: 16px !important;
-    }
-    .tw-ear-tabs > div > div {
-      font-size: 10px !important;
-      font-weight: 700 !important;
-    }
-    .tw-easter-egg {
-      font-size: 16px !important;
-    }
-    .tw-prompt span {
-      font-size: 16px !important;
-    }
-    .tw-prompt {
-      font-size: 16px !important;
-    }
-    .tw-page-home > div, .tw-page-about > div, .tw-page-contact > div, .tw-page-art > div {
-      font-size: 15px !important;
-    }
-    .tw-page-home > div > div:first-of-type,
-    .tw-page-about > div:first-of-type > div:first-of-type,
-    .tw-page-contact > div > div > div:first-of-type,
-    .tw-page-art > div:first-of-type > div:first-of-type {
-      font-size: 26px !important;
-    }
-    .tw-page-home .tw-name {
-      font-size: 32px !important;
-    }
-    .tw-art-grid div {
-      font-size: 12px !important;
-    }
-  </style>
+  <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <div id="root"></div>
   <script type="text/babel">
-function App() {
-  const [activeTab, setActiveTab] = React.useState(null);
-  const [lightboxImg, setLightboxImg] = React.useState(null);
-  const [hoveredCard, setHoveredCard] = React.useState(null);
-  const [deskTyped, setDeskTyped] = React.useState('');
-  const [easterEggArt, setEasterEggArt] = React.useState(null);
-  const [easterEggPos, setEasterEggPos] = React.useState({ top: 50, left: 60 });
-  const [showCursor, setShowCursor] = React.useState(true);
-  const [doodles, setDoodles] = React.useState([]);
-  const mono = '"Courier New", Courier, monospace';
 
-  // GA event helper
-  const track = (eventName, params) => {
-    if (typeof gtag === 'function') gtag('event', eventName, params || {});
-  };
+/* ─────────────────────────────────────────────
+   Constants & Data
+   ───────────────────────────────────────────── */
 
-  const artImages = [
-    { src: 'src/assets/graphite.jpg', title: 'Graphite Study', medium: 'Graphite', alt: 'Graphite' },
-    { src: 'src/assets/onions.JPG', title: 'Onions', medium: 'Watercolor', alt: 'Onions' },
-    { src: 'src/assets/cactus.jpg', title: 'Cactus', medium: 'Watercolor', alt: 'Cactus' },
-    { src: 'src/assets/sf.jpg', title: 'San Francisco', medium: 'Watercolor', alt: 'SF' },
-    { src: 'src/assets/chocolate.JPG', title: 'Chocolate', medium: 'Oil', alt: 'Chocolate' },
-    { src: 'src/assets/spatula.JPG', title: 'Spatula', medium: 'Watercolor', alt: 'Spatula' },
-    { src: 'src/assets/bird.jpg', title: 'Bird', medium: 'Watercolor', alt: 'Bird' },
-    { src: 'src/assets/metal.jpg', title: 'Metal', medium: 'Acrylic', alt: 'Metal' },
-    { src: 'src/assets/coffee.jpg', title: 'Coffee', medium: 'Watercolor', alt: 'Coffee' },
-    { src: 'src/assets/surreal.jpg', title: 'Surreal', medium: 'Oil', alt: 'Surreal' },
-    { src: 'src/assets/toast.jpg', title: 'Toast', medium: 'Watercolor', alt: 'Toast' },
+const MONO = '"Courier New", Courier, monospace';
+
+const COLORS = {
+  ink:       '#2A2418',
+  accent:    '#A0785A',
+  dark:      '#3A3020',
+  muted:     '#8A7A60',
+  faded:     '#A09080',
+  paper:     '#FDFAF6',
+  pageNum:   '#B8B0A0',
+  separator: '#3A3020',
+};
+
+const TABS = [
+  { id: 'home',    label: 'HOME',    color: '#EDD9A3' },
+  { id: 'about',   label: 'ABOUT',   color: '#EDD9A3' },
+  { id: 'art',     label: 'ART',     color: '#EDD9A3' },
+  { id: 'contact', label: 'CONTACT', color: '#EDD9A3' },
+];
+
+const ART_IMAGES = [
+  { src: 'src/assets/graphite.jpg',   title: 'Graphite Study', medium: 'Graphite',   alt: 'Graphite' },
+  { src: 'src/assets/onions.JPG',     title: 'Onions',         medium: 'Watercolor',  alt: 'Onions' },
+  { src: 'src/assets/cactus.jpg',     title: 'Cactus',         medium: 'Watercolor',  alt: 'Cactus' },
+  { src: 'src/assets/sf.jpg',         title: 'San Francisco',  medium: 'Watercolor',  alt: 'SF' },
+  { src: 'src/assets/chocolate.JPG',  title: 'Chocolate',      medium: 'Oil',         alt: 'Chocolate' },
+  { src: 'src/assets/spatula.JPG',    title: 'Spatula',        medium: 'Watercolor',  alt: 'Spatula' },
+  { src: 'src/assets/bird.jpg',       title: 'Bird',           medium: 'Watercolor',  alt: 'Bird' },
+  { src: 'src/assets/metal.jpg',      title: 'Metal',          medium: 'Acrylic',     alt: 'Metal' },
+  { src: 'src/assets/coffee.jpg',     title: 'Coffee',         medium: 'Watercolor',  alt: 'Coffee' },
+  { src: 'src/assets/surreal.jpg',    title: 'Surreal',        medium: 'Oil',         alt: 'Surreal' },
+  { src: 'src/assets/toast.jpg',      title: 'Toast',          medium: 'Watercolor',  alt: 'Toast' },
+];
+
+const EASTER_EGGS = [
+  { art: '  /)_/)\n ( . .)\n / づ♡' },
+  { art: '  ☆  ☆  ☆\n ☆  ♡  ☆\n  ☆  ☆  ☆' },
+  { art: '  ∧＿∧\n( ･ω･)\nっ  c' },
+  { art: ' ⊹ ˚₊ ⊹\n  ♡\n ⊹ ˚₊ ⊹' },
+  { art: ' ❀ ❁ ✿ ❀\n✿ ❀ ❁ ✿\n ❁ ✿ ❀ ❁' },
+  { art: '♡♡♡\n♡♡\n♡' },
+  { art: '✩ . ✩ . ✩\n . ✩ . ✩ .\n✩ . ✩ . ✩' },
+  { art: '⋆˚✿˖°' },
+  { art: '⋆☁︎｡⋆｡ ☾' },
+];
+
+const CUTE_CHARS = ['♡', '★', '✿', '☁', '♪', '✦', '◡', '⊹', '✧', '❀', '✩', '·', '✶', '☂', '☼'];
+
+/* ─────────────────────────────────────────────
+   Helpers
+   ───────────────────────────────────────────── */
+
+function track(eventName, params) {
+  if (typeof gtag === 'function') gtag('event', eventName, params || {});
+}
+
+function pickRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function randomEasterEggPosition() {
+  const isMobile = window.innerWidth <= 768;
+  if (isMobile) {
+    return {
+      top:  Math.max(10, Math.min(18, 10 + Math.floor(Math.random() * 10))),
+      left: Math.max(70, Math.min(82, 70 + Math.floor(Math.random() * 12))),
+    };
+  }
+  const desktopPositions = [
+    { top: Math.min(75, 62 + Math.floor(Math.random() * 13)), left: Math.min(78, 55 + Math.floor(Math.random() * 23)) },
+    { top: Math.min(75, 62 + Math.floor(Math.random() * 13)), left: Math.min(78, 55 + Math.floor(Math.random() * 23)) },
+    { top: Math.max(12, 12 + Math.floor(Math.random() * 12)), left: Math.min(78, 60 + Math.floor(Math.random() * 20)) },
+    { top: Math.max(12, 12 + Math.floor(Math.random() * 10)), left: Math.min(80, 65 + Math.floor(Math.random() * 18)) },
   ];
+  return pickRandom(desktopPositions);
+}
 
-  const tabs = [
-    { id: 'home', label: 'HOME', color: '#EDD9A3' },
-    { id: 'about', label: 'ABOUT', color: '#EDD9A3' },
-    { id: 'art', label: 'ART', color: '#EDD9A3' },
-    { id: 'contact', label: 'CONTACT', color: '#EDD9A3' },
-  ];
+/* ─────────────────────────────────────────────
+   Custom Hooks
+   ───────────────────────────────────────────── */
 
-  // Blinking cursor
+function useBlinkingCursor(interval = 530) {
+  const [visible, setVisible] = React.useState(true);
   React.useEffect(() => {
-    const i = setInterval(() => setShowCursor(c => !c), 530);
-    return () => clearInterval(i);
-  }, []);
+    const id = setInterval(() => setVisible(c => !c), interval);
+    return () => clearInterval(id);
+  }, [interval]);
+  return visible;
+}
 
-  // Floating hand-drawn doodles
+function useFloatingDoodles() {
+  const [doodles, setDoodles] = React.useState([]);
   React.useEffect(() => {
     const chars = 'abcdefghijklmnopqrstuvwxyz';
     const spawnDoodle = () => {
@@ -137,582 +141,514 @@ function App() {
       setTimeout(() => setDoodles(prev => prev.filter(d => d.id !== id)), duration * 1000);
     };
     const interval = setInterval(spawnDoodle, 2000);
-    setTimeout(spawnDoodle, 500);
-    setTimeout(spawnDoodle, 1200);
-    setTimeout(spawnDoodle, 2000);
-    setTimeout(spawnDoodle, 2800);
+    [500, 1200, 2000, 2800].forEach(ms => setTimeout(spawnDoodle, ms));
     return () => clearInterval(interval);
   }, []);
+  return doodles;
+}
 
-  // Track initial page view
+function useTypewriterInput() {
+  const [typed, setTyped] = React.useState('');
+  const [easterEgg, setEasterEgg] = React.useState(null);
+  const [easterEggPos, setEasterEggPos] = React.useState({ top: 50, left: 60 });
+
+  const triggerEasterEgg = React.useCallback((displayChar, source) => {
+    setTyped(displayChar);
+    const pick = pickRandom(EASTER_EGGS);
+    setEasterEgg(pick);
+    setEasterEggPos(randomEasterEggPosition());
+    track('easter_egg', {});
+    track(source === 'tap' ? 'typewriter_tap' : 'typewriter_key', {
+      key: displayChar,
+      device: window.innerWidth <= 768 ? 'mobile' : 'desktop',
+    });
+  }, []);
+
+  React.useEffect(() => {
+    const handleKey = (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'Backspace') {
+        e.preventDefault();
+        setTyped('');
+        setEasterEgg(null);
+      } else if (e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
+        triggerEasterEgg(e.key, 'key');
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [triggerEasterEgg]);
+
+  return { typed, easterEgg, easterEggPos, triggerEasterEgg };
+}
+
+/* ─────────────────────────────────────────────
+   Shared Components
+   ───────────────────────────────────────────── */
+
+function PageHeader({ title, children }) {
+  return (
+    <div style={{ marginBottom: 13 }}>
+      <div style={{ fontSize: 26, color: COLORS.ink, letterSpacing: '0.06em', fontWeight: 700 }}>
+        {title}<span style={{ color: COLORS.accent }}>.</span>
+      </div>
+      <div style={{ width: 40, height: 1, background: COLORS.separator, margin: '8px 0', opacity: 0.15 }} />
+      {children}
+    </div>
+  );
+}
+
+function PageNumber({ number }) {
+  return (
+    <div style={{ textAlign: 'center', fontSize: 8, color: COLORS.pageNum, letterSpacing: '0.15em' }}>
+      - {number} -
+    </div>
+  );
+}
+
+function Cursor({ visible }) {
+  return (
+    <div style={{
+      width: 7, height: 13, background: COLORS.dark,
+      opacity: visible ? 0.6 : 0,
+      transition: 'opacity 0.08s',
+    }} />
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Lightbox
+   ───────────────────────────────────────────── */
+
+function Lightbox({ src, onClose }) {
+  if (!src) return null;
+  return (
+    <div onClick={() => { onClose(); track('art_lightbox_close'); }}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 999,
+        background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(3px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        cursor: 'pointer', padding: 24,
+      }}>
+      <div style={{ position: 'relative', maxWidth: '90%', maxHeight: '85vh' }} onClick={e => e.stopPropagation()}>
+        <div onClick={onClose} style={{
+          position: 'absolute', top: -14, right: -14, zIndex: 1000,
+          width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: COLORS.paper, border: '1.5px solid ' + COLORS.dark, borderRadius: '50%',
+          cursor: 'pointer', fontSize: 12, color: COLORS.dark,
+          fontFamily: MONO, fontWeight: 600,
+        }}>x</div>
+        <img src={src} alt="Enlarged" style={{
+          maxWidth: '100%', maxHeight: '85vh', objectFit: 'contain',
+          border: '2px solid ' + COLORS.dark, borderRadius: 1, display: 'block',
+        }} />
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Floating Doodle Background
+   ───────────────────────────────────────────── */
+
+function DoodleBackground({ doodles }) {
+  return (
+    <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
+      {doodles.map(d => (
+        <span key={d.id} style={{
+          position: 'absolute',
+          left: d.x + '%', top: d.startY + '%',
+          fontSize: d.size,
+          fontFamily: MONO, fontWeight: 600, color: '#000000',
+          animation: `doodleFloat ${d.duration}s linear forwards`,
+          '--dd': d.drift + 'px', '--dr': d.rotate + 'deg',
+          opacity: 0, userSelect: 'none',
+        }}>{d.char}</span>
+      ))}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Easter Egg Note
+   ───────────────────────────────────────────── */
+
+function EasterEggNote({ egg, position }) {
+  if (!egg) return null;
+  return (
+    <div className="tw-easter-egg" style={{
+      position: 'absolute', top: position.top + '%', left: position.left + '%',
+      transform: 'translate(-50%, -50%)', zIndex: 5,
+      pointerEvents: 'none', animation: 'fadeIn 0.4s ease-out',
+    }}>
+      <div style={{ display: 'inline-block', position: 'relative', transform: 'rotate(-1.5deg)' }}>
+        <svg style={{ position: 'absolute', inset: -6, width: 'calc(100% + 12px)', height: 'calc(100% + 12px)' }}
+          viewBox="0 0 100 80" preserveAspectRatio="none">
+          <path d="M 3 78 Q 1 75 2 3 Q 4 1 8 2 Q 30 0.5 50 1.5 Q 70 0 92 2 Q 98 3 97 6 Q 99 40 97 75 Q 96 78 92 78 Q 60 79 30 78 Q 10 79 3 78 Z"
+            fill={COLORS.paper} stroke={COLORS.dark} strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" />
+        </svg>
+        <svg style={{ position: 'absolute', top: -10, left: '50%', transform: 'translateX(-50%) rotate(2deg)', width: 40, height: 14, zIndex: 3 }}
+          viewBox="0 0 40 14">
+          <path d="M 1 12 Q 0 10 1 2 Q 2 0.5 6 1 Q 20 0 34 1 Q 38 0.5 39 2 Q 40 10 39 12 Q 20 13 1 12 Z"
+            fill="rgba(200,184,156,0.5)" stroke={COLORS.dark} strokeWidth="0.6" strokeLinejoin="round" />
+        </svg>
+        <div style={{ position: 'relative', padding: '10px 14px 10px', zIndex: 2 }}>
+          <div style={{
+            whiteSpace: 'pre', textAlign: 'center', fontSize: 14,
+            lineHeight: 1.2, color: COLORS.dark, fontFamily: MONO, letterSpacing: '0.03em',
+          }}>{egg.art}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Ear Tabs (Navigation)
+   ───────────────────────────────────────────── */
+
+function EarTab({ tab, index, isActive, onClick }) {
+  const w = 52;
+  const h = 20;
+  return (
+    <div onClick={onClick} className="cursor-pointer" style={{
+      position: 'relative', width: w, height: h,
+      marginLeft: index > 0 ? -2 : 0,
+      zIndex: isActive ? 12 : 11,
+      transition: 'opacity 0.2s',
+    }}>
+      <svg width={w} height={h} viewBox={'0 0 ' + w + ' ' + h} style={{ position: 'absolute', top: 0, left: 0 }}>
+        <path d={
+          'M 1 ' + h + ' Q 2 ' + (h-2) + ' 3 2 Q ' + (w*0.2) + ' 0.5 ' + (w*0.35) + ' 1 Q ' + (w*0.5) + ' ' + (index%2===0?'0':'0.8') + ' ' + (w*0.65) + ' ' + (index%2===0?'1.2':'0.5') + ' Q ' + (w*0.8) + ' ' + (index%2===0?'0.3':'1') + ' ' + (w-3) + ' 1.5 Q ' + (w-1) + ' ' + (h-2) + ' ' + (w-1) + ' ' + h
+        }
+          fill={isActive ? '#FFFFFF' : 'rgba(253,250,246,0.25)'}
+          stroke={COLORS.dark}
+          strokeWidth={isActive ? 2 : 1.4}
+          strokeLinejoin="round" strokeLinecap="round"
+        />
+        {isActive && <line x1="0" y1={h} x2={w} y2={h} stroke="#FFFFFF" strokeWidth="3.5" />}
+      </svg>
+      <div style={{
+        position: 'relative', zIndex: 2,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        height: '100%', paddingBottom: 2,
+        fontSize: isActive ? 8 : 7, letterSpacing: '0.03em',
+        color: isActive ? COLORS.ink : COLORS.faded,
+        fontWeight: isActive ? 700 : 500,
+        fontFamily: MONO, textDecoration: 'none',
+      }}>
+        {tab.label.toLowerCase()}
+      </div>
+    </div>
+  );
+}
+
+function EarTabs({ activeTab, onTabChange }) {
+  return (
+    <div className="tw-ear-tabs" style={{
+      position: 'absolute', top: '-2.5%', left: '24%', right: '24%',
+      display: 'flex', justifyContent: 'flex-end', gap: -1,
+      zIndex: 12, paddingRight: 0,
+    }}>
+      {TABS.map((tab, i) => {
+        const isActive = tab.id === 'home' ? activeTab === null : activeTab === tab.id;
+        return (
+          <EarTab key={tab.id} tab={tab} index={i} isActive={isActive}
+            onClick={() => {
+              const newTab = tab.id === 'home' ? null : (isActive ? null : tab.id);
+              const pageName = tab.id === 'home' ? 'home' : (isActive ? 'home' : tab.id);
+              track('tab_click', { tab_name: pageName });
+              track('page_view', { page_title: pageName, page_location: '/' + pageName });
+              onTabChange(newTab);
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Keyboard Overlay (Typewriter Tap Targets)
+   ───────────────────────────────────────────── */
+
+function KeyboardOverlay({ onTap }) {
+  return (
+    <div className="tw-keyboard-overlay" style={{
+      position: 'absolute',
+      top: '58%', left: '14%', right: '14%', bottom: '8%',
+      zIndex: 11, cursor: 'pointer',
+      display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gridTemplateRows: 'repeat(3, 1fr)',
+    }}>
+      {[...Array(15)].map((_, i) => (
+        <div key={i} style={{ width: '100%', height: '100%' }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onTap(CUTE_CHARS[i % CUTE_CHARS.length]);
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Page: Home
+   ───────────────────────────────────────────── */
+
+function PageHome({ typed, showCursor, easterEgg, easterEggPos }) {
+  return (
+    <div className="tw-page-home" style={{
+      padding: '20px 24px 16px', position: 'relative',
+      display: 'flex', flexDirection: 'column', minHeight: '100%', overflow: 'hidden',
+    }}>
+      <div style={{ position: 'relative', zIndex: 2 }}>
+        <div style={{ marginBottom: 13 }}>
+          <div className="tw-name" style={{
+            fontSize: 32, color: COLORS.ink, letterSpacing: '0.06em',
+            lineHeight: 1.2, fontWeight: 700,
+          }}>
+            Amy Nguyen<span style={{ color: COLORS.accent }}>.</span>
+          </div>
+          <div style={{ width: 40, height: 1, background: COLORS.separator, margin: '8px 0', opacity: 0.15 }} />
+        </div>
+        <div style={{ fontSize: 13, color: COLORS.ink, lineHeight: '20px', marginBottom: 16, letterSpacing: '0.03em', fontWeight: 600 }}>
+          <span style={{ display: 'block' }}>Engineer. Designer.</span>
+          <span style={{ display: 'block' }}>Stanford-trained. SF-based.</span>
+        </div>
+
+        <div className="tw-prompt" style={{ marginTop: 28 }}>
+          {!typed ? (
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontSize: 8, color: COLORS.muted, letterSpacing: '0.06em', fontWeight: 400, fontFamily: MONO }}>
+                press any key
+              </span>
+              <Cursor visible={showCursor} />
+              <span style={{ fontSize: 8, color: COLORS.faded, marginLeft: 2 }}>&#8595;</span>
+            </div>
+          ) : (
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+              <span style={{
+                fontSize: 14, color: COLORS.ink, fontWeight: 700,
+                fontFamily: MONO, animation: 'letterPop 0.3s ease-out',
+                display: 'inline-block',
+              }}>
+                {typed}
+              </span>
+              <Cursor visible={showCursor} />
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div style={{ flex: 1 }} />
+      <PageNumber number={1} />
+      <div style={{ paddingBottom: 14 }} />
+
+      <EasterEggNote egg={easterEgg} position={easterEggPos} />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Page: About
+   ───────────────────────────────────────────── */
+
+function PageAbout({ onImageClick }) {
+  return (
+    <div className="tw-page-about" style={{ padding: '20px 24px', minHeight: 200 }}>
+      <PageHeader title="About me" />
+      <img src="src/assets/amy.jpg" alt="Amy" className="tw-about-photo"
+        style={{
+          width: 130, float: 'right', marginLeft: 14, marginBottom: 10,
+          border: '1.5px solid ' + COLORS.dark, filter: 'sepia(5%) contrast(95%)',
+          transform: 'rotate(1.5deg)', boxShadow: 'none', cursor: 'pointer',
+        }}
+        onClick={() => { onImageClick('src/assets/amy.jpg'); track('art_lightbox_open', { image: 'Amy Photo', medium: 'Photo' }); }}
+      />
+      <div className="tw-selectable" style={{ fontSize: 11, color: COLORS.ink, lineHeight: '20px', letterSpacing: '0.03em', fontWeight: 600 }}>
+        <p style={{ marginBottom: 8 }}>I entered Stanford with a background in writing and literature, but chose to pursue Computer Science because I wanted to push myself toward an intellectual challenge I hadn't yet mastered.</p>
+        <p style={{ marginBottom: 8 }}>With no prior technical experience, I started from scratch: multivariable calculus, first-order logic, my first lines of code. Computer Science gave me a second language for thinking: decompose, debug, build.</p>
+        <p style={{ marginBottom: 8 }}>Building at the seam of engineering and design, I take pride in my work and continually strive to refine my craft. Drawn to patterns, I have a gut feeling for how things align, when they work, and where they break.</p>
+        <p style={{ marginBottom: 8 }}>I believe the most interesting things live at the edges: between disciplines, between identities, between what exists and what could. A jack of all trades -- the trade is knowing which one to pull out.</p>
+        <div style={{ clear: 'both' }} />
+      </div>
+      <div style={{ textAlign: 'center', marginTop: 20 }}>
+        <PageNumber number={2} />
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Page: Art
+   ───────────────────────────────────────────── */
+
+function ArtCard({ img, index, isHovered, isDimmed, onHover, onLeave, onClick }) {
+  return (
+    <div
+      onMouseEnter={onHover} onMouseLeave={onLeave}
+      onClick={onClick} className="cursor-pointer"
+      style={{
+        background: COLORS.paper, border: '1.5px solid ' + COLORS.dark,
+        borderRadius: 1, overflow: 'hidden',
+        boxShadow: isHovered ? '2px 3px 8px rgba(58,48,32,0.12)' : 'none',
+        transform: isHovered ? 'translateY(-4px) rotate(-0.5deg)' : 'none',
+        transition: 'all 0.25s ease',
+        opacity: isDimmed ? 0.3 : 1,
+      }}>
+      <div style={{ aspectRatio: '1', overflow: 'hidden', borderBottom: '1px solid ' + COLORS.dark }}>
+        <img src={img.src} alt={img.alt} style={{
+          width: '100%', height: '100%', objectFit: 'cover',
+          display: 'block', filter: 'sepia(5%) contrast(96%)',
+        }} onError={e => { e.target.style.display = 'none'; }} />
+      </div>
+      <div style={{ padding: '6px 8px' }}>
+        <div style={{ fontSize: 9, color: COLORS.ink, letterSpacing: '0.03em', fontWeight: 600, opacity: 0.5 }}>
+          {img.medium}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PageArt({ lightboxImg, onImageClick, hoveredCard, onHoverCard }) {
+  return (
+    <div className="tw-page-art" style={{ padding: '20px 24px', minHeight: 200 }}>
+      <PageHeader title="Art">
+        <div style={{ fontSize: 13, color: COLORS.ink, marginTop: 6, lineHeight: '20px', letterSpacing: '0.03em', fontWeight: 600 }}>
+          A collection of works and studies across oil, watercolor, acrylic, and graphite.
+        </div>
+      </PageHeader>
+      <div className="tw-art-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginTop: 20 }}>
+        {ART_IMAGES.map((img, i) => (
+          <ArtCard key={i} img={img} index={i}
+            isHovered={hoveredCard === i}
+            isDimmed={lightboxImg && lightboxImg !== img.src}
+            onHover={() => onHoverCard(i)}
+            onLeave={() => onHoverCard(null)}
+            onClick={(e) => { e.stopPropagation(); onImageClick(img.src); track('art_lightbox_open', { image: img.title, medium: img.medium }); }}
+          />
+        ))}
+      </div>
+      <div style={{ textAlign: 'center', marginTop: 24 }}>
+        <PageNumber number={3} />
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Page: Contact
+   ───────────────────────────────────────────── */
+
+function PageContact() {
+  const linkStyle = { color: COLORS.accent, textDecoration: 'underline', textUnderlineOffset: 3 };
+  return (
+    <div className="tw-page-contact" style={{
+      padding: '20px 24px 16px', minHeight: '100%',
+      display: 'flex', flexDirection: 'column',
+    }}>
+      <div>
+        <PageHeader title="Contact" />
+        <div style={{ fontSize: 13, color: COLORS.ink, lineHeight: '20px', letterSpacing: '0.03em', fontWeight: 600 }}>
+          <p style={{ marginBottom: 12 }}>
+            If you want to discuss design, tech, culture -- or debate whether Comic Sans is ever acceptable,{' '}
+            <a href="https://www.linkedin.com/in/nguyen-amy" target="_blank" rel="noopener noreferrer"
+              onClick={() => track('outbound_click', { link_url: 'linkedin', link_text: 'message me on LinkedIn' })}
+              style={linkStyle}>message me on LinkedIn</a>.
+          </p>
+          <p style={{ marginBottom: 12 }}>
+            You can also keep up with what I'm reading on{' '}
+            <a href="https://goodreads.com/amynlha" target="_blank" rel="noopener noreferrer"
+              onClick={() => track('outbound_click', { link_url: 'goodreads', link_text: 'Goodreads' })}
+              style={linkStyle}>Goodreads</a>.
+          </p>
+        </div>
+      </div>
+      <div style={{ flex: 1 }} />
+      <div style={{ paddingBottom: 14 }}>
+        <PageNumber number={4} />
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   App (Composition Root)
+   ───────────────────────────────────────────── */
+
+function App() {
+  const [activeTab, setActiveTab] = React.useState(null);
+  const [lightboxImg, setLightboxImg] = React.useState(null);
+  const [hoveredCard, setHoveredCard] = React.useState(null);
+
+  const showCursor = useBlinkingCursor();
+  const doodles = useFloatingDoodles();
+  const { typed, easterEgg, easterEggPos, triggerEasterEgg } = useTypewriterInput();
+
   React.useEffect(() => {
     track('page_view', { page_title: 'home', page_location: '/home' });
   }, []);
 
-  // Typewriter keyboard handler - single letter easter egg
-  const easterEggs = [
-    { art: '  /)_/)\n ( . .)\n / づ♡' },
-    { art: '  ☆  ☆  ☆\n ☆  ♡  ☆\n  ☆  ☆  ☆' },
-    { art: '  ∧＿∧\n( ･ω･)\nっ  c' },
-    { art: ' ⊹ ˚₊ ⊹\n  ♡\n ⊹ ˚₊ ⊹' },
-    { art: ' ❀ ❁ ✿ ❀\n✿ ❀ ❁ ✿\n ❁ ✿ ❀ ❁' },
-    { art: '♡♡♡\n♡♡\n♡' },
-    { art: '✩ . ✩ . ✩\n . ✩ . ✩ .\n✩ . ✩ . ✩' },
-    { art: '⋆˚✿˖°' },
-    { art: '⋆☁︎｡⋆｡ ☾' },
-  ];
-
-  React.useEffect(() => {
-    const handleTwKey = (e) => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      if (e.key === 'Backspace') {
-        e.preventDefault();
-        setDeskTyped('');
-        setEasterEggArt(null);
-      } else if (e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
-        const key = e.key.toUpperCase();
-        setDeskTyped(e.key);
-        const pick = easterEggs[Math.floor(Math.random() * easterEggs.length)];
-        setEasterEggArt(pick);
-        track('typewriter_key', { key: key, device: 'desktop' });
-        track('easter_egg', {});
-        // Random position — mobile: top-right only, desktop: includes top-right
-        const isMobile = window.innerWidth <= 768;
-        let randTop, randLeft;
-        if (isMobile) {
-          // Mobile: top-right of paper, clamped to stay in bounds
-          randTop = Math.max(10, Math.min(18, 10 + Math.floor(Math.random() * 10)));
-          randLeft = Math.max(70, Math.min(82, 70 + Math.floor(Math.random() * 12)));
-        } else {
-          // Desktop: random across safe zones including top-right
-          const desktopPositions = [
-            // Bottom-right (original) — clamped to stay in bounds
-            { top: Math.min(75, 62 + Math.floor(Math.random() * 13)), left: Math.min(78, 55 + Math.floor(Math.random() * 23)) },
-            { top: Math.min(75, 62 + Math.floor(Math.random() * 13)), left: Math.min(78, 55 + Math.floor(Math.random() * 23)) },
-            // Top-right (new) — clamped to stay in bounds
-            { top: Math.max(12, 12 + Math.floor(Math.random() * 12)), left: Math.min(78, 60 + Math.floor(Math.random() * 20)) },
-            { top: Math.max(12, 12 + Math.floor(Math.random() * 10)), left: Math.min(80, 65 + Math.floor(Math.random() * 18)) },
-          ];
-          const pos = desktopPositions[Math.floor(Math.random() * desktopPositions.length)];
-          randTop = pos.top;
-          randLeft = pos.left;
-        }
-        setEasterEggPos({ top: randTop, left: randLeft });
-      }
-    };
-    window.addEventListener('keydown', handleTwKey);
-    return () => window.removeEventListener('keydown', handleTwKey);
-  }, []);
-
-
-
   return (
     <div className="w-full flex flex-col items-center"
-      style={{ background: '#FFFFFF', height: '100vh', fontFamily: mono, position: 'relative', overflow: 'hidden' }}>
-      <style>{`
-        .paper-scroll::-webkit-scrollbar { display: none; }
-        .paper-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-        /* Floating doodle animation */
-        @keyframes doodleFloat {
-          0% { transform: translateY(0) translateX(0) rotate(var(--dr, 0deg)); opacity: 0; }
-          8% { opacity: 0.35; }
-          50% { opacity: 0.25; }
-          92% { opacity: 0.15; }
-          100% { transform: translateY(110vh) translateX(var(--dd, 0px)) rotate(calc(var(--dr, 0deg) + 45deg)); opacity: 0; }
-        }    
+      style={{ background: '#FFFFFF', height: '100vh', fontFamily: MONO, position: 'relative', overflow: 'hidden' }}>
 
-        /* Tab animations — each tab has its own idle motion */
-        @keyframes tabSway1 {
-          0%, 100% { transform: translateY(0) rotate(0deg); }
-          30% { transform: translateY(-1.5px) rotate(0.8deg); }
-          70% { transform: translateY(0.5px) rotate(-0.4deg); }
-        }
-        @keyframes tabSway2 {
-          0%, 100% { transform: translateY(0) rotate(0deg); }
-          40% { transform: translateY(-1px) rotate(-0.6deg); }
-          80% { transform: translateY(0.3px) rotate(0.5deg); }
-        }
-        @keyframes tabSway3 {
-          0%, 100% { transform: translateY(0.5px) rotate(0.3deg); }
-          50% { transform: translateY(-2px) rotate(-0.7deg); }
-        }
-        @keyframes tabSway4 {
-          0%, 100% { transform: translateY(0) rotate(-0.2deg); }
-          35% { transform: translateY(-1.8px) rotate(0.6deg); }
-          65% { transform: translateY(0.3px) rotate(-0.5deg); }
-        }
-        .tw-ear-tabs > div:nth-child(1) { animation: tabSway1 4s ease-in-out infinite; transform-origin: bottom center; }
-        .tw-ear-tabs > div:nth-child(2) { animation: tabSway2 5s ease-in-out infinite 0.5s; transform-origin: bottom center; }
-        .tw-ear-tabs > div:nth-child(3) { animation: tabSway3 3.5s ease-in-out infinite 1s; transform-origin: bottom center; }
-        .tw-ear-tabs > div:nth-child(4) { animation: tabSway4 4.5s ease-in-out infinite 0.3s; transform-origin: bottom center; }
+      <DoodleBackground doodles={doodles} />
 
-        @keyframes letterPop {
-          0% { transform: scale(0.5); opacity: 0; }
-          50% { transform: scale(1.15); }
-          100% { transform: scale(1); opacity: 1; }
-        }
-
-        
-/* Typewriter-style text selection — warm yellow like highlighter on paper */
-        .tw-selectable ::selection { background: rgba(237,217,163,0.5); color: #2A2418; }
-        .tw-selectable ::-moz-selection { background: rgba(237,217,163,0.5); color: #2A2418; }
-        
-        /* Also style selection on the entire paper for consistency */
-        .tw-paper ::selection { background: rgba(237,217,163,0.5); color: #2A2418; }
-        .tw-paper ::-moz-selection { background: rgba(237,217,163,0.5); color: #2A2418; }
-
-        
-        /* Large desktop (1200px+) */
-        @media (min-width: 1200px) {
-          .tw-typewriter-wrap { width: 70% !important; }
-        }
-
-        /* Small desktop / large tablet landscape (1024px - 1199px) */
-        @media (max-width: 1199px) and (min-width: 769px) {
-          .tw-typewriter-wrap { width: 80% !important; }
-        }
-
-        /* Tablet portrait (768px and below) */
-        @media (max-width: 768px) {
-          .tw-typewriter-wrap { width: 92% !important; }
-          .tw-main-wrapper { justify-content: center !important; padding-top: 0 !important; }
-          .tw-content-col { justify-content: center !important; flex: 1 !important; padding-top: 8px !important; }
-          .tw-footer { padding-bottom: 2px !important; padding-top: 0 !important; font-size: 8px !important; }
-          .tw-page-home { padding: 14px 16px 10px !important; overflow: hidden !important; }
-          .tw-prompt { margin-top: -8px !important; }
-          .tw-page-home > div > div:first-of-type,
-          .tw-page-about > div:first-of-type > div:first-of-type,
-          .tw-page-contact > div > div > div:first-of-type,
-          .tw-page-art > div:first-of-type > div:first-of-type {
-            font-size: 15px !important;
-          }
-          div[style*="fontSize: 11"] {
-            font-size: 8px !important;
-          }
-          .tw-art-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 6px !important; }
-          .tw-about-photo { width: 70px !important; margin-left: 8px !important; margin-bottom: 6px !important; }
-          .tw-outer { padding-left: 0 !important; padding-right: 0 !important; max-width: 100% !important; }
-          .tw-ear-tabs { gap: 1px !important; top: -4.5% !important; }
-          .tw-ear-tabs > div { width: 54px !important; height: 20px !important; }
-          .tw-ear-tabs > div svg { width: 54px !important; height: 20px !important; }
-          .tw-ear-tabs > div > div { font-size: 10px !important; }
-          .tw-easter-egg { transform: translate(-50%, -50%) scale(0.7) !important; max-width: 65% !important; }
-        }
-
-        /* Large phone (481px - 767px) */
-        @media (max-width: 767px) and (min-width: 481px) {
-          .tw-typewriter-wrap { width: 88% !important; }
-        }
-
-        /* Phone (480px and below) */
-        @media (max-width: 480px) {
-          .tw-typewriter-wrap { width: 96% !important; }
-          .tw-main-wrapper { justify-content: center !important; padding-top: 0 !important; }
-          .tw-content-col { justify-content: center !important; flex: 1 !important; padding-top: 4px !important; }
-          .tw-footer { padding-bottom: 1px !important; padding-top: 0 !important; font-size: 7px !important; }
-          .tw-page-home { padding: 10px 12px 8px !important; overflow: hidden !important; }
-          .tw-prompt { margin-top: -12px !important; }
-          .tw-page-art { padding: 14px 14px !important; }
-          .tw-page-about { padding: 14px 16px !important; }
-          .tw-page-contact { padding: 14px 16px 10px !important; }
-          .tw-page-home > div, .tw-page-about > div, .tw-page-contact > div, .tw-page-art > div { font-size: 13px !important; line-height: 18px !important; }
-          .tw-page-home .tw-name { font-size: 16px !important; }
-          .tw-page-home > div > div:first-of-type,
-          .tw-page-about > div:first-of-type > div:first-of-type,
-          .tw-page-contact > div > div > div:first-of-type,
-          .tw-page-art > div:first-of-type > div:first-of-type {
-            font-size: 15px !important;
-          }
-          div[style*="fontSize: 11"] {
-            font-size: 8px !important;
-          }
-          .tw-art-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 4px !important; }
-          .tw-about-photo { width: 55px !important; margin-left: 6px !important; margin-bottom: 4px !important; }
-          .tw-outer { padding-left: 0 !important; padding-right: 0 !important; }
-          .tw-ear-tabs { gap: 0px !important; top: -4% !important; }
-          .tw-ear-tabs > div { width: 48px !important; height: 18px !important; margin-left: -1px !important; }
-          .tw-ear-tabs > div svg { width: 48px !important; height: 18px !important; }
-          .tw-ear-tabs > div > div { font-size: 9px !important; }
-          .tw-easter-egg { transform: translate(-50%, -50%) scale(0.55) !important; max-width: 60% !important; }
-        }
-
-        /* Very small phone (380px and below) */
-        @media (max-width: 380px) {
-          .tw-typewriter-wrap { width: 100% !important; }
-          .tw-page-home > div, .tw-page-about > div, .tw-page-contact > div, .tw-page-art > div { font-size: 10px !important; line-height: 14px !important; padding: 8px 8px !important; }
-          .tw-prompt { margin-top: -8px !important; }
-          .tw-page-home .tw-name { font-size: 16px !important; }
-          .tw-about-photo { width: 45px !important; }
-          .tw-art-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 3px !important; }
-          .tw-ear-tabs > div { width: 40px !important; height: 16px !important; }
-          .tw-ear-tabs > div svg { width: 40px !important; height: 16px !important; }
-          .tw-ear-tabs > div > div { font-size: 8px !important; }
-          .tw-easter-egg { display: none !important; }
-        }
-      `}</style>
-
-
-
-      {/* Floating hand-drawn doodles on the background */}
-      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
-        {doodles.map(d => (
-          <span key={d.id} style={{
-            position: 'absolute',
-            left: d.x + '%',
-            top: d.startY + '%',
-            fontSize: d.size,
-            fontFamily: '"Courier New", monospace',
-            fontWeight: 600,
-            color: '#000000',
-            animation: `doodleFloat ${d.duration}s linear forwards`,
-            '--dd': d.drift + 'px',
-            '--dr': d.rotate + 'deg',
-            opacity: 0,
-            userSelect: 'none',
-          }}>{d.char}</span>
-        ))}
-      </div>
-
-      {lightboxImg && (
-        <div onClick={() => { setLightboxImg(null); track('art_lightbox_close'); }} style={{ position: 'fixed', inset: 0, zIndex: 999,
-          background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(3px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 24 }}>
-          <div style={{ position: 'relative', maxWidth: '90%', maxHeight: '85vh' }} onClick={(e) => e.stopPropagation()}>
-            {/* X close button — top right of image */}
-            <div onClick={() => setLightboxImg(null)} style={{
-              position: 'absolute', top: -14, right: -14, zIndex: 1000,
-              width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: '#FDFAF6', border: '1.5px solid #3A3020', borderRadius: '50%',
-              boxShadow: 'none', cursor: 'pointer',
-              fontSize: 12, color: '#3A3020', fontFamily: '"Courier New", monospace', fontWeight: 600,
-            }}>x</div>
-            <img src={lightboxImg} alt="Enlarged" style={{ maxWidth: '100%', maxHeight: '85vh', objectFit: 'contain',
-              border: '2px solid #3A3020', borderRadius: 1, display: 'block' }} />
-          </div>
-        </div>
-      )}
+      <Lightbox src={lightboxImg} onClose={() => setLightboxImg(null)} />
 
       <div className="w-full flex-1 flex flex-col items-center px-4 tw-outer tw-main-wrapper"
         style={{ maxWidth: 900, position: 'relative', zIndex: 2, height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
 
-        {/* ====== TYPEWRITER WITH CONTENT ON PAPER ====== */}
         <div className="tw-content-col" style={{ width: '100%', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', overflow: 'visible' }}>
           <div className="tw-typewriter-wrap" style={{ position: 'relative', width: '75%', margin: '0 auto' }}>
-            {/* Typewriter PNG — full image */}
-            <img src="./typewriter_cropped.png" alt="Typewriter" 
+
+            <img src="./typewriter_cropped.png" alt="Typewriter"
               style={{ width: '100%', display: 'block', pointerEvents: 'none', position: 'relative', zIndex: 9 }} />
 
-            {/* Invisible keyboard overlay — tapping shows cute characters + easter egg */}
-            <div className="tw-keyboard-overlay" style={{
-              position: 'absolute',
-              top: '58%', left: '14%', right: '14%', bottom: '8%',
-              zIndex: 11, cursor: 'pointer',
-              display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gridTemplateRows: 'repeat(3, 1fr)',
-            }}>
-              {[...Array(15)].map((_, i) => {
-                const cuteChars = ['♡', '★', '✿', '☁', '♪', '✦', '◡', '⊹', '✧', '❀', '✩', '·', '✶', '☂', '☼'];
-                return (
-                  <div key={i} style={{ width: '100%', height: '100%' }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const char = cuteChars[i % cuteChars.length];
-                      setDeskTyped(char);
-                      const pick = easterEggs[Math.floor(Math.random() * easterEggs.length)];
-                      setEasterEggArt(pick);
-                      track('typewriter_tap', { key: char, device: window.innerWidth <= 768 ? 'mobile' : 'desktop' });
-                      track('easter_egg', {});
-                      const isMobile = window.innerWidth <= 768;
-                      let randTop, randLeft;
-                      if (isMobile) {
-                        // Mobile: top-right of paper, clamped to stay in bounds
-                        randTop = Math.max(10, Math.min(18, 10 + Math.floor(Math.random() * 10)));
-                        randLeft = Math.max(70, Math.min(82, 70 + Math.floor(Math.random() * 12)));
-                      } else {
-                        // Desktop: random including top-right
-                        const desktopPositions = [
-                          { top: 62 + Math.floor(Math.random() * 15), left: 55 + Math.floor(Math.random() * 25) },
-                          { top: 62 + Math.floor(Math.random() * 15), left: 55 + Math.floor(Math.random() * 25) },
-                          { top: 8 + Math.floor(Math.random() * 15), left: 60 + Math.floor(Math.random() * 20) },
-                          { top: 10 + Math.floor(Math.random() * 12), left: 65 + Math.floor(Math.random() * 18) },
-                        ];
-                        const pos = desktopPositions[Math.floor(Math.random() * desktopPositions.length)];
-                        randTop = pos.top;
-                        randLeft = pos.left;
-                      }
-                      setEasterEggPos({ top: randTop, left: randLeft });
-                    }}
-                  />
-                );
-              })}
-            </div>
+            <KeyboardOverlay onTap={(char) => triggerEasterEgg(char, 'tap')} />
 
-            {/* Ear tabs — hand-drawn wobbly outlines matching the illustration */}
-            <div className="tw-ear-tabs" style={{
-              position: 'absolute',
-              top: '-2.5%', left: '24%', right: '24%',
-              display: 'flex', justifyContent: 'flex-end', gap: -1,
-              zIndex: 12, paddingRight: 0,
-            }}>
-              {tabs.map((tab, i) => {
-                const isActive = tab.id === 'home' ? activeTab === null : activeTab === tab.id;
-                const w = 52;
-                const h = 20;
-                // Slightly different wobbly paths per tab for organic feel
-                const wobbles = [
-                  'M1,HH Q2,HH-2 4,1 Q8,0.5 W/4,1.5 QW/2,0 W*3/4,1 QW-4,0.5 W-2,2 LW-1,HH-1 QW-1,HH LW,HH',
-                  'M1,HH Q1.5,HH-1 3,1.5 Q10,0 W/3,1 QW/2,0.8 W*2/3,0.5 QW-3,1 W-1,2.5 LW,HH-1 QW,HH LW,HH',
-                  'M0.5,HH Q1,HH-2 3.5,1 Q7,0.5 W/4,1.5 QW/2,-0.5 W*3/4,1.5 QW-5,0.5 W-1.5,1.5 LW-0.5,HH-1 QW,HH LW,HH',
-                  'M1,HH Q2,HH-1.5 3,1.5 Q9,-0.5 W/3,1 QW/2,0.5 W*2/3,1.5 QW-4,0 W-1,2 LW-0.5,HH QW,HH LW,HH',
-                ];
-                return (
-                  <div key={tab.id}
-                    onClick={() => { 
-                      const newTab = tab.id === 'home' ? null : (isActive ? null : tab.id);
-                      const pageName = tab.id === 'home' ? 'home' : (isActive ? 'home' : tab.id);
-                      track('tab_click', { tab_name: pageName });
-                      track('page_view', { page_title: pageName, page_location: '/' + pageName });
-                      setActiveTab(newTab);
-                    }}
-                    className="cursor-pointer"
-                    style={{
-                      position: 'relative',
-                      width: w, height: h,
-                      marginLeft: i > 0 ? -2 : 0,
-                      zIndex: isActive ? 12 : 11,
-                      transition: 'opacity 0.2s',
-                    }}>
-                    <svg width={w} height={h} viewBox={'0 0 ' + w + ' ' + h} style={{ position: 'absolute', top: 0, left: 0 }}>
-                      {/* Hand-drawn tab outline */}
-                      <path d={
-                        'M 1 ' + h + ' Q 2 ' + (h-2) + ' 3 2 Q ' + (w*0.2) + ' 0.5 ' + (w*0.35) + ' 1 Q ' + (w*0.5) + ' ' + (i%2===0?'0':'0.8') + ' ' + (w*0.65) + ' ' + (i%2===0?'1.2':'0.5') + ' Q ' + (w*0.8) + ' ' + (i%2===0?'0.3':'1') + ' ' + (w-3) + ' 1.5 Q ' + (w-1) + ' ' + (h-2) + ' ' + (w-1) + ' ' + h
-                      }
-                        fill={isActive ? '#FFFFFF' : 'rgba(253,250,246,0.25)'}
-                        stroke="#3A3020"
-                        strokeWidth={isActive ? 2 : 1.4}
-                        strokeLinejoin="round"
-                        strokeLinecap="round"
-                      />
-                      {isActive && <line x1="0" y1={h} x2={w} y2={h} stroke="#FFFFFF" strokeWidth="3.5" />}
-                    </svg>
-                    <div style={{
-                      position: 'relative', zIndex: 2,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      height: '100%', paddingBottom: 2,
-                      fontSize: isActive ? 8 : 7,
-                      letterSpacing: '0.03em',
-                      color: isActive ? '#2A2418' : '#A09080',
-                      fontWeight: isActive ? 700 : 500,
-                      fontFamily: '"Courier New", monospace',
-                      textDecoration: 'none',
-                    }}>
-                      {tab.label.toLowerCase()}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <EarTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
-            {/* Content overlaid on the paper area of the image */}
+            {/* Paper content area */}
             <div className="tw-paper-overlay" style={{
               position: 'absolute',
               top: '1%', left: '25%', right: '19%', bottom: '63%', minHeight: 0,
-              overflow: 'hidden',
-              display: 'flex', flexDirection: 'column',
-              fontFamily: mono,
-              zIndex: 10,
+              overflow: 'hidden', display: 'flex', flexDirection: 'column',
+              fontFamily: MONO, zIndex: 10,
             }}>
               <div className="paper-scroll" style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', position: 'relative' }}>
-{/* HOME */}
-              {!activeTab && (
-                <div className="tw-page-home" style={{ padding: '20px 24px 16px', position: 'relative', display: 'flex', flexDirection: 'column', minHeight: '100%', overflow: 'hidden' }}>
-
-                  <div style={{ position: 'relative', zIndex: 2 }}>
-                    <div style={{ marginBottom: 13 }}>
-                      <div className="tw-name" style={{ fontSize: 32, color: '#2A2418', letterSpacing: '0.06em', lineHeight: 1.2, fontWeight: 700 }}>
-                        Amy Nguyen<span style={{ color: '#A0785A' }}>.</span>
-                      </div>
-                      <div style={{ width: 40, height: 1, background: '#3A3020', margin: '8px 0', opacity: 0.15 }} />
-                    </div>
-                    <div style={{ fontSize: 13, color: '#2A2418', lineHeight: '20px', marginBottom: 16, letterSpacing: '0.03em', fontWeight: 600 }}>
-                      <span style={{ display: 'block' }}>Engineer. Designer.</span>
-                      <span style={{ display: 'block' }}>Stanford-trained. SF-based.</span>
-                    </div>
-
-                    {/* Interactive type prompt */}
-                    <div className="tw-prompt" style={{ marginTop: 28 }}>
-                      {!deskTyped ? (
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                          <span style={{ fontSize:8, color: '#8A7A60', letterSpacing: '0.06em', fontWeight: 400, fontFamily: '"Courier New", monospace' }}>
-                            press any key
-                          </span>
-                          <div style={{
-                            width: 7, height: 13, background: '#3A3020',
-                            opacity: showCursor ? 0.6 : 0,
-                            transition: 'opacity 0.08s',
-                          }} />
-                          <span style={{ fontSize: 8, color: '#A09080', marginLeft: 2 }}>
-                            ↓
-                          </span>
-                        </div>
-                      ) : (
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                          <span style={{
-                            fontSize: 14, color: '#2A2418', fontWeight: 700,
-                            fontFamily: '"Courier New", monospace',
-                            animation: 'letterPop 0.3s ease-out',
-                            display: 'inline-block',
-                          }}>
-                            {deskTyped}
-                          </span>
-                          <div style={{
-                            width: 7, height: 13, background: '#3A3020',
-                            opacity: showCursor ? 0.6 : 0,
-                            transition: 'opacity 0.08s',
-                          }} />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  {/* Page number — pushed to bottom */}
-                  <div style={{ flex: 1 }} />
-                  <div style={{ textAlign: 'center', fontSize: 8, color: '#B8B0A0', letterSpacing: '0.15em', paddingBottom: 14 }}>- 1 -</div>
-                  {easterEggArt && (
-                    <div className="tw-easter-egg" style={{ position: 'absolute', top: easterEggPos.top + '%', left: easterEggPos.left + '%', transform: 'translate(-50%, -50%)', zIndex: 5, pointerEvents: 'none', animation: 'fadeIn 0.4s ease-out' }}>
-                      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(8px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }`}</style>
-                      <div style={{ display: 'inline-block', position: 'relative', transform: 'rotate(-1.5deg)' }}>
-                        {/* Hand-drawn note outline */}
-                        <svg style={{ position: 'absolute', inset: -6, width: 'calc(100% + 12px)', height: 'calc(100% + 12px)' }} viewBox="0 0 100 80" preserveAspectRatio="none">
-                          <path d="M 3 78 Q 1 75 2 3 Q 4 1 8 2 Q 30 0.5 50 1.5 Q 70 0 92 2 Q 98 3 97 6 Q 99 40 97 75 Q 96 78 92 78 Q 60 79 30 78 Q 10 79 3 78 Z"
-                            fill="#FDFAF6" stroke="#3A3020" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" />
-                        </svg>
-                        {/* Tape strip on top — hand-drawn style */}
-                        <svg style={{ position: 'absolute', top: -10, left: '50%', transform: 'translateX(-50%) rotate(2deg)', width: 40, height: 14, zIndex: 3 }} viewBox="0 0 40 14">
-                          <path d="M 1 12 Q 0 10 1 2 Q 2 0.5 6 1 Q 20 0 34 1 Q 38 0.5 39 2 Q 40 10 39 12 Q 20 13 1 12 Z"
-                            fill="rgba(200,184,156,0.5)" stroke="#3A3020" strokeWidth="0.6" strokeLinejoin="round" />
-                        </svg>
-                        <div style={{ position: 'relative', padding: '10px 14px 10px', zIndex: 2 }}>
-                          <div style={{ whiteSpace: 'pre', textAlign: 'center', fontSize: 14, lineHeight: 1.2, color: '#3A3020', fontFamily: '"Courier New", monospace', letterSpacing: '0.03em' }}>{easterEggArt.art}</div>
-                          
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* ART */}
-              {activeTab === 'art' && (
-                <div className="tw-page-art" style={{ padding: '20px 24px', minHeight: 200 }}>
-                  <div style={{ marginBottom: 6 }}>
-                    <div style={{ fontSize: 26, color: '#2A2418', letterSpacing: '0.06em', fontWeight: 700 }}>
-                      Art<span style={{ color: '#A0785A' }}>.</span>
-                    </div>
-                    <div style={{ width: 40, height: 1, background: '#3A3020', margin: '8px 0', opacity: 0.15 }} />
-                    <div style={{ fontSize: 13, color: '#2A2418', marginTop: 6, lineHeight: '20px', letterSpacing: '0.03em', fontWeight: 600 }}>
-                      A collection of works and studies across oil, watercolor, acrylic, and graphite.
-                    </div>
-                  </div>
-                  <div className="tw-art-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginTop: 20 }}>
-                    {artImages.map((img, i) => (
-                      <div key={i}
-                        onMouseEnter={() => setHoveredCard(i)}
-                        onMouseLeave={() => setHoveredCard(null)}
-                        onClick={(e) => { e.stopPropagation(); setLightboxImg(img.src); track('art_lightbox_open', { image: img.title, medium: img.medium }); }}
-                        className="cursor-pointer"
-                        style={{
-                          background: '#FDFAF6', border: '1.5px solid #3A3020', borderRadius: 1, overflow: 'hidden',
-                          boxShadow: hoveredCard === i ? '2px 3px 8px rgba(58,48,32,0.12)' : 'none',
-                          transform: hoveredCard === i ? 'translateY(-4px) rotate(-0.5deg)' : 'none',
-                          transition: 'all 0.25s ease',
-                          opacity: lightboxImg && lightboxImg !== img.src ? 0.3 : 1,
-                        }}>
-                        <div style={{ aspectRatio: '1', overflow: 'hidden', borderBottom: '1px solid #3A3020' }}>
-                          <img src={img.src} alt={img.alt} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: 'sepia(5%) contrast(96%)' }} onError={(e) => { e.target.style.display = 'none'; }} />
-                        </div>
-                        <div style={{ padding: '6px 8px' }}>
-                          <div style={{ fontSize: 9, color: '#2A2418', letterSpacing: '0.03em', fontWeight: 600, opacity: 0.5 }}>{img.medium}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  {/* Page number */}
-                  <div style={{ textAlign: 'center', marginTop: 24, fontSize: 8, color: '#B8B0A0', letterSpacing: '0.15em' }}>- 3 -</div>
-                </div>
-              )}
-
-              {/* ABOUT */}
-              {activeTab === 'about' && (
-                <div className="tw-page-about" style={{ padding: '20px 24px', minHeight: 200 }}>
-                  <div style={{ marginBottom: 13 }}>
-                    <div style={{ fontSize: 26, color: '#2A2418', letterSpacing: '0.06em', fontWeight: 700 }}>
-                      About me<span style={{ color: '#A0785A' }}>.</span>
-                    </div>
-                    <div style={{ width: 40, height: 1, background: '#3A3020', margin: '8px 0', opacity: 0.15 }} />
-                  </div>
-                  <img src="src/assets/amy.jpg" alt="Amy"
-                    className="tw-about-photo" style={{ width: 130, float: 'right', marginLeft: 14, marginBottom: 10, border: '1.5px solid #3A3020', filter: 'sepia(5%) contrast(95%)', transform: 'rotate(1.5deg)', boxShadow: 'none', cursor: 'pointer' }} 
-                    onClick={() => { setLightboxImg('src/assets/amy.jpg'); track('art_lightbox_open', { image: 'Amy Photo', medium: 'Photo' }); }} />
-                  <div className="tw-selectable" style={{ fontSize: 11, color: '#2A2418', lineHeight: '20px', letterSpacing: '0.03em', fontWeight: 600 }}>
-                    <p style={{ marginBottom: 8 }}>I entered Stanford with a background in writing and literature, but chose to pursue Computer Science because I wanted to push myself toward an intellectual challenge I hadn't yet mastered.</p>
-                    <p style={{ marginBottom: 8 }}>With no prior technical experience, I started from scratch: multivariable calculus, first-order logic, my first lines of code. Computer Science gave me a second language for thinking: decompose, debug, build.</p>
-                    <p style={{ marginBottom: 8 }}>Building at the seam of engineering and design, I take pride in my work and continually strive to refine my craft. Drawn to patterns, I have a gut feeling for how things align, when they work, and where they break.</p>
-                    <p style={{ marginBottom: 8 }}>I believe the most interesting things live at the edges: between disciplines, between identities, between what exists and what could. A jack of all trades -- the trade is knowing which one to pull out.</p>
-                    <div style={{ clear: 'both' }} />
-                  </div>
-                  <div style={{ textAlign: 'center', marginTop: 20, fontSize: 8, color: '#B8B0A0', letterSpacing: '0.15em' }}>- 2 -</div>
-                </div>
-              )}
-
-              {/* CONTACT */}
-              {activeTab === 'contact' && (
-                <div className="tw-page-contact" style={{ padding: '20px 24px 16px', minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
-                  <div>
-                    <div style={{ marginBottom: 13 }}>
-                      <div style={{ fontSize: 26, color: '#2A2418', letterSpacing: '0.06em', fontWeight: 700 }}>
-                        Contact<span style={{ color: '#A0785A' }}>.</span>
-                      </div>
-                      <div style={{ width: 40, height: 1, background: '#3A3020', margin: '8px 0', opacity: 0.15 }} />
-                    </div>
-                    <div style={{ fontSize: 13, color: '#2A2418', lineHeight: '20px', letterSpacing: '0.03em', fontWeight: 600 }}>
-                      <p style={{ marginBottom: 12 }}>
-                        If you want to discuss design, tech, culture -- or debate whether Comic Sans is ever acceptable,{' '}
-                        <a href="https://www.linkedin.com/in/nguyen-amy" target="_blank" rel="noopener noreferrer" onClick={() => track('outbound_click', { link_url: 'linkedin', link_text: 'message me on LinkedIn' })}
-                          style={{ color: '#A0785A', textDecoration: 'underline', textUnderlineOffset: 3 }}>
-                          message me on LinkedIn
-                        </a>.
-                      </p>
-                      <p style={{ marginBottom: 12 }}>
-                        You can also keep up with what I'm reading on{' '}
-                        <a href="https://goodreads.com/amynlha" target="_blank" rel="noopener noreferrer" onClick={() => track('outbound_click', { link_url: 'goodreads', link_text: 'Goodreads' })}
-                          style={{ color: '#A0785A', textDecoration: 'underline', textUnderlineOffset: 3 }}>
-                          Goodreads
-                        </a>.
-                      </p>
-                    </div>
-                  </div>
-                  {/* Page number — pushed to bottom */}
-                  <div style={{ flex: 1 }} />
-                  <div style={{ textAlign: 'center', fontSize: 8, color: '#B8B0A0', letterSpacing: '0.15em', paddingBottom: 14 }}>- 4 -</div>
-                </div>
-              )}
-
+                {!activeTab && (
+                  <PageHome typed={typed} showCursor={showCursor} easterEgg={easterEgg} easterEggPos={easterEggPos} />
+                )}
+                {activeTab === 'art' && (
+                  <PageArt lightboxImg={lightboxImg} onImageClick={setLightboxImg} hoveredCard={hoveredCard} onHoverCard={setHoveredCard} />
+                )}
+                {activeTab === 'about' && (
+                  <PageAbout onImageClick={setLightboxImg} />
+                )}
+                {activeTab === 'contact' && (
+                  <PageContact />
+                )}
               </div>
             </div>
-            {/* Footer — directly below typewriter PNG */}
+
             <div className="tw-footer" style={{ textAlign: 'center', paddingBottom: 2, paddingTop: 4, flexShrink: 0 }}>
-              <p style={{ fontSize: 10, color: '#8A7A60', letterSpacing: '0.15em', fontFamily: '"Courier New", monospace' }}>
+              <p style={{ fontSize: 10, color: COLORS.muted, letterSpacing: '0.15em', fontFamily: MONO }}>
                 Amy Nguyen &copy; 2026
               </p>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );
 }
-    const root = ReactDOM.createRoot(document.getElementById("root"));
-    root.render(<App />);
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
   </script>
 </body>
 </html>
