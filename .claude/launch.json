@@ -1,0 +1,25 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Static Site",
+      "runtimeExecutable": "/Users/amynguyen/.nvm/versions/node/v18.20.6/bin/npx",
+      "runtimeArgs": ["serve", "-l", "3000"],
+      "env": {
+        "PATH": "/Users/amynguyen/.nvm/versions/node/v18.20.6/bin:/usr/local/bin:/usr/bin:/bin"
+      },
+      "port": 3000,
+      "autoPort": false
+    },
+    {
+      "name": "React Dev Server",
+      "runtimeExecutable": "/Users/amynguyen/.nvm/versions/node/v18.20.6/bin/npm",
+      "runtimeArgs": ["start"],
+      "env": {
+        "PATH": "/Users/amynguyen/.nvm/versions/node/v18.20.6/bin:/usr/local/bin:/usr/bin:/bin"
+      },
+      "port": 3001,
+      "autoPort": true
+    }
+  ]
+}
