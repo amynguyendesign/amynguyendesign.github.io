@@ -68,6 +68,7 @@
 				{ id: "about", label: "ABOUT", color: "#EDD9A3" },
 				{ id: "art", label: "ART", color: "#EDD9A3" },
 				{ id: "contact", label: "CONTACT", color: "#EDD9A3" },
+				{ id: "game", label: "GAME", color: "#EDD9A3" },
 			];
 
 			const ART_IMAGES = [
@@ -733,6 +734,11 @@
 									index={i}
 									isActive={isActive}
 									onClick={() => {
+										if (tab.id === "game") {
+											track("tab_click", { tab_name: "game" });
+											window.location.href = "/game";
+											return;
+										}
 										const newTab =
 											tab.id === "home"
 												? null
