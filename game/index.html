@@ -1,0 +1,1137 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>m&#233;lange — color mixing game</title>
+		<meta
+			name="description"
+			content="A color mixing puzzle game — find the missing ingredient in every blend."
+		/>
+		<link rel="icon" type="image/x-icon" href="./favicon.png" />
+		<link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+
+		<!-- Firebase -->
+		<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+		<script>
+			firebase.initializeApp({
+				apiKey: "AIzaSyC5pbJ5B-e1TkhIt6uNQk7JqLjagXyyJGo",
+				authDomain: "odd-palette.firebaseapp.com",
+				databaseURL: "https://odd-palette-default-rtdb.firebaseio.com",
+				projectId: "odd-palette",
+				storageBucket: "odd-palette.firebasestorage.app",
+				messagingSenderId: "411802611410",
+				appId: "1:411802611410:web:46363820ae772b170e470b",
+			});
+			var db = firebase.database();
+		</script>
+
+		<!-- React + Babel -->
+		<script
+			crossorigin
+			src="https://unpkg.com/react@18/umd/react.production.min.js"
+		></script>
+		<script
+			crossorigin
+			src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+		></script>
+		<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+		<style>
+			*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+			html, body { height: 100%; }
+			body {
+				display: flex; align-items: center; justify-content: center;
+				background: #F6F4F9;
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+			}
+			*:focus-visible { outline: 2px solid #2EA896; outline-offset: 2px; }
+			@media (prefers-reduced-motion: reduce) {
+				*, *::before, *::after {
+					animation-duration: 0.01ms !important;
+					animation-iteration-count: 1 !important;
+					transition-duration: 0.01ms !important;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div id="root" style="width:100%;display:flex;align-items:center;justify-content:center"></div>
+		<script type="text/babel">
+			const { useState, useEffect, useRef } = React;
+
+			function UserDiv() {
+
+  // ─── CONSTANTS ───
+  const P = {
+    bg: '#FDFCFE', bg2: '#F5F3F8', text: '#2D2640', sub: '#7E7494',
+    dim: '#B5ADCA', border: '#E8E4EE', lavender: '#A78BDB', lilac: '#C4AEEE',
+    cta: '#2EA896', ctaLight: '#5CC4B4',
+    peach: '#F2C4A0', coral: '#E8A888', mint: '#8DD8C0', sage: '#78C8AA',
+    sky: '#7CB8E0', baby: '#A0D4F0', butter: '#E8C878', lemon: '#F0D890',
+    pink: '#E8A0C0', rose: '#D888B0', ok: '#6DC892', no: '#E88080',
+    title: '#3E2F2F', subtitle: '#6B5656',
+  };
+  const GAME_ROUNDS = 10;
+  const ROUNDS = GAME_ROUNDS; // for leaderboard compat
+  const ACCENTS = [P.lavender, P.lilac, P.peach, P.coral, P.mint, P.sage, P.sky, P.baby, P.butter, P.pink, P.rose];
+  const CORRECT_PHRASES = ['you got it!','nailed it!','yes yes yes!','so good!','sharp eye!','lovely!'];
+  const WRONG_PHRASES = ['not quite!','oops!','so close!','next time!','tricky one!'];
+
+  // ─── STATE ───
+  const [phase, setPhase] = useState('menu'); // menu, play, reveal, done
+  const [round, setRound] = useState(0);
+  const [score, setScore] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [bestStreak, setBestStreak] = useState(0);
+  const [history, setHistory] = useState([]);
+  const [puzzle, setPuzzle] = useState(null);
+  const [picked, setPicked] = useState(-1);
+  const [savedName, setSavedName] = useState('');
+  const [nameInput, setNameInput] = useState('');
+  const [saved, setSaved] = useState(false);
+  const [rank, setRank] = useState(null);
+  const [totalPlays, setTotalPlays] = useState(0);
+  const [hoveredSwatch, setHoveredSwatch] = useState(-1);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+
+  const audioRef = useRef(null);
+  const wrapRef = useRef(null);
+  const phraseRef = useRef('');
+  const leaderboardRef = useRef(null);
+
+  // ─── RESPONSIVE ───
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  // ─── HELPERS ───
+  const hs = (h, s, l) => `hsl(${((h % 360) + 360) % 360}, ${s}%, ${l}%)`;
+  const rand = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+  const shuffle = (arr) => {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
+  const nameHash = (name) => {
+    let h = 0;
+    for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) | 0;
+    return Math.abs(h);
+  };
+
+  // ─── SOUND SYSTEM ───
+  const getAudio = () => {
+    if (!audioRef.current) {
+      try { audioRef.current = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+    }
+    if (audioRef.current && audioRef.current.state === 'suspended') {
+      audioRef.current.resume();
+    }
+    return audioRef.current;
+  };
+
+  const playTone = (freq, dur, wave = 'sine', vol = 0.12, rampTo) => {
+    const ctx = getAudio();
+    if (!ctx) return;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = wave;
+    osc.frequency.value = freq;
+    if (rampTo) osc.frequency.exponentialRampToValueAtTime(rampTo, ctx.currentTime + dur);
+    gain.gain.value = vol;
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + dur);
+  };
+
+  const sfx = {
+    click: () => playTone(880, 0.04, 'sine', 0.06),
+    hover: () => playTone(1200, 0.03, 'sine', 0.04),
+    correct: () => {
+      playTone(523, 0.12, 'sine', 0.25);
+      setTimeout(() => playTone(659, 0.12, 'sine', 0.25), 80);
+      setTimeout(() => playTone(784, 0.18, 'sine', 0.25), 160);
+    },
+    wrong: () => {
+      playTone(330, 0.15, 'triangle', 0.22);
+      setTimeout(() => playTone(262, 0.2, 'triangle', 0.22), 100);
+    },
+    start: () => {
+      playTone(523, 0.1, 'sine', 0.1);
+      setTimeout(() => playTone(659, 0.1, 'sine', 0.1), 100);
+      setTimeout(() => playTone(784, 0.1, 'sine', 0.1), 200);
+      setTimeout(() => playTone(1047, 0.16, 'sine', 0.1), 300);
+    },
+    streak: (n) => {
+      const base = Math.min(n, 6);
+      playTone(600 + base * 60, 0.08, 'sine', 0.1);
+      setTimeout(() => playTone(700 + base * 60, 0.08, 'sine', 0.1), 70);
+      setTimeout(() => playTone(800 + base * 60, 0.12, 'sine', 0.1), 140);
+    },
+    doneGood: () => {
+      [523,659,784,1047,784,1047].forEach((f,i) =>
+        setTimeout(() => playTone(f, 0.14, 'sine', 0.1), i * 100)
+      );
+    },
+    doneBad: () => {
+      [440,523,440].forEach((f,i) =>
+        setTimeout(() => playTone(f, 0.14, 'sine', 0.08), i * 120)
+      );
+    },
+    save: () => {
+      playTone(784, 0.1, 'sine', 0.1);
+      setTimeout(() => playTone(1047, 0.14, 'sine', 0.1), 100);
+    },
+  };
+
+  // ─── HUE NAMING ───
+  const hueName = (h) => {
+    h = ((h % 360) + 360) % 360;
+    if (h < 15) return 'red';
+    if (h < 40) return 'orange';
+    if (h < 70) return 'yellow';
+    if (h < 150) return 'green';
+    if (h < 190) return 'teal';
+    if (h < 260) return 'blue';
+    if (h < 290) return 'purple';
+    if (h < 340) return 'pink';
+    return 'red';
+  };
+
+  const hueAngle = (h) => `${((h % 360) + 360) % 360}\u00B0`;
+
+  // ─── COLOR MIXING ───
+  const mixHue = (h1, h2) => {
+    const r1 = h1 * Math.PI / 180, r2 = h2 * Math.PI / 180;
+    let avg = Math.atan2(
+      (Math.sin(r1) + Math.sin(r2)) / 2,
+      (Math.cos(r1) + Math.cos(r2)) / 2
+    ) * 180 / Math.PI;
+    return ((avg % 360) + 360) % 360;
+  };
+
+  const mixColors = (a, b) => ({
+    h: Math.round(mixHue(a.h, b.h)),
+    s: Math.round((a.s + b.s) / 2),
+    l: Math.round((a.l + b.l) / 2),
+  });
+
+  // ─── PUZZLE GENERATION ───
+  const difficultyForRound = (r) => {
+    if (r < 3) return 'easy';
+    if (r < 6) return 'medium';
+    return 'hard';
+  };
+
+  const genMixPuzzle = (difficulty) => {
+    // Pick color A
+    const a = { h: rand(0, 359), s: rand(50, 80), l: rand(40, 60) };
+
+    // Difficulty controls how far apart A and B are, and how close distractors are
+    let hueGap, distSpread;
+    if (difficulty === 'easy') { hueGap = rand(70, 150); distSpread = rand(50, 90); }
+    else if (difficulty === 'medium') { hueGap = rand(35, 80); distSpread = rand(28, 50); }
+    else { hueGap = rand(15, 45); distSpread = rand(12, 28); }
+
+    const dir = Math.random() > 0.5 ? 1 : -1;
+    const b = {
+      h: ((a.h + hueGap * dir) % 360 + 360) % 360,
+      s: Math.max(25, Math.min(85, a.s + rand(-15, 15))),
+      l: Math.max(30, Math.min(70, a.l + rand(-10, 10))),
+    };
+
+    // Result = mix of A and B
+    const c = mixColors(a, b);
+
+    // Generate 3 distractors — close enough to be tricky
+    const distractors = [];
+    const usedHues = [b.h];
+    for (let i = 0; i < 3; i++) {
+      let dh, attempts = 0;
+      do {
+        const shift = rand(Math.floor(distSpread * 0.5), distSpread) * (Math.random() > 0.5 ? 1 : -1);
+        dh = ((b.h + shift) % 360 + 360) % 360;
+        attempts++;
+      } while (attempts < 20 && usedHues.some(uh => {
+        const diff = Math.abs(dh - uh);
+        return Math.min(diff, 360 - diff) < 10;
+      }));
+      usedHues.push(dh);
+      distractors.push({
+        h: dh,
+        s: Math.max(20, Math.min(90, b.s + rand(-12, 12))),
+        l: Math.max(25, Math.min(75, b.l + rand(-10, 10))),
+      });
+    }
+
+    const options = shuffle([
+      { ...b, isCorrect: true },
+      ...distractors.map(d => ({ ...d, isCorrect: false })),
+    ]);
+    const correctIdx = options.findIndex(o => o.isCorrect);
+
+    return { colorA: a, colorC: c, correct: b, options, correctIdx, difficulty };
+  };
+
+  // ─── LEADERBOARD (Firebase Realtime DB) ───
+  const [board, setBoard] = useState([]);
+  const [boardLoaded, setBoardLoaded] = useState(false);
+
+  // Listen for realtime leaderboard updates
+  useEffect(() => {
+    const ref = db.ref('scores');
+    ref.orderByChild('score').on('value', (snap) => {
+      const entries = [];
+      snap.forEach((child) => {
+        entries.push({ key: child.key, ...child.val() });
+      });
+      // Sort: highest score first, then streak, then newest
+      entries.sort((a, b) => b.score - a.score || b.bestStreak - a.bestStreak || b.ts - a.ts);
+      setBoard(entries);
+      setBoardLoaded(true);
+    });
+    return () => ref.off();
+  }, []);
+
+  const getBoard = () => board;
+
+  const saveToFirebase = (entry) => {
+    db.ref('scores').push(entry);
+  };
+
+  const clearBoard = () => {
+    db.ref('scores').remove();
+  };
+
+  const getSavedName = () => {
+    try { return localStorage.getItem('oddpalette_name') || ''; } catch { return ''; }
+  };
+
+  // ─── GAME ACTIONS ───
+
+  const isNameTaken = (n) => {
+    if (!n) return false;
+    return board.some(e => e.name.toLowerCase() === n.toLowerCase());
+  };
+
+  const BLOCKED = ['fuck','shit','ass','damn','bitch','dick','cock','pussy','cunt','fag','nigger','nigga','retard','slut','whore','penis','vagina','bastard','wank','twat','bollock','arse','piss','tit','boob','nazi','hitler','rape','molest','pedo','kill','die','stfu','gtfo','wtf','lmao','porn','sex','69','420'];
+  const isProfane = (n) => {
+    if (!n) return false;
+    const lower = n.toLowerCase().replace(/[^a-z]/g, '');
+    return BLOCKED.some(w => lower.includes(w));
+  };
+
+  const nameError = (n) => {
+    if (!n) return null;
+    if (n.length < 2) return 'min 2 characters';
+    if (isProfane(n)) return 'keep it clean!';
+    if (isNameTaken(n)) return 'name taken — try another!';
+    return null;
+  };
+
+  const startGame = () => {
+    const n = nameInput.trim();
+    if (!n || nameError(n)) return;
+    setSavedName(n);
+    sfx.start();
+    setRound(0); setScore(0); setStreak(0); setBestStreak(0);
+    setHistory([]); setPicked(-1); setSaved(false);
+    setRank(null); setTotalPlays(0);
+    setPuzzle(genMixPuzzle(difficultyForRound(0)));
+    setPhase('play');
+  };
+
+  const handlePick = (idx) => {
+    if (phase !== 'play' || picked !== -1) return;
+    setPicked(idx);
+    const correct = idx === puzzle.correctIdx;
+
+    const newHistory = [...history, correct];
+    setHistory(newHistory);
+
+    if (correct) {
+      sfx.correct();
+      setScore(s => s + 1);
+      const ns = streak + 1;
+      setStreak(ns);
+      if (ns > bestStreak) setBestStreak(ns);
+      if (ns > 1) setTimeout(() => sfx.streak(ns), 300);
+      phraseRef.current = pick(CORRECT_PHRASES);
+    } else {
+      sfx.wrong();
+      setStreak(0);
+      phraseRef.current = pick(WRONG_PHRASES);
+    }
+    setPhase('reveal');
+  };
+
+  const nextRound = () => {
+    sfx.click();
+    const nr = round + 1;
+    if (nr >= GAME_ROUNDS) {
+      if (score / GAME_ROUNDS >= 0.63) sfx.doneGood(); else sfx.doneBad();
+      // Auto-save score to Firebase
+      const n = savedName || nameInput.trim() || getSavedName();
+      if (n) {
+        saveToFirebase({ name: n, score, bestStreak, rounds: ROUNDS, ts: Date.now() });
+        setSaved(true);
+      }
+      setPhase('done');
+      return;
+    }
+    setRound(nr);
+    setPicked(-1);
+    setPuzzle(genMixPuzzle(difficultyForRound(nr)));
+    setPhase('play');
+  };
+
+  // Compute rank when done phase + board updates
+  useEffect(() => {
+    if (phase === 'done' && board.length > 0) {
+      setTotalPlays(board.length);
+      // Find this player's latest entry rank (board is sorted best-first)
+      const myRank = board.findIndex(e => e.name === (savedName || getSavedName()) && e.score === score);
+      setRank(myRank >= 0 ? myRank + 1 : null);
+    }
+  }, [phase, board]);
+
+  // Reset name input when returning to menu
+  useEffect(() => { if (phase === 'menu') setNameInput(''); }, [phase]);
+
+  // Auto-scroll leaderboard to highlighted player
+  useEffect(() => {
+    if (phase === 'done' && leaderboardRef.current) {
+      const el = leaderboardRef.current.querySelector('[data-me]');
+      if (el) setTimeout(() => el.scrollIntoView({ block: 'center', behavior: 'smooth' }), 600);
+    }
+  }, [phase, board]);
+
+  // ─── INLINE SUB-COMPONENTS ───
+  const Star = ({ x, y, size, delay, color }) => (
+    <span style={{
+      position: 'absolute', left: x, top: y, fontSize: `${(size || 18) / 16}rem`,
+      color: color || P.lavender, pointerEvents: 'none', zIndex: 0,
+      animation: `op-twinkle 2.4s ${delay || 0}s ease-in-out infinite both`,
+      opacity: 0.2,
+    }}>{'\u2726'}</span>
+  );
+
+  const Pill = ({ children, color, bg, small }) => (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: 4,
+      padding: small ? '2px 9px' : '4px 14px',
+      borderRadius: 999, fontSize: small ? '0.6875rem' : '0.8125rem',
+      fontWeight: 700, color: color || P.text,
+      background: bg || 'rgba(255,255,255,0.9)',
+      border: `2px solid ${P.border}`,
+      letterSpacing: '-0.01em',
+    }}>{children}</span>
+  );
+
+  const SwatchCircle = ({ color, size = 28 }) => (
+    <div style={{
+      width: size, height: size, borderRadius: size * 0.25,
+      background: hs(color.h, color.s, color.l),
+      border: '2px solid rgba(255,255,255,0.5)',
+      flexShrink: 0,
+    }} />
+  );
+
+  // ─── MIX EQUATION DISPLAY ───
+  const MixSwatch = ({ color, size, border, label, glow }) => (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+      <div style={{
+        width: size, height: size, borderRadius: size * 0.25,
+        background: hs(color.h, color.s, color.l),
+        border: border || `3px solid ${P.border}`,
+        boxShadow: glow || 'none',
+        flexShrink: 0,
+      }} />
+      {label && <span style={{ fontSize: isMobile ? '0.625rem' : '0.6875rem', fontWeight: 700, color: P.sub, letterSpacing: '0.02em' }}>{label}</span>}
+    </div>
+  );
+
+  const MixEquation = ({ colorA, colorB, colorC, size, showAnswer }) => (
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: isMobile ? 10 : 16,
+    }}>
+      <MixSwatch color={colorA} size={size} />
+      <span style={{ fontSize: isMobile ? '1.25rem' : '1.625rem', fontWeight: 800, color: P.dim }}>+</span>
+      {showAnswer ? (
+        <MixSwatch color={colorB} size={size} border={`3px solid ${P.ok}`} glow={`0 0 0 3px rgba(109,200,146,0.3)`} />
+      ) : (
+        <div style={{
+          width: size, height: size, borderRadius: size * 0.25,
+          background: `repeating-conic-gradient(${P.border} 0% 25%, rgba(255,255,255,0.6) 0% 50%) 50% / ${isMobile ? 12 : 16}px ${isMobile ? 12 : 16}px`,
+          border: `3px dashed ${P.dim}`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          flexShrink: 0,
+        }}>
+          <span style={{ fontSize: isMobile ? '1.375rem' : '1.75rem', fontWeight: 800, color: P.dim }}>?</span>
+        </div>
+      )}
+      <span style={{ fontSize: isMobile ? '1.25rem' : '1.625rem', fontWeight: 800, color: P.dim }}>=</span>
+      <MixSwatch color={colorC} size={size} />
+    </div>
+  );
+
+  const Btn = ({ children, onClick, gradient, shadow, small, disabled, big }) => {
+    const [pressed, setPressed] = useState(false);
+    const [hovered, setHovered] = useState(false);
+    return (
+      <button
+        onClick={(e) => { if (!disabled) { sfx.click(); onClick && onClick(e); } }}
+        onMouseDown={() => setPressed(true)}
+        onMouseUp={() => setPressed(false)}
+        onMouseLeave={() => { setPressed(false); setHovered(false); }}
+        onMouseEnter={() => setHovered(true)}
+        style={{
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+          padding: big ? (isMobile ? '16px 52px' : '18px 64px') : small ? (isMobile ? '8px 20px' : '10px 24px') : (isMobile ? '13px 32px' : '15px 40px'),
+          borderRadius: big ? 20 : 16, border: 'none', cursor: disabled ? 'default' : 'pointer',
+          background: gradient || P.cta,
+          color: '#fff', fontWeight: 800, fontSize: big ? (isMobile ? '1.1875rem' : '1.3125rem') : small ? (isMobile ? '0.8125rem' : '0.875rem') : (isMobile ? '1rem' : '1.0625rem'),
+          letterSpacing: '-0.02em', fontFamily: 'inherit',
+          boxShadow: hovered && !disabled ? `0 6px 24px ${P.cta}55` : 'none',
+          transform: pressed ? 'scale(0.96)' : hovered && !disabled ? 'scale(1.04)' : 'scale(1)',
+          transition: 'transform 0.15s ease, box-shadow 0.2s ease',
+          opacity: disabled ? 0.5 : 1,
+        }}
+      >{children}</button>
+    );
+  };
+
+  // ─── DATE FORMAT ───
+  const fmtDate = (ts) => {
+    const d = new Date(ts);
+    const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+    return `${months[d.getMonth()]} ${d.getDate()}`;
+  };
+
+  // ─── RENDER PHASES ───
+
+  // ─── LOGO OPTIONS ───
+  // Option A: Venn diagram — two overlapping circles that blend in the middle
+  const MenuLogo = ({ scale = 1 }) => {
+    const size = (isMobile ? 110 : 140) * scale;
+    return (
+      <svg aria-hidden="true" width={size} height={size * 120 / 140} viewBox="0 0 140 120">
+        {/* Center bucket - ocean mint */}
+        <path d="M45 40 L40 85 Q40 94 52 94 L88 94 Q100 94 100 85 L95 40Z" fill="#B8E8DE" stroke="#5CC4B4" strokeWidth="2" />
+        <rect x="42" y="34" width="56" height="10" rx="4" fill="#5CC4B4" />
+        <path d="M50 34 Q70 10 90 34" stroke="#2EA896" strokeWidth="3" fill="none" strokeLinecap="round" />
+        {/* Bucket face */}
+        <circle cx="60" cy="58" r="6" fill="white" />
+        <circle cx="61" cy="57" r="3" fill="#3E2F2F" />
+        <circle cx="80" cy="58" r="6" fill="white" />
+        <circle cx="81" cy="57" r="3" fill="#3E2F2F" />
+        <path d="M60 70 Q70 80 80 70" stroke="#3E2F2F" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+        <ellipse cx="52" cy="66" rx="4" ry="2" fill="#F2C4A0" opacity="0.35" />
+        <ellipse cx="88" cy="66" rx="4" ry="2" fill="#F2C4A0" opacity="0.35" />
+        {/* Left brush - spring green */}
+        <rect x="2" y="28" width="9" height="40" rx="3" fill="#A8E4B4" />
+        <rect x="0" y="64" width="13" height="8" rx="2" fill="#5CC47A" />
+        <path d="M1 72 Q0 84 7 86 Q14 84 13 72Z" fill="#7DD88C" opacity="0.8" />
+        <path d="M13 78 Q24 74 40 62" stroke="#7DD88C" strokeWidth="5" fill="none" strokeLinecap="round" opacity="0.6" />
+        <circle cx="5" cy="42" r="2.5" fill="white" />
+        <circle cx="5.5" cy="42" r="1.2" fill="#3E2F2F" />
+        <circle cx="10" cy="42" r="2.5" fill="white" />
+        <circle cx="10.5" cy="42" r="1.2" fill="#3E2F2F" />
+        {/* Right brush - ocean blue */}
+        <rect x="129" y="28" width="9" height="40" rx="3" fill="#A0D4F0" />
+        <rect x="127" y="64" width="13" height="8" rx="2" fill="#4A9ED8" />
+        <path d="M128 72 Q127 84 134 86 Q141 84 140 72Z" fill="#6BB8E8" opacity="0.8" />
+        <path d="M127 78 Q116 74 100 62" stroke="#6BB8E8" strokeWidth="5" fill="none" strokeLinecap="round" opacity="0.6" />
+        <circle cx="132" cy="42" r="2.5" fill="white" />
+        <circle cx="131.5" cy="42" r="1.2" fill="#3E2F2F" />
+        <circle cx="137" cy="42" r="2.5" fill="white" />
+        <circle cx="136.5" cy="42" r="1.2" fill="#3E2F2F" />
+      </svg>
+    );
+  };
+
+  const MenuLeaderboard = ({ leaderboard, light }) => leaderboard.length > 0 ? (
+    <div style={{
+      width: '100%', maxWidth: isMobile ? 360 : 440,
+      background: light ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.12)',
+      borderRadius: 22,
+      border: `2px solid ${light ? P.border : 'rgba(255,255,255,0.15)'}`,
+      padding: isMobile ? '16px 18px' : '20px 28px',
+      backdropFilter: 'blur(6px)',
+    }}>
+      <h3 style={{ fontSize: '1rem', fontWeight: 700, color: light ? P.text : '#fff', margin: '0 0 12px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 2h8v6a4 4 0 01-8 0V2z" fill={P.butter} stroke={P.coral} strokeWidth="1.2"/><path d="M6 12h4v2H6z" fill={P.coral}/><path d="M4 14h8" stroke={P.coral} strokeWidth="1.2" strokeLinecap="round"/><path d="M4 4H2a2 2 0 000 4h2M12 4h2a2 2 0 010 4h-2" stroke={P.coral} strokeWidth="1" fill="none"/></svg>
+        leaderboard
+      </h3>
+      {leaderboard.slice(0, 10).map((entry, i) => {
+        const rankBg = i === 0 ? P.butter : i === 1 ? P.dim : i === 2 ? P.peach : 'transparent';
+        const rankColor = i === 0 ? P.coral : i === 1 ? '#fff' : i === 2 ? P.coral : (light ? P.sub : 'rgba(255,255,255,0.6)');
+        const avatarColor = ACCENTS[nameHash(entry.name) % ACCENTS.length];
+        return (
+          <div key={i} style={{
+            display: 'flex', alignItems: 'center', gap: isMobile ? 10 : 14, padding: isMobile ? '7px 0' : '9px 0',
+            borderBottom: i < Math.min(leaderboard.length, 10) - 1 ? `1px solid ${light ? P.border : 'rgba(255,255,255,0.1)'}` : 'none',
+            animation: `op-up 0.3s ${i * 0.04}s both`,
+            fontSize: '1rem',
+          }}>
+            <div style={{ width: 24, height: 24, borderRadius: '50%', background: rankBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6875rem', fontWeight: 800, color: rankColor, flexShrink: 0 }}>{i + 1}</div>
+            <div style={{
+              width: isMobile ? 28 : 34, height: isMobile ? 28 : 34, borderRadius: '50%', background: avatarColor,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: isMobile ? '0.75rem' : '0.875rem', fontWeight: 800, color: '#fff', flexShrink: 0,
+            }}>{entry.name[0].toUpperCase()}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 700, color: light ? P.text : '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{entry.name}</div>
+              <div style={{ fontSize: '0.6875rem', color: light ? P.dim : 'rgba(255,255,255,0.45)' }}>{fmtDate(entry.ts)}{entry.bestStreak > 1 ? ` \u00B7 ${entry.bestStreak}x streak` : ''}</div>
+            </div>
+            <span style={{ fontWeight: 800, color: light ? P.cta : '#fff', fontSize: '1rem' }}>{entry.score}/{entry.rounds}</span>
+          </div>
+        );
+      })}
+      <div style={{ textAlign: 'center', marginTop: 10 }}>
+        <button
+          onClick={() => { clearBoard(); }}
+          style={{ fontSize: '0.6875rem', color: light ? P.dim : 'rgba(255,255,255,0.4)', cursor: 'pointer', textDecoration: 'underline', background: 'none', border: 'none', font: 'inherit', padding: '12px 16px', minHeight: 44 }}
+        >clear scores</button>
+      </div>
+    </div>
+  ) : (
+    <div style={{
+      width: '100%', maxWidth: isMobile ? 340 : 420, borderRadius: 20,
+      border: `2.5px dashed ${light ? P.border : 'rgba(255,255,255,0.2)'}`,
+      padding: isMobile ? '24px 20px' : '28px 32px',
+      textAlign: 'center', color: light ? P.sub : 'rgba(255,255,255,0.7)',
+      fontSize: '1rem', lineHeight: 1.6,
+    }}>two colors mix into one. can you spot the missing ingredient? test your color intuition.</div>
+  );
+
+  const renderMenu = () => {
+    return (
+      <div style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        justifyContent: 'center',
+        padding: isMobile ? '40px 24px' : '48px 40px',
+        flex: 1,
+        gap: 0, position: 'relative',
+      }}>
+        {/* Logo */}
+        <div style={{ marginBottom: isMobile ? 12 : 16 }}>
+          <MenuLogo scale={isMobile ? 0.85 : 1} />
+        </div>
+        {/* Title */}
+        <h1 style={{
+          fontSize: isMobile ? '2.375rem' : '3rem', fontWeight: 800, color: P.title,
+          margin: 0, letterSpacing: '-0.03em', lineHeight: 1,
+        }}>m{'\u00E9'}lange</h1>
+        {/* Description */}
+        <p style={{
+          fontSize: '1rem', color: P.subtitle, fontWeight: 500,
+          textAlign: 'center', lineHeight: 1.7,
+          margin: isMobile ? '0 0 0' : '4px 0 0',
+          maxWidth: isMobile ? 260 : 320,
+        }}>guess the missing color.</p>
+        {/* Name input + Play CTA */}
+        {(() => {
+          const err = nameError(nameInput.trim());
+          const canPlay = nameInput.trim() && !err;
+          return (
+            <div style={{ marginTop: isMobile ? 28 : 40, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, width: '100%', maxWidth: 280 }}>
+              <input
+                className="op-input"
+                value={nameInput}
+                onChange={(e) => setNameInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') startGame(); }}
+                placeholder="enter a username"
+                maxLength={20}
+                style={{
+                  width: '100%', padding: '12px 16px', borderRadius: 14,
+                  border: `2px solid ${err ? P.no : P.border}`, background: 'rgba(255,255,255,0.9)',
+                  fontSize: '1rem', fontWeight: 600, color: P.text,
+                  textAlign: 'center', outline: 'none',
+                  fontFamily: 'inherit',
+                  transition: 'border-color 0.2s',
+                }}
+              />
+              {err && (
+                <div style={{ fontSize: '0.8125rem', color: P.no, fontWeight: 600, animation: 'op-up 0.2s both' }}>
+                  {err}
+                </div>
+              )}
+              <div style={{ animation: canPlay ? 'op-glow 2.5s ease-in-out infinite' : 'none', opacity: canPlay ? 1 : 0.4, transition: 'opacity 0.2s', marginTop: 4 }}>
+                <Btn onClick={startGame} big disabled={!canPlay}>play</Btn>
+              </div>
+            </div>
+          );
+        })()}
+      </div>
+    );
+  };
+
+  const GameProgressBar = () => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', maxWidth: isMobile ? 340 : 460, justifyContent: 'center' }}>
+      <div style={{ display: 'flex', gap: isMobile ? 4 : 5, alignItems: 'center', flex: 1 }}>
+        {Array.from({ length: GAME_ROUNDS }, (_, i) => {
+          const done = i < history.length;
+          const current = i === round;
+          const correct = done ? history[i] : null;
+          return (
+            <div key={i} style={{
+              height: isMobile ? 6 : 8, borderRadius: 4,
+              flex: current ? 2 : 1,
+              background: done ? (correct ? P.ok : P.no) : current ? `linear-gradient(90deg, ${P.cta}, ${P.ctaLight})` : P.border,
+              transition: 'all 0.3s ease',
+            }} />
+          );
+        })}
+      </div>
+      <span style={{ fontSize: isMobile ? '0.9375rem' : '1.125rem', fontWeight: 800, color: P.text, minWidth: 30, textAlign: 'right' }}>{score}/{GAME_ROUNDS}</span>
+      {streak > 1 && <Pill color={P.cta} small>x{streak}</Pill>}
+    </div>
+  );
+
+  const renderPlay = () => {
+    if (!puzzle) return null;
+    const eqSize = isMobile ? 60 : 72;
+    const optSize = isMobile ? 76 : 88;
+
+    if (isMobile) {
+      // Mobile: compact group, centered slightly above middle
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 20px 20px', position: 'relative', flex: 1 }}>
+          <div style={{ flex: 1 }} />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 44, width: '100%' }}>
+            <Pill color={P.text} style={{ animation: 'op-pop 0.3s both' }}>which color completes the mix?</Pill>
+            <div key={`prompt-${round}`} style={{ animation: 'op-pop 0.3s both' }}>
+              <MixEquation colorA={puzzle.colorA} colorC={puzzle.colorC} size={eqSize} showAnswer={false} />
+            </div>
+            <div style={{
+              display: 'grid', gridTemplateColumns: '1fr 1fr',
+              gap: 14, background: 'rgba(255,255,255,0.95)', borderRadius: 28,
+              border: `2px solid ${P.border}`, padding: 18,
+              backdropFilter: 'blur(6px)', animation: 'op-pop 0.35s 0.1s both',
+            }}>
+              {puzzle.options.map((c, i) => (
+                <div key={`${round}-${i}`} onClick={() => handlePick(i)}
+                  tabIndex={0} role="button" aria-label={`Color option ${i + 1}`}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handlePick(i); } }}
+                  onMouseEnter={() => { setHoveredSwatch(i); sfx.hover(); }}
+                  onMouseLeave={() => setHoveredSwatch(-1)}
+                  style={{
+                    width: optSize, height: optSize, borderRadius: 22, cursor: 'pointer',
+                    background: hs(c.h, c.s, c.l), border: `2px solid ${P.border}`,
+                    transform: hoveredSwatch === i ? 'scale(1.1) rotate(-3deg)' : 'scale(1)',
+                    transition: 'transform 0.25s cubic-bezier(0.34,1.56,0.64,1)',
+                    animation: `op-pop 0.3s ${i * 0.06 + 0.15}s both`,
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+          <div style={{ flex: 1.6 }} />
+        </div>
+      );
+    }
+
+    // Desktop: original layout with space-evenly
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '36px 40px', gap: 26, position: 'relative', flex: 1, justifyContent: 'space-evenly' }}>
+        <div key={`prompt-${round}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 26, animation: 'op-pop 0.3s both' }}>
+          <Pill color={P.text}>which color completes the mix?</Pill>
+          <MixEquation colorA={puzzle.colorA} colorC={puzzle.colorC} size={eqSize} showAnswer={false} />
+        </div>
+        <div style={{
+          display: 'grid', gridTemplateColumns: '1fr 1fr',
+          gap: 18, background: 'rgba(255,255,255,0.95)', borderRadius: 32,
+          border: `2.5px solid ${P.border}`, padding: 28,
+          backdropFilter: 'blur(6px)', animation: 'op-pop 0.35s 0.1s both',
+        }}>
+          {puzzle.options.map((c, i) => (
+            <div key={`${round}-${i}`} onClick={() => handlePick(i)}
+              tabIndex={0} role="button" aria-label={`Color option ${i + 1}`}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handlePick(i); } }}
+              onMouseEnter={() => { setHoveredSwatch(i); sfx.hover(); }}
+              onMouseLeave={() => setHoveredSwatch(-1)}
+              style={{
+                width: optSize, height: optSize, borderRadius: 24, cursor: 'pointer',
+                background: hs(c.h, c.s, c.l), border: `3px solid ${P.border}`,
+                transform: hoveredSwatch === i ? 'scale(1.1) rotate(-3deg)' : 'scale(1)',
+                transition: 'transform 0.25s cubic-bezier(0.34,1.56,0.64,1)',
+                animation: `op-pop 0.3s ${i * 0.06 + 0.15}s both`,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderReveal = () => {
+    if (!puzzle) return null;
+    const correct = picked === puzzle.correctIdx;
+    const eqSize = isMobile ? 52 : 64;
+    const optSize = isMobile ? 76 : 88;
+    const btnLabel = round >= GAME_ROUNDS - 1 ? 'see results' : 'next';
+
+    const revealContent = (
+      <>
+        <div style={{
+          fontSize: isMobile ? '1.375rem' : '1.625rem', fontWeight: 800,
+          color: correct ? P.ok : P.no,
+          animation: correct ? 'op-bounce 0.3s both' : 'op-shake 0.3s both',
+        }}>{phraseRef.current}</div>
+        <MixEquation colorA={puzzle.colorA} colorB={puzzle.correct} colorC={puzzle.colorC} size={eqSize} showAnswer={true} />
+        <div style={{
+          display: 'grid', gridTemplateColumns: '1fr 1fr',
+          gap: isMobile ? 14 : 18,
+          background: 'rgba(255,255,255,0.95)', borderRadius: isMobile ? 28 : 32,
+          border: `${isMobile ? 2 : 2.5}px solid ${P.border}`, padding: isMobile ? 18 : 28,
+          backdropFilter: 'blur(6px)',
+        }}>
+          {puzzle.options.map((c, i) => {
+            const isCorrect = i === puzzle.correctIdx;
+            const isPicked = i === picked;
+            const isWrongPick = isPicked && !correct;
+            let borderColor = P.border;
+            let anim = '';
+            if (isCorrect) { borderColor = P.ok; anim = 'op-ring 1.2s infinite'; }
+            if (isWrongPick) { borderColor = P.no; anim = 'op-shake 0.3s both'; }
+            return (
+              <div key={`${round}-r-${i}`} style={{
+                width: optSize, height: optSize, borderRadius: isMobile ? 22 : 24,
+                background: hs(c.h, c.s, c.l),
+                border: `${isCorrect || isWrongPick ? 4 : isMobile ? 2 : 3}px solid ${borderColor}`,
+                opacity: isWrongPick ? 0.35 : (!isCorrect && !isPicked) ? 0.25 : 1,
+                transition: 'all 0.3s ease', animation: anim,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                {isWrongPick && <span style={{
+                  fontSize: isMobile ? '1.75rem' : '2.25rem', fontWeight: 800, color: P.no,
+                  lineHeight: 1, filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.15))',
+                }}>{'\u2715'}</span>}
+              </div>
+            );
+          })}
+        </div>
+        <div style={{ animation: 'op-up 0.3s 0.15s both' }}>
+          <Btn onClick={nextRound}>{btnLabel}</Btn>
+        </div>
+      </>
+    );
+
+    if (isMobile) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 20px 20px', position: 'relative', flex: 1 }}>
+          <div style={{ flex: 1 }} />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 28, width: '100%' }}>
+            {revealContent}
+          </div>
+          <div style={{ flex: 1.6 }} />
+        </div>
+      );
+    }
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '36px 40px', gap: 26, position: 'relative', flex: 1, justifyContent: 'space-evenly' }}>
+        {revealContent}
+      </div>
+    );
+  };
+
+  // SVG illustrations for done screen tiers
+  const DoneIllustration = ({ tier, size = 64 }) => {
+    if (tier === 'genius') return (
+      <svg aria-hidden="true" width={size} height={size} viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="32" r="26" fill={P.lavender} opacity="0.18" />
+        <circle cx="32" cy="32" r="16" fill={P.lilac} opacity="0.3" />
+        <path d="M32 10l4 12h12l-10 7 4 12-10-7-10 7 4-12-10-7h12z" fill={P.lavender} stroke={P.lilac} strokeWidth="1.5" />
+      </svg>
+    );
+    if (tier === 'sharp') return (
+      <svg aria-hidden="true" width={size} height={size} viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="32" r="26" fill={P.sky} opacity="0.15" />
+        <circle cx="32" cy="34" r="14" stroke={P.sky} strokeWidth="2.5" fill="none" />
+        <circle cx="32" cy="34" r="5" fill={P.sky} />
+        <line x1="32" y1="12" x2="32" y2="18" stroke={P.lilac} strokeWidth="2" strokeLinecap="round" />
+        <line x1="44" y1="22" x2="40" y2="26" stroke={P.lilac} strokeWidth="2" strokeLinecap="round" />
+        <line x1="20" y1="22" x2="24" y2="26" stroke={P.lilac} strokeWidth="2" strokeLinecap="round" />
+      </svg>
+    );
+    if (tier === 'getting') return (
+      <svg aria-hidden="true" width={size} height={size} viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="38" r="22" fill={P.butter} opacity="0.15" />
+        <ellipse cx="32" cy="42" rx="14" ry="8" fill={P.peach} opacity="0.3" />
+        <path d="M24 36c0-8 4-16 8-20 4 4 8 12 8 20" stroke={P.butter} strokeWidth="2.5" fill={P.butter} opacity="0.5" strokeLinecap="round" />
+        <path d="M28 38c0-5 2-10 4-13 2 3 4 8 4 13" fill={P.peach} />
+        <path d="M30 42v6M34 42v6" stroke={P.coral} strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    );
+    // bloom
+    return (
+      <svg aria-hidden="true" width={size} height={size} viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="40" r="20" fill={P.mint} opacity="0.12" />
+        <path d="M32 48v-18" stroke={P.sage} strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M26 34c-4-6-2-14 6-14 8 0 10 8 6 14" fill={P.mint} opacity="0.6" />
+        <path d="M28 36c-2-4-1-9 4-9s6 5 4 9" fill={P.sage} opacity="0.5" />
+        <ellipse cx="32" cy="50" rx="6" ry="2.5" fill={P.sage} opacity="0.25" />
+      </svg>
+    );
+  };
+
+  // ─── SHARE CARD GENERATOR ───
+  const shareCanvasRef = useRef(null);
+  const [shareReady, setShareReady] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const getShareName = () => {
+    const n = (savedName || nameInput || getSavedName()).trim();
+    return n || '';
+  };
+
+  const getShareText = () => {
+    const n = getShareName();
+    const who = n ? n : 'i';
+    return `${who} scored ${score}/${GAME_ROUNDS} on m\u00E9lange \u2014 think you can mix better? \uD83C\uDFA8\nhttps://amynguyen.studio/game`;
+  };
+
+  const generateShareCard = () => {
+    const canvas = document.createElement('canvas');
+    const w = 600, h = 340;
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+
+    // Background gradient
+    const bg = ctx.createLinearGradient(0, 0, w, h);
+    bg.addColorStop(0, '#F5F3F8');
+    bg.addColorStop(1, '#E8E4EE');
+    ctx.fillStyle = bg;
+    ctx.roundRect(0, 0, w, h, 0);
+    ctx.fill();
+
+    // Inner card
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.beginPath();
+    ctx.roundRect(30, 30, w - 60, h - 60, 24);
+    ctx.fill();
+
+    // Title
+    ctx.fillStyle = '#3E2F2F';
+    ctx.font = '800 28px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('m\u00E9lange', w / 2, 85);
+
+    // Score
+    const pct = score / GAME_ROUNDS;
+    let gradA, gradB;
+    if (pct >= 0.88) { gradA = '#2EA896'; gradB = '#5CC4B4'; }
+    else if (pct >= 0.63) { gradA = '#7CB8E0'; gradB = '#5CC4B4'; }
+    else if (pct >= 0.38) { gradA = '#E8C878'; gradB = '#F2C4A0'; }
+    else { gradA = '#8DD8C0'; gradB = '#7CB8E0'; }
+
+    // Score pill
+    const pillW = 200, pillH = 80, pillX = w / 2 - pillW / 2, pillY = 105;
+    const sg = ctx.createLinearGradient(pillX, pillY, pillX + pillW, pillY + pillH);
+    sg.addColorStop(0, gradA); sg.addColorStop(1, gradB);
+    ctx.fillStyle = sg;
+    ctx.beginPath();
+    ctx.roundRect(pillX, pillY, pillW, pillH, 20);
+    ctx.fill();
+
+    ctx.fillStyle = '#fff';
+    ctx.font = '800 42px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.fillText(`${score}/${GAME_ROUNDS}`, w / 2, 158);
+
+    // Challenge tagline
+    ctx.fillStyle = '#7E7494';
+    ctx.font = '500 16px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.fillText('think you can mix better?', w / 2, 230);
+
+    // URL
+    ctx.fillStyle = '#B5ADCA';
+    ctx.font = '600 12px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.fillText('amynguyen.studio/game', w / 2, 280);
+
+    shareCanvasRef.current = canvas;
+    setShareReady(true);
+  };
+
+  const handleShare = async () => {
+    const canvas = shareCanvasRef.current;
+    if (!canvas) return;
+
+    const shareText = getShareText();
+
+    // Try native share with image
+    try {
+      const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+      const file = new File([blob], 'melange-score.png', { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ text: shareText, files: [file] });
+        return;
+      }
+    } catch (e) {}
+
+    // Fallback: copy text to clipboard
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (e) {}
+  };
+
+  const handleDownloadCard = () => {
+    const canvas = shareCanvasRef.current;
+    if (!canvas) return;
+    const link = document.createElement('a');
+    link.download = 'melange-score.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  };
+
+  // Generate share card when entering done phase
+  useEffect(() => {
+    if (phase === 'done') {
+      setShareReady(false);
+      setCopied(false);
+      setTimeout(() => generateShareCard(), 100);
+    }
+  }, [phase]);
+
+  const renderDone = () => {
+    const pct = score / GAME_ROUNDS;
+    let tier, title, grad;
+    if (pct >= 0.88) { tier = 'genius'; title = 'color genius!'; grad = `linear-gradient(135deg, ${P.cta}, ${P.ctaLight})`; }
+    else if (pct >= 0.63) { tier = 'sharp'; title = 'sharp eye!'; grad = `linear-gradient(135deg, ${P.sky}, ${P.ctaLight})`; }
+    else if (pct >= 0.38) { tier = 'getting'; title = 'getting there!'; grad = `linear-gradient(135deg, ${P.butter}, ${P.peach})`; }
+    else { tier = 'bloom'; title = 'keep blooming!'; grad = `linear-gradient(135deg, ${P.mint}, ${P.sky})`; }
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: isMobile ? '40px 20px' : '48px 40px', gap: isMobile ? 16 : 22, position: 'relative', flex: 1, justifyContent: 'safe center' }}>
+        <div style={{ animation: 'op-pop 0.3s both' }}>
+          <DoneIllustration tier={tier} size={isMobile ? 64 : 80} />
+        </div>
+        <h2 style={{ fontSize: isMobile ? '1.625rem' : '2.125rem', fontWeight: 800, color: P.text, margin: 0, letterSpacing: '-0.03em', animation: 'op-up 0.3s 0.1s both' }}>{title}</h2>
+        <div style={{
+          background: grad, borderRadius: isMobile ? 22 : 26, padding: isMobile ? '20px 40px' : '28px 56px',
+          color: '#fff', textAlign: 'center', animation: 'op-up 0.3s 0.15s both',
+        }}>
+          <div style={{ fontSize: isMobile ? '2.625rem' : '3.5rem', fontWeight: 800 }}>{score}/{GAME_ROUNDS}</div>
+          <div style={{ fontSize: '1rem', opacity: 0.85, fontWeight: 600 }}>correct</div>
+        </div>
+        {/* Scrollable leaderboard */}
+        {board.length > 0 && (
+          <div style={{
+            animation: 'op-up 0.3s 0.2s both', width: '100%', maxWidth: isMobile ? 340 : 420,
+            background: 'rgba(255,255,255,0.92)', borderRadius: 18,
+            border: `2px solid ${P.border}`, overflow: 'hidden',
+          }}>
+            <div ref={leaderboardRef} style={{
+              maxHeight: isMobile ? 180 : 220, overflowY: 'auto',
+              padding: '4px 0',
+            }}>
+              {board.map((entry, i) => {
+                const isMe = entry.name === savedName && entry.score === score;
+                const avatarColor = ACCENTS[nameHash(entry.name) % ACCENTS.length];
+                return (
+                  <div key={entry.key || i} data-me={isMe || undefined} style={{
+                    display: 'flex', alignItems: 'center', gap: isMobile ? 8 : 12,
+                    padding: isMobile ? '8px 14px' : '9px 18px',
+                    background: isMe ? `${P.cta}12` : 'transparent',
+                    borderLeft: isMe ? `3px solid ${P.cta}` : '3px solid transparent',
+                    transition: 'background 0.2s',
+                  }}>
+                    <span style={{
+                      fontSize: '0.75rem', fontWeight: 800, color: i < 3 ? P.cta : P.dim,
+                      minWidth: 28, textAlign: 'right',
+                    }}>#{i + 1}</span>
+                    <div style={{
+                      width: 26, height: 26, borderRadius: '50%', background: avatarColor,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '0.6875rem', fontWeight: 800, color: '#fff', flexShrink: 0,
+                    }}>{entry.name[0].toUpperCase()}</div>
+                    <div style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.875rem', fontWeight: isMe ? 700 : 500, color: isMe ? P.text : P.sub }}>
+                      {entry.name}
+                    </div>
+                    <span style={{ fontSize: '0.875rem', fontWeight: 800, color: isMe ? P.cta : P.text }}>{entry.score}/{entry.rounds}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+        {/* Actions: share + play again on same line */}
+        <div style={{ display: 'flex', gap: 12, animation: 'op-up 0.3s 0.3s both' }}>
+          <Btn onClick={handleShare}>
+            {copied ? 'copied!' : 'share'}
+          </Btn>
+          <Btn onClick={() => { sfx.click(); setPhase('menu'); }}>play again</Btn>
+        </div>
+      </div>
+    );
+  };
+
+  // ─── MAIN RENDER ───
+  const content = phase === 'menu' ? renderMenu()
+    : phase === 'play' ? renderPlay()
+    : phase === 'reveal' ? renderReveal()
+    : renderDone();
+
+  return (
+    <main
+      ref={wrapRef}
+      style={{
+        position: 'relative',
+        width: '100%',
+        maxWidth: isMobile ? '100%' : 900,
+        minHeight: isMobile ? '100dvh' : '85vh',
+        display: 'flex', flexDirection: 'column',
+        justifyContent: isMobile ? 'center' : undefined,
+        background: `linear-gradient(180deg, ${P.bg}, ${P.bg2})`,
+        borderRadius: isMobile ? 0 : 32,
+        overflow: 'hidden',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        color: P.text,
+        boxSizing: 'border-box',
+        boxShadow: isMobile ? 'none' : '0 8px 40px rgba(74,54,96,0.08)',
+      }}
+    >
+      <style>{`
+        @keyframes op-pop { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes op-up { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes op-shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(5px); } }
+        @keyframes op-bounce { 0% { transform: scale(1); } 25% { transform: scale(1.18); } 50% { transform: scale(0.94); } 75% { transform: scale(1.04); } 100% { transform: scale(1); } }
+        @keyframes op-wiggle { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(-5deg); } 75% { transform: rotate(5deg); } }
+        @keyframes op-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        @keyframes op-pulse { 0%,100% { opacity: 0.3; } 50% { opacity: 0.65; } }
+        @keyframes op-ring { 0%,100% { box-shadow: 0 0 0 0 rgba(125,212,160,0.5); } 50% { box-shadow: 0 0 0 10px rgba(125,212,160,0); } }
+        @keyframes op-twinkle { 0%,100% { opacity: 0.12; transform: scale(0.8); } 50% { opacity: 0.4; transform: scale(1.1); } }
+        @keyframes op-heartbeat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+        @keyframes op-glow { 0%,100% { transform: translateY(0); filter: drop-shadow(0 4px 12px rgba(167,139,219,0.3)); } 50% { transform: translateY(-4px); filter: drop-shadow(0 8px 24px rgba(167,139,219,0.55)); } }
+        .op-input:focus { border-color: ${P.cta} !important; outline: none; }
+        .op-input::placeholder { color: ${P.dim}; }
+      `}</style>
+      {(phase === 'play' || phase === 'reveal') && (
+        <div style={{ padding: isMobile ? '20px 20px 0' : '36px 40px 0', display: 'flex', justifyContent: 'center' }}>
+          <GameProgressBar />
+        </div>
+      )}
+      {content}
+    </main>
+  );
+}
+
+			const root = ReactDOM.createRoot(document.getElementById("root"));
+			root.render(<UserDiv />);
+		</script>
+	</body>
+</html>
