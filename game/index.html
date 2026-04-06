@@ -297,7 +297,7 @@
         entries.push({ key: child.key, ...child.val() });
       });
       // Sort: highest score first, then streak, then newest
-      entries.sort((a, b) => b.score - a.score || b.bestStreak - a.bestStreak || b.ts - a.ts);
+      entries.sort((a, b) => b.score - a.score || b.ts - a.ts);
       setBoard(entries);
       setBoardLoaded(true);
     });
@@ -384,7 +384,7 @@
       // Auto-save score to Firebase
       const n = savedName || nameInput.trim() || getSavedName();
       if (n) {
-        saveToFirebase({ name: n, score, bestStreak, rounds: ROUNDS, ts: Date.now() });
+        saveToFirebase({ name: n, score, rounds: ROUNDS, ts: Date.now() });
         setSaved(true);
       }
       setPhase('done');
@@ -593,7 +593,7 @@
             }}>{entry.name[0].toUpperCase()}</div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: 700, color: light ? P.text : '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{entry.name}</div>
-              <div style={{ fontSize: '0.6875rem', color: light ? P.dim : 'rgba(255,255,255,0.45)' }}>{fmtDate(entry.ts)}{entry.bestStreak > 1 ? ` \u00B7 ${entry.bestStreak}x streak` : ''}</div>
+              <div style={{ fontSize: '0.6875rem', color: light ? P.dim : 'rgba(255,255,255,0.45)' }}>{fmtDate(entry.ts)}</div>
             </div>
             <span style={{ fontWeight: 800, color: light ? P.cta : '#fff', fontSize: '1rem' }}>{entry.score}/{entry.rounds}</span>
           </div>
