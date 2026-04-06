@@ -608,6 +608,7 @@
    ───────────────────────────────────────────── */
 
 			function EarTab({ tab, index, isActive, onClick }) {
+				const isMob = window.innerWidth <= 768;
 				const w = 52;
 				const h = 20;
 				return (
@@ -692,7 +693,7 @@
 								justifyContent: "center",
 								height: "100%",
 								paddingBottom: 2,
-								fontSize: isActive ? 8 : 7,
+								fontSize: isMob ? 6.5 : (isActive ? 8 : 7),
 								letterSpacing: "0.03em",
 								color: isActive ? COLORS.ink : COLORS.faded,
 								fontWeight: isActive ? 700 : 500,
@@ -713,8 +714,8 @@
 						style={{
 							position: "absolute",
 							top: "-2.5%",
-							left: "24%",
-							right: "24%",
+							left: window.innerWidth <= 768 ? "16%" : "24%",
+							right: window.innerWidth <= 768 ? "16%" : "24%",
 							display: "flex",
 							justifyContent: "flex-end",
 							gap: -1,
