@@ -296,8 +296,8 @@
       snap.forEach((child) => {
         entries.push({ key: child.key, ...child.val() });
       });
-      // Sort: highest score first, then streak, then newest
-      entries.sort((a, b) => b.score - a.score || b.ts - a.ts);
+      // Sort: highest score first, then alphabetical by name
+      entries.sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
       setBoard(entries);
       setBoardLoaded(true);
     });
@@ -400,9 +400,9 @@
   useEffect(() => {
     if (phase === 'done' && board.length > 0) {
       setTotalPlays(board.length);
-      // Find this player's latest entry rank (board is sorted best-first)
-      const myRank = board.findIndex(e => e.name === (savedName || getSavedName()) && e.score === score);
-      setRank(myRank >= 0 ? myRank + 1 : null);
+      // Tied rank: first index with this score + 1
+      const tiedRank = board.findIndex(e => e.score === score);
+      setRank(tiedRank >= 0 ? tiedRank + 1 : null);
     }
   }, [phase, board]);
 
@@ -851,14 +851,14 @@
   // SVG illustrations for done screen tiers
   const DoneIllustration = ({ tier, size = 64 }) => {
     if (tier === 'genius') return (
-      <svg aria-hidden="true" width={size} height={size} viewBox="0 0 64 64" fill="none">
+      <svg aria-hidden="true" width={size} height={size} viewBox="0 4 64 64" fill="none">
         <circle cx="32" cy="32" r="26" fill={P.lavender} opacity="0.18" />
         <circle cx="32" cy="32" r="16" fill={P.lilac} opacity="0.3" />
         <path d="M32 10l4 12h12l-10 7 4 12-10-7-10 7 4-12-10-7h12z" fill={P.lavender} stroke={P.lilac} strokeWidth="1.5" />
       </svg>
     );
     if (tier === 'sharp') return (
-      <svg aria-hidden="true" width={size} height={size} viewBox="0 0 64 64" fill="none">
+      <svg aria-hidden="true" width={size} height={size} viewBox="0 4 64 64" fill="none">
         <circle cx="32" cy="32" r="26" fill={P.sky} opacity="0.15" />
         <circle cx="32" cy="34" r="14" stroke={P.sky} strokeWidth="2.5" fill="none" />
         <circle cx="32" cy="34" r="5" fill={P.sky} />
@@ -868,7 +868,7 @@
       </svg>
     );
     if (tier === 'getting') return (
-      <svg aria-hidden="true" width={size} height={size} viewBox="0 0 64 64" fill="none">
+      <svg aria-hidden="true" width={size} height={size} viewBox="0 14 64 64" fill="none">
         <circle cx="32" cy="38" r="22" fill={P.butter} opacity="0.15" />
         <ellipse cx="32" cy="42" rx="14" ry="8" fill={P.peach} opacity="0.3" />
         <path d="M24 36c0-8 4-16 8-20 4 4 8 12 8 20" stroke={P.butter} strokeWidth="2.5" fill={P.butter} opacity="0.5" strokeLinecap="round" />
@@ -878,7 +878,7 @@
     );
     // bloom
     return (
-      <svg aria-hidden="true" width={size} height={size} viewBox="0 0 64 64" fill="none">
+      <svg aria-hidden="true" width={size} height={size} viewBox="0 18 64 64" fill="none">
         <circle cx="32" cy="40" r="20" fill={P.mint} opacity="0.12" />
         <path d="M32 48v-18" stroke={P.sage} strokeWidth="2.5" strokeLinecap="round" />
         <path d="M26 34c-4-6-2-14 6-14 8 0 10 8 6 14" fill={P.mint} opacity="0.6" />
@@ -1016,10 +1016,9 @@
     else { tier = 'bloom'; title = 'keep blooming!'; grad = `linear-gradient(135deg, ${P.mint}, ${P.sky})`; }
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: isMobile ? '40px 20px' : '48px 40px', gap: isMobile ? 16 : 22, position: 'relative', flex: 1, justifyContent: 'safe center' }}>
-        <div style={{ animation: 'op-pop 0.3s both' }}>
-          <DoneIllustration tier={tier} size={isMobile ? 64 : 80} />
-        </div>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: isMobile ? '20px 20px' : '40px 40px', overflow: 'auto' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: isMobile ? 16 : 22 }}>
+        <DoneIllustration tier={tier} size={isMobile ? 64 : 80} />
         <h2 style={{ fontSize: isMobile ? '1.625rem' : '2.125rem', fontWeight: 800, color: P.text, margin: 0, letterSpacing: '-0.03em', animation: 'op-up 0.3s 0.1s both' }}>{title}</h2>
         <div style={{
           background: grad, borderRadius: isMobile ? 22 : 26, padding: isMobile ? '20px 40px' : '28px 56px',
@@ -1042,6 +1041,8 @@
               {board.map((entry, i) => {
                 const isMe = entry.name === savedName && entry.score === score;
                 const avatarColor = ACCENTS[nameHash(entry.name) % ACCENTS.length];
+                // Tied rank: same rank if same score as previous entry
+                const rank = i === 0 || board[i - 1].score !== entry.score ? i + 1 : board.findIndex(e => e.score === entry.score) + 1;
                 return (
                   <div key={entry.key || i} data-me={isMe || undefined} style={{
                     display: 'flex', alignItems: 'center', gap: isMobile ? 8 : 12,
@@ -1051,9 +1052,9 @@
                     transition: 'background 0.2s',
                   }}>
                     <span style={{
-                      fontSize: '0.75rem', fontWeight: 800, color: i < 3 ? P.cta : P.dim,
+                      fontSize: '0.75rem', fontWeight: 800, color: rank <= 3 ? P.cta : P.dim,
                       minWidth: 28, textAlign: 'right',
-                    }}>#{i + 1}</span>
+                    }}>#{rank}</span>
                     <div style={{
                       width: 26, height: 26, borderRadius: '50%', background: avatarColor,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -1075,6 +1076,7 @@
             {copied ? 'copied!' : 'share'}
           </Btn>
           <Btn onClick={() => { sfx.click(); setPhase('menu'); }}>play again</Btn>
+        </div>
         </div>
       </div>
     );
