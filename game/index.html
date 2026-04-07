@@ -429,6 +429,8 @@
   }, []);
 
   const getBoard = () => board;
+  // Leaderboard only shows hard mode entries (or legacy entries without mode field)
+  const hardBoard = board.filter(e => !e.mode || e.mode === 'hard');
 
   const saveToFirebase = (entry) => {
     db.ref('scores').push(entry);
@@ -449,7 +451,7 @@
     return board.some(e => e.name.toLowerCase() === n.toLowerCase());
   };
 
-  const BLOCKED = ['fuck','shit','ass','damn','bitch','dick','cock','pussy','cunt','fag','nigger','nigga','retard','slut','whore','penis','vagina','bastard','wank','twat','bollock','arse','piss','tit','boob','nazi','hitler','rape','molest','pedo','kill','die','stfu','gtfo','wtf','lmao','porn','sex','69','420'];
+  const BLOCKED = ['fuck','fuk','fck','fuc','shit','sht','ass','arse','damn','bitch','btch','dick','dik','cock','cok','pussy','puss','cunt','cnt','fag','fgt','nigger','nigga','niga','retard','tard','slut','whore','hoe','penis','peen','vagina','bastard','wank','twat','bollock','piss','pee','poo','poop','tit','boob','nazi','hitler','rape','molest','pedo','paedo','perv','kill','die','stfu','gtfo','wtf','lmao','lmfao','porn','sex','sexy','69','420','kkk','homo','anal','dildo','fetish','orgasm','erect','scrotum','testicl','nudes','thot','simp','incel','cum','jizz','semen','cooch','schlong','dong','ballsack','butthole','blowjob','handjob'];
   const isProfane = (n) => {
     if (!n) return false;
     const lower = n.toLowerCase().replace(/[^a-z]/g, '');
@@ -466,9 +468,7 @@
 
   const startGame = (mode) => {
     const n = nameInput.trim();
-    // Easy mode: skip name-taken check since no leaderboard
-    const err = mode === 'easy' ? (n.length < 2 ? 'min 2 characters' : isProfane(n) ? 'keep it clean!' : null) : nameError(n);
-    if (!n || err) return;
+    if (!n || nameError(n)) return;
     setSavedName(n);
     setGameMode(mode);
     usedEasyRef.current = [];
@@ -509,13 +509,11 @@
     const nr = round + 1;
     if (nr >= GAME_ROUNDS) {
       if (score / GAME_ROUNDS >= 0.63) sfx.doneGood(); else sfx.doneBad();
-      // Auto-save score to Firebase (hard mode only)
-      if (gameMode === 'hard') {
-        const n = savedName || nameInput.trim() || getSavedName();
-        if (n) {
-          saveToFirebase({ name: n, score, rounds: ROUNDS, ts: Date.now() });
-          setSaved(true);
-        }
+      // Auto-save score to Firebase (both modes — for stats tracking)
+      const n = savedName || nameInput.trim() || getSavedName();
+      if (n) {
+        saveToFirebase({ name: n, score, rounds: ROUNDS, mode: gameMode, ts: Date.now() });
+        setSaved(true);
       }
       setPhase('done');
       return;
@@ -526,12 +524,12 @@
     setPhase('play');
   };
 
-  // Compute rank when done phase + board updates
+  // Compute rank when done phase + board updates (hard mode only)
   useEffect(() => {
-    if (phase === 'done' && board.length > 0) {
-      setTotalPlays(board.length);
+    if (phase === 'done' && hardBoard.length > 0 && gameMode === 'hard') {
+      setTotalPlays(hardBoard.length);
       // Tied rank: first index with this score + 1
-      const tiedRank = board.findIndex(e => e.score === score);
+      const tiedRank = hardBoard.findIndex(e => e.score === score);
       setRank(tiedRank >= 0 ? tiedRank + 1 : null);
     }
   }, [phase, board]);
@@ -1166,7 +1164,7 @@
           <div style={{ fontSize: '1rem', opacity: 0.85, fontWeight: 600 }}>correct</div>
         </div>
         {/* Scrollable leaderboard (hard mode only) */}
-        {gameMode === 'hard' && board.length > 0 && (
+        {gameMode === 'hard' && hardBoard.length > 0 && (
           <div style={{
             animation: 'op-up 0.3s 0.2s both', width: '100%', maxWidth: isMobile ? 340 : 420,
             background: 'rgba(255,255,255,0.92)', borderRadius: 18,
@@ -1176,11 +1174,11 @@
               maxHeight: isMobile ? 180 : 220, overflowY: 'auto',
               padding: '4px 0',
             }}>
-              {board.map((entry, i) => {
+              {hardBoard.map((entry, i) => {
                 const isMe = entry.name === savedName && entry.score === score;
                 const avatarColor = ACCENTS[nameHash(entry.name) % ACCENTS.length];
                 // Tied rank: same rank if same score as previous entry
-                const rank = i === 0 || board[i - 1].score !== entry.score ? i + 1 : board.findIndex(e => e.score === entry.score) + 1;
+                const rank = i === 0 || hardBoard[i - 1].score !== entry.score ? i + 1 : hardBoard.findIndex(e => e.score === entry.score) + 1;
                 return (
                   <div key={entry.key || i} data-me={isMe || undefined} style={{
                     display: 'flex', alignItems: 'center', gap: isMobile ? 8 : 12,
