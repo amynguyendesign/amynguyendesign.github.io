@@ -95,6 +95,7 @@
   const [totalPlays, setTotalPlays] = useState(0);
   const [hoveredSwatch, setHoveredSwatch] = useState(-1);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+  const [gameMode, setGameMode] = useState(null); // 'easy' or 'hard'
 
   const audioRef = useRef(null);
   const wrapRef = useRef(null);
@@ -227,6 +228,129 @@
     l: Math.round((a.l + b.l) / 2),
   });
 
+  // ─── EASY MODE: pre-defined puzzles with exact colors ───
+  // Each entry: a (shown color), b (correct answer), result (shown mix), distractors (3 wrong answers)
+  // All colors are exact HSL — no random variation — so they look like what people expect
+  const EASY_BANK = [
+    // Red + White = Pink
+    { a: { h: 0, s: 80, l: 50 },   b: { h: 0, s: 0, l: 95 },    r: { h: 0, s: 40, l: 72 },
+      d: [{ h: 120, s: 60, l: 45 }, { h: 220, s: 70, l: 50 }, { h: 50, s: 80, l: 55 }] },
+    // White + Black = Gray
+    { a: { h: 0, s: 0, l: 95 },    b: { h: 0, s: 0, l: 15 },     r: { h: 0, s: 0, l: 55 },
+      d: [{ h: 0, s: 70, l: 50 }, { h: 220, s: 60, l: 50 }, { h: 120, s: 50, l: 45 }] },
+    // Yellow + Blue = Green
+    { a: { h: 55, s: 90, l: 55 },  b: { h: 220, s: 70, l: 50 },  r: { h: 140, s: 50, l: 48 },
+      d: [{ h: 0, s: 75, l: 50 }, { h: 30, s: 80, l: 55 }, { h: 300, s: 55, l: 50 }] },
+    // Red + Yellow = Orange
+    { a: { h: 0, s: 80, l: 50 },   b: { h: 55, s: 90, l: 55 },   r: { h: 28, s: 85, l: 52 },
+      d: [{ h: 220, s: 70, l: 50 }, { h: 280, s: 55, l: 50 }, { h: 160, s: 50, l: 45 }] },
+    // Red + Blue = Purple
+    { a: { h: 0, s: 80, l: 50 },   b: { h: 220, s: 70, l: 50 },  r: { h: 280, s: 55, l: 45 },
+      d: [{ h: 55, s: 85, l: 55 }, { h: 120, s: 60, l: 45 }, { h: 30, s: 80, l: 55 }] },
+    // Blue + White = Light Blue
+    { a: { h: 220, s: 70, l: 50 }, b: { h: 0, s: 0, l: 95 },     r: { h: 220, s: 35, l: 72 },
+      d: [{ h: 0, s: 70, l: 50 }, { h: 55, s: 80, l: 55 }, { h: 280, s: 50, l: 55 }] },
+    // Yellow + White = Cream
+    { a: { h: 55, s: 90, l: 55 },  b: { h: 0, s: 0, l: 95 },     r: { h: 55, s: 45, l: 75 },
+      d: [{ h: 220, s: 60, l: 50 }, { h: 0, s: 70, l: 50 }, { h: 160, s: 50, l: 45 }] },
+    // Green + White = Mint
+    { a: { h: 140, s: 60, l: 40 }, b: { h: 0, s: 0, l: 95 },     r: { h: 140, s: 30, l: 68 },
+      d: [{ h: 0, s: 70, l: 50 }, { h: 280, s: 55, l: 50 }, { h: 30, s: 80, l: 55 }] },
+    // Orange + White = Peach
+    { a: { h: 25, s: 85, l: 55 },  b: { h: 0, s: 0, l: 95 },     r: { h: 25, s: 42, l: 75 },
+      d: [{ h: 220, s: 60, l: 50 }, { h: 120, s: 50, l: 40 }, { h: 300, s: 50, l: 55 }] },
+    // Purple + White = Lavender
+    { a: { h: 275, s: 55, l: 50 }, b: { h: 0, s: 0, l: 95 },     r: { h: 275, s: 28, l: 72 },
+      d: [{ h: 55, s: 80, l: 55 }, { h: 0, s: 70, l: 50 }, { h: 160, s: 50, l: 45 }] },
+    // Red + Black = Maroon
+    { a: { h: 0, s: 80, l: 50 },   b: { h: 0, s: 0, l: 15 },     r: { h: 0, s: 40, l: 32 },
+      d: [{ h: 120, s: 60, l: 45 }, { h: 55, s: 80, l: 55 }, { h: 220, s: 60, l: 50 }] },
+    // Blue + Black = Navy
+    { a: { h: 220, s: 70, l: 50 }, b: { h: 0, s: 0, l: 15 },     r: { h: 220, s: 35, l: 32 },
+      d: [{ h: 0, s: 70, l: 50 }, { h: 55, s: 80, l: 55 }, { h: 120, s: 50, l: 40 }] },
+    // Green + Black = Dark Green
+    { a: { h: 140, s: 60, l: 40 }, b: { h: 0, s: 0, l: 15 },     r: { h: 140, s: 30, l: 28 },
+      d: [{ h: 0, s: 70, l: 50 }, { h: 55, s: 80, l: 55 }, { h: 280, s: 55, l: 50 }] },
+    // Blue + Green = Teal
+    { a: { h: 220, s: 70, l: 50 }, b: { h: 140, s: 60, l: 40 },  r: { h: 180, s: 55, l: 42 },
+      d: [{ h: 0, s: 70, l: 50 }, { h: 55, s: 80, l: 55 }, { h: 300, s: 55, l: 50 }] },
+    // Green + Yellow = Lime
+    { a: { h: 140, s: 60, l: 40 }, b: { h: 55, s: 90, l: 55 },   r: { h: 90, s: 65, l: 48 },
+      d: [{ h: 0, s: 70, l: 50 }, { h: 220, s: 60, l: 50 }, { h: 300, s: 55, l: 50 }] },
+    // Pink + White = Light Pink
+    { a: { h: 335, s: 65, l: 60 }, b: { h: 0, s: 0, l: 95 },     r: { h: 335, s: 32, l: 78 },
+      d: [{ h: 120, s: 60, l: 45 }, { h: 55, s: 80, l: 55 }, { h: 220, s: 60, l: 50 }] },
+    // Purple + Red = Magenta
+    { a: { h: 275, s: 55, l: 50 }, b: { h: 0, s: 80, l: 50 },    r: { h: 318, s: 60, l: 48 },
+      d: [{ h: 55, s: 80, l: 55 }, { h: 120, s: 50, l: 40 }, { h: 200, s: 60, l: 50 }] },
+    // Orange + Red = Red-Orange
+    { a: { h: 25, s: 85, l: 55 },  b: { h: 0, s: 80, l: 50 },    r: { h: 12, s: 82, l: 52 },
+      d: [{ h: 220, s: 60, l: 50 }, { h: 120, s: 50, l: 40 }, { h: 280, s: 55, l: 50 }] },
+    // Cyan + White = Pale Cyan
+    { a: { h: 185, s: 60, l: 45 }, b: { h: 0, s: 0, l: 95 },     r: { h: 185, s: 30, l: 70 },
+      d: [{ h: 0, s: 70, l: 50 }, { h: 55, s: 80, l: 55 }, { h: 300, s: 50, l: 55 }] },
+    // Orange + Black = Brown
+    { a: { h: 25, s: 85, l: 55 },  b: { h: 0, s: 0, l: 15 },     r: { h: 25, s: 42, l: 35 },
+      d: [{ h: 220, s: 60, l: 50 }, { h: 120, s: 50, l: 40 }, { h: 280, s: 55, l: 50 }] },
+    // Pink + Purple = Orchid
+    { a: { h: 335, s: 65, l: 60 }, b: { h: 275, s: 55, l: 50 },  r: { h: 305, s: 50, l: 52 },
+      d: [{ h: 55, s: 80, l: 55 }, { h: 120, s: 50, l: 40 }, { h: 25, s: 80, l: 55 }] },
+    // Yellow + Orange = Gold
+    { a: { h: 55, s: 90, l: 55 },  b: { h: 25, s: 85, l: 55 },   r: { h: 40, s: 87, l: 55 },
+      d: [{ h: 220, s: 60, l: 50 }, { h: 120, s: 50, l: 40 }, { h: 300, s: 55, l: 50 }] },
+    // Cyan + Blue = Azure
+    { a: { h: 185, s: 60, l: 45 }, b: { h: 220, s: 70, l: 50 },  r: { h: 202, s: 60, l: 46 },
+      d: [{ h: 0, s: 70, l: 50 }, { h: 55, s: 80, l: 55 }, { h: 120, s: 50, l: 40 }] },
+    // Purple + Blue = Indigo
+    { a: { h: 275, s: 55, l: 50 }, b: { h: 220, s: 70, l: 50 },  r: { h: 248, s: 55, l: 46 },
+      d: [{ h: 55, s: 80, l: 55 }, { h: 0, s: 70, l: 50 }, { h: 120, s: 50, l: 40 }] },
+    // Pink + Red = Hot Pink
+    { a: { h: 335, s: 65, l: 60 }, b: { h: 0, s: 80, l: 50 },    r: { h: 348, s: 72, l: 55 },
+      d: [{ h: 120, s: 50, l: 40 }, { h: 220, s: 60, l: 50 }, { h: 55, s: 80, l: 55 }] },
+    // Purple + Black = Dark Purple
+    { a: { h: 275, s: 55, l: 50 }, b: { h: 0, s: 0, l: 15 },     r: { h: 275, s: 28, l: 32 },
+      d: [{ h: 55, s: 80, l: 55 }, { h: 0, s: 70, l: 50 }, { h: 120, s: 50, l: 40 }] },
+    // Cyan + Green = Sea Green
+    { a: { h: 185, s: 60, l: 45 }, b: { h: 140, s: 60, l: 40 },  r: { h: 162, s: 52, l: 40 },
+      d: [{ h: 0, s: 70, l: 50 }, { h: 55, s: 80, l: 55 }, { h: 280, s: 55, l: 50 }] },
+    // Pink + Yellow = Salmon
+    { a: { h: 335, s: 65, l: 60 }, b: { h: 55, s: 90, l: 55 },   r: { h: 15, s: 65, l: 58 },
+      d: [{ h: 220, s: 60, l: 50 }, { h: 120, s: 50, l: 40 }, { h: 275, s: 55, l: 50 }] },
+  ];
+
+  // Track used easy indices per game to avoid repeats
+  const usedEasyRef = useRef([]);
+
+  // Indices of "tint" puzzles (answer is white) — easiest questions
+  const WHITE_MIX_INDICES = EASY_BANK.map((q, i) => q.b.s === 0 && q.b.l >= 90 ? i : -1).filter(i => i >= 0);
+
+  const genEasyPuzzle = (roundNum) => {
+    // ~20% chance (after round 4) to use a hard-mode "easy" puzzle for variety
+    if (roundNum > 4 && Math.random() < 0.2) {
+      return genMixPuzzle('easy');
+    }
+    // First 2 rounds: always a white-mix (color + white = tint) — easiest to grasp
+    let pool;
+    if (roundNum < 2) {
+      pool = WHITE_MIX_INDICES.filter(i => !usedEasyRef.current.includes(i));
+      if (pool.length === 0) pool = WHITE_MIX_INDICES; // fallback
+    } else {
+      pool = EASY_BANK.map((_, i) => i).filter(i => !usedEasyRef.current.includes(i));
+      if (pool.length === 0) { usedEasyRef.current = []; pool = EASY_BANK.map((_, i) => i); }
+    }
+    const idx = pool[Math.floor(Math.random() * pool.length)];
+    usedEasyRef.current.push(idx);
+    const q = EASY_BANK[idx];
+
+    // Use exact pre-defined colors — no variation
+    const options = shuffle([
+      { ...q.b, isCorrect: true },
+      ...q.d.map(d => ({ ...d, isCorrect: false })),
+    ]);
+    const correctIdx = options.findIndex(o => o.isCorrect);
+    return { colorA: q.a, colorC: q.r, correct: q.b, options, correctIdx, difficulty: 'easy' };
+  };
+
   // ─── PUZZLE GENERATION ───
   const difficultyForRound = (r) => {
     if (r < 3) return 'easy';
@@ -340,15 +464,19 @@
     return null;
   };
 
-  const startGame = () => {
+  const startGame = (mode) => {
     const n = nameInput.trim();
-    if (!n || nameError(n)) return;
+    // Easy mode: skip name-taken check since no leaderboard
+    const err = mode === 'easy' ? (n.length < 2 ? 'min 2 characters' : isProfane(n) ? 'keep it clean!' : null) : nameError(n);
+    if (!n || err) return;
     setSavedName(n);
+    setGameMode(mode);
+    usedEasyRef.current = [];
     sfx.start();
     setRound(0); setScore(0); setStreak(0); setBestStreak(0);
     setHistory([]); setPicked(-1); setSaved(false);
     setRank(null); setTotalPlays(0);
-    setPuzzle(genMixPuzzle(difficultyForRound(0)));
+    setPuzzle(mode === 'easy' ? genEasyPuzzle(0) : genMixPuzzle(difficultyForRound(0)));
     setPhase('play');
   };
 
@@ -381,18 +509,20 @@
     const nr = round + 1;
     if (nr >= GAME_ROUNDS) {
       if (score / GAME_ROUNDS >= 0.63) sfx.doneGood(); else sfx.doneBad();
-      // Auto-save score to Firebase
-      const n = savedName || nameInput.trim() || getSavedName();
-      if (n) {
-        saveToFirebase({ name: n, score, rounds: ROUNDS, ts: Date.now() });
-        setSaved(true);
+      // Auto-save score to Firebase (hard mode only)
+      if (gameMode === 'hard') {
+        const n = savedName || nameInput.trim() || getSavedName();
+        if (n) {
+          saveToFirebase({ name: n, score, rounds: ROUNDS, ts: Date.now() });
+          setSaved(true);
+        }
       }
       setPhase('done');
       return;
     }
     setRound(nr);
     setPicked(-1);
-    setPuzzle(genMixPuzzle(difficultyForRound(nr)));
+    setPuzzle(gameMode === 'easy' ? genEasyPuzzle(nr) : genMixPuzzle(difficultyForRound(nr)));
     setPhase('play');
   };
 
@@ -407,7 +537,7 @@
   }, [phase, board]);
 
   // Reset name input when returning to menu
-  useEffect(() => { if (phase === 'menu') setNameInput(''); }, [phase]);
+  useEffect(() => { if (phase === 'menu') { setNameInput(''); setGameMode(null); } }, [phase]);
 
   // Auto-scroll leaderboard to highlighted player
   useEffect(() => {
@@ -641,7 +771,7 @@
           margin: isMobile ? '0 0 0' : '4px 0 0',
           maxWidth: isMobile ? 260 : 320,
         }}>guess the missing color.</p>
-        {/* Name input + Play CTA */}
+        {/* Name input + Mode select */}
         {(() => {
           const err = nameError(nameInput.trim());
           const canPlay = nameInput.trim() && !err;
@@ -651,7 +781,6 @@
                 className="op-input"
                 value={nameInput}
                 onChange={(e) => setNameInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') startGame(); }}
                 placeholder="enter a username"
                 maxLength={20}
                 style={{
@@ -668,8 +797,16 @@
                   {err}
                 </div>
               )}
-              <div style={{ animation: canPlay ? 'op-glow 2.5s ease-in-out infinite' : 'none', opacity: canPlay ? 1 : 0.4, transition: 'opacity 0.2s', marginTop: 4 }}>
-                <Btn onClick={startGame} big disabled={!canPlay}>play</Btn>
+              <div style={{
+                display: 'flex', gap: 10, marginTop: 4, width: '100%', justifyContent: 'center',
+                opacity: canPlay ? 1 : 0.4, transition: 'opacity 0.2s',
+                animation: canPlay ? 'op-glow 2.5s ease-in-out infinite' : 'none',
+              }}>
+                <Btn onClick={() => startGame('easy')} disabled={!canPlay}>easy</Btn>
+                <Btn onClick={() => startGame('hard')} disabled={!canPlay}>hard</Btn>
+              </div>
+              <div style={{ fontSize: '0.6875rem', color: P.dim, fontWeight: 500, textAlign: 'center', marginTop: 2 }}>
+                ranking on hard mode only
               </div>
             </div>
           );
@@ -901,7 +1038,8 @@
   const getShareText = () => {
     const n = getShareName();
     const who = n ? n : 'i';
-    return `${who} scored ${score}/${GAME_ROUNDS} on m\u00E9lange \u2014 think you can mix better? \uD83C\uDFA8\nhttps://amynguyen.studio/game`;
+    const mode = gameMode === 'easy' ? ' (easy)' : '';
+    return `${who} scored ${score}/${GAME_ROUNDS} on m\u00E9lange${mode} \u2014 think you can mix better? \uD83C\uDFA8\nhttps://amynguyen.studio/game`;
   };
 
   const generateShareCard = () => {
@@ -1027,8 +1165,8 @@
           <div style={{ fontSize: isMobile ? '2.625rem' : '3.5rem', fontWeight: 800 }}>{score}/{GAME_ROUNDS}</div>
           <div style={{ fontSize: '1rem', opacity: 0.85, fontWeight: 600 }}>correct</div>
         </div>
-        {/* Scrollable leaderboard */}
-        {board.length > 0 && (
+        {/* Scrollable leaderboard (hard mode only) */}
+        {gameMode === 'hard' && board.length > 0 && (
           <div style={{
             animation: 'op-up 0.3s 0.2s both', width: '100%', maxWidth: isMobile ? 340 : 420,
             background: 'rgba(255,255,255,0.92)', borderRadius: 18,
@@ -1068,6 +1206,11 @@
                 );
               })}
             </div>
+          </div>
+        )}
+        {gameMode === 'easy' && (
+          <div style={{ animation: 'op-up 0.3s 0.2s both', fontSize: '0.8125rem', color: P.dim, fontWeight: 500, textAlign: 'center' }}>
+            try hard mode to get ranked on the leaderboard!
           </div>
         )}
         {/* Actions: share + play again on same line */}
