@@ -80,7 +80,7 @@
   const WRONG_PHRASES = ['not quite!','oops!','so close!','next time!','tricky one!'];
 
   // ─── STATE ───
-  const [phase, setPhase] = useState('menu'); // menu, play, reveal, done
+  const [phase, setPhase] = useState('menu'); // menu, nameEntry, play, reveal, done
   const [round, setRound] = useState(0);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -96,11 +96,15 @@
   const [hoveredSwatch, setHoveredSwatch] = useState(-1);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
   const [gameMode, setGameMode] = useState(null); // 'easy' or 'hard'
+  const [easyNameInput, setEasyNameInput] = useState('');
+  const [easyNameSaved, setEasyNameSaved] = useState(false);
 
   const audioRef = useRef(null);
   const wrapRef = useRef(null);
   const phraseRef = useRef('');
   const leaderboardRef = useRef(null);
+  const gameStartRef = useRef(null);
+  const sharedRef = useRef(false);
 
   // ─── RESPONSIVE ───
   useEffect(() => {
@@ -432,8 +436,10 @@
   // Leaderboard only shows hard mode entries (or legacy entries without mode field)
   const hardBoard = board.filter(e => !e.mode || e.mode === 'hard');
 
+  const lastEntryKeyRef = useRef(null);
   const saveToFirebase = (entry) => {
-    db.ref('scores').push(entry);
+    const ref = db.ref('scores').push(entry);
+    lastEntryKeyRef.current = ref.key;
   };
 
   const clearBoard = () => {
@@ -458,7 +464,7 @@
     return BLOCKED.some(w => lower.includes(w));
   };
 
-  const nameError = (n) => {
+  const nameErrorHard = (n) => {
     if (!n) return null;
     if (n.length < 2) return 'min 2 characters';
     if (isProfane(n)) return 'keep it clean!';
@@ -466,18 +472,52 @@
     return null;
   };
 
-  const startGame = (mode) => {
-    const n = nameInput.trim();
-    if (!n || nameError(n)) return;
-    setSavedName(n);
+  const nameErrorEasy = (n) => {
+    if (!n) return null;
+    if (n.length < 2) return 'min 2 characters';
+    if (isProfane(n)) return 'keep it clean!';
+    return null;
+  };
+
+  const getEasySavedName = () => {
+    try { return localStorage.getItem('oddpalette_easy_name') || ''; } catch { return ''; }
+  };
+
+  const setEasySavedName = (n) => {
+    try { localStorage.setItem('oddpalette_easy_name', n); } catch {}
+  };
+
+  const launchGame = (mode) => {
     setGameMode(mode);
     usedEasyRef.current = [];
+    gameStartRef.current = Date.now();
+    sharedRef.current = false;
     sfx.start();
     setRound(0); setScore(0); setStreak(0); setBestStreak(0);
     setHistory([]); setPicked(-1); setSaved(false);
     setRank(null); setTotalPlays(0);
+    setEasyNameInput(''); setEasyNameSaved(false);
     setPuzzle(mode === 'easy' ? genEasyPuzzle(0) : genMixPuzzle(difficultyForRound(0)));
     setPhase('play');
+  };
+
+  const startEasy = () => {
+    const existing = getEasySavedName();
+    if (existing) setSavedName(existing);
+    launchGame('easy');
+  };
+
+  const startHard = () => {
+    setGameMode('hard');
+    setNameInput(getSavedName());
+    setPhase('nameEntry');
+  };
+
+  const confirmHardName = () => {
+    const n = nameInput.trim();
+    if (!n || nameErrorHard(n)) return;
+    setSavedName(n);
+    launchGame('hard');
   };
 
   const handlePick = (idx) => {
@@ -509,10 +549,17 @@
     const nr = round + 1;
     if (nr >= GAME_ROUNDS) {
       if (score / GAME_ROUNDS >= 0.63) sfx.doneGood(); else sfx.doneBad();
-      // Auto-save score to Firebase (both modes — for stats tracking)
-      const n = savedName || nameInput.trim() || getSavedName();
-      if (n) {
-        saveToFirebase({ name: n, score, rounds: ROUNDS, mode: gameMode, ts: Date.now() });
+      // Auto-save score to Firebase
+      if (gameMode === 'hard') {
+        const n = savedName || nameInput.trim() || getSavedName();
+        if (n) {
+          saveToFirebase({ name: n, score, rounds: ROUNDS, mode: 'hard', bestStreak, duration: Math.round((Date.now() - gameStartRef.current) / 1000), ts: Date.now() });
+          setSaved(true);
+        }
+      } else {
+        // Easy mode: save with name if they have one, otherwise anonymous
+        const n = savedName || getEasySavedName();
+        saveToFirebase({ name: n || 'anonymous', score, rounds: ROUNDS, mode: 'easy', bestStreak, duration: Math.round((Date.now() - gameStartRef.current) / 1000), ts: Date.now() });
         setSaved(true);
       }
       setPhase('done');
@@ -762,46 +809,34 @@
           fontSize: isMobile ? '2.375rem' : '3rem', fontWeight: 800, color: P.title,
           margin: 0, letterSpacing: '-0.03em', lineHeight: 1,
         }}>m{'\u00E9'}lange</h1>
-        {/* Description */}
-        <p style={{
-          fontSize: '1rem', color: P.subtitle, fontWeight: 500,
-          textAlign: 'center', lineHeight: 1.7,
-          margin: isMobile ? '0 0 0' : '4px 0 0',
-          maxWidth: isMobile ? 260 : 320,
-        }}>guess the missing color.</p>
-        {/* Name input + Mode select */}
+        {/* Description / Welcome */}
         {(() => {
-          const err = nameError(nameInput.trim());
-          const canPlay = nameInput.trim() && !err;
+          const easyName = getEasySavedName();
+          return easyName ? (
+            <p style={{
+              fontSize: '1rem', color: P.cta, fontWeight: 600,
+              textAlign: 'center', lineHeight: 1.7,
+              margin: isMobile ? '0 0 0' : '4px 0 0',
+              animation: 'op-up 0.2s both',
+            }}>welcome back, {easyName}!</p>
+          ) : (
+            <p style={{
+              fontSize: '1rem', color: P.subtitle, fontWeight: 500,
+              textAlign: 'center', lineHeight: 1.7,
+              margin: isMobile ? '0 0 0' : '4px 0 0',
+              maxWidth: isMobile ? 260 : 320,
+            }}>guess the missing color.</p>
+          );
+        })()}
+        {/* Mode select */}
+        {(() => {
           return (
             <div style={{ marginTop: isMobile ? 28 : 40, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, width: '100%', maxWidth: 280 }}>
-              <input
-                className="op-input"
-                value={nameInput}
-                onChange={(e) => setNameInput(e.target.value)}
-                placeholder="enter a username"
-                maxLength={20}
-                style={{
-                  width: '100%', padding: '12px 16px', borderRadius: 14,
-                  border: `2px solid ${err ? P.no : P.border}`, background: 'rgba(255,255,255,0.9)',
-                  fontSize: '1rem', fontWeight: 600, color: P.text,
-                  textAlign: 'center', outline: 'none',
-                  fontFamily: 'inherit',
-                  transition: 'border-color 0.2s',
-                }}
-              />
-              {err && (
-                <div style={{ fontSize: '0.8125rem', color: P.no, fontWeight: 600, animation: 'op-up 0.2s both' }}>
-                  {err}
-                </div>
-              )}
               <div style={{
-                display: 'flex', gap: 10, marginTop: 4, width: '100%', justifyContent: 'center',
-                opacity: canPlay ? 1 : 0.4, transition: 'opacity 0.2s',
-                animation: canPlay ? 'op-glow 2.5s ease-in-out infinite' : 'none',
+                display: 'flex', gap: 10, width: '100%', justifyContent: 'center',
               }}>
-                <Btn onClick={() => startGame('easy')} disabled={!canPlay}>easy</Btn>
-                <Btn onClick={() => startGame('hard')} disabled={!canPlay}>hard</Btn>
+                <Btn onClick={startEasy}>easy</Btn>
+                <Btn onClick={startHard}>hard</Btn>
               </div>
               <div style={{ fontSize: '0.6875rem', color: P.dim, fontWeight: 500, textAlign: 'center', marginTop: 2 }}>
                 ranking on hard mode only
@@ -809,6 +844,62 @@
             </div>
           );
         })()}
+      </div>
+    );
+  };
+
+  const renderNameEntry = () => {
+    const err = nameErrorHard(nameInput.trim());
+    const canGo = nameInput.trim() && !err;
+    return (
+      <div style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        justifyContent: 'center',
+        padding: isMobile ? '40px 24px' : '48px 40px',
+        flex: 1,
+        gap: 0, position: 'relative',
+      }}>
+        <div style={{ marginBottom: isMobile ? 12 : 16 }}>
+          <MenuLogo scale={isMobile ? 0.85 : 1} />
+        </div>
+        <h1 style={{
+          fontSize: isMobile ? '2.375rem' : '3rem', fontWeight: 800, color: P.title,
+          margin: 0, letterSpacing: '-0.03em', lineHeight: 1,
+        }}>hard mode</h1>
+        <p style={{
+          fontSize: '1rem', color: P.subtitle, fontWeight: 500,
+          textAlign: 'center', lineHeight: 1.7,
+          margin: isMobile ? '4px 0 0' : '8px 0 0',
+          maxWidth: isMobile ? 260 : 320,
+        }}>enter a unique name for the leaderboard.</p>
+        <div style={{ marginTop: isMobile ? 28 : 40, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, width: '100%', maxWidth: 280 }}>
+          <input
+            className="op-input"
+            value={nameInput}
+            onChange={(e) => setNameInput(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter' && canGo) confirmHardName(); }}
+            placeholder="enter a username"
+            maxLength={20}
+            autoFocus
+            style={{
+              width: '100%', padding: '12px 16px', borderRadius: 14,
+              border: `2px solid ${err ? P.no : P.border}`, background: 'rgba(255,255,255,0.9)',
+              fontSize: '1rem', fontWeight: 600, color: P.text,
+              textAlign: 'center', outline: 'none',
+              fontFamily: 'inherit',
+              transition: 'border-color 0.2s',
+            }}
+          />
+          {err && (
+            <div style={{ fontSize: '0.8125rem', color: P.no, fontWeight: 600, animation: 'op-up 0.2s both' }}>
+              {err}
+            </div>
+          )}
+          <div style={{ display: 'flex', gap: 10, width: '100%', justifyContent: 'center' }}>
+            <Btn onClick={() => { sfx.click(); setPhase('menu'); }}>back</Btn>
+            <Btn onClick={confirmHardName} disabled={!canGo} style={{ opacity: canGo ? 1 : 0.4 }}>play</Btn>
+          </div>
+        </div>
       </div>
     );
   };
@@ -1029,7 +1120,7 @@
   const [copied, setCopied] = useState(false);
 
   const getShareName = () => {
-    const n = (savedName || nameInput || getSavedName()).trim();
+    const n = (savedName || nameInput || getEasySavedName() || getSavedName()).trim();
     return n || '';
   };
 
@@ -1102,6 +1193,10 @@
   };
 
   const handleShare = async () => {
+    if (!sharedRef.current && lastEntryKeyRef.current) {
+      db.ref('scores/' + lastEntryKeyRef.current).update({ shared: true });
+    }
+    sharedRef.current = true;
     const canvas = shareCanvasRef.current;
     if (!canvas) return;
 
@@ -1207,15 +1302,58 @@
           </div>
         )}
         {gameMode === 'easy' && (
-          <div style={{ animation: 'op-up 0.3s 0.2s both', fontSize: '0.8125rem', color: P.dim, fontWeight: 500, textAlign: 'center' }}>
-            try hard mode to get ranked on the leaderboard!
+          <div style={{ animation: 'op-up 0.3s 0.2s both', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, width: '100%', maxWidth: 280 }}>
+            {easyNameSaved || getEasySavedName() ? (
+              <div style={{ fontSize: '0.8125rem', color: P.cta, fontWeight: 600, textAlign: 'center' }}>
+                {easyNameSaved ? 'saved!' : `playing as ${getEasySavedName()}`} — try hard mode to get ranked!
+              </div>
+            ) : (
+              <>
+                <div style={{ fontSize: '0.8125rem', color: P.dim, fontWeight: 500, textAlign: 'center' }}>
+                  save your name to track your streak?
+                </div>
+                <input
+                  className="op-input"
+                  value={easyNameInput}
+                  onChange={(e) => setEasyNameInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    const n = easyNameInput.trim();
+                    if (e.key === 'Enter' && n && !nameErrorEasy(n)) {
+                      setEasySavedName(n); setSavedName(n); setEasyNameSaved(true);
+                    }
+                  }}
+                  placeholder="your name"
+                  maxLength={20}
+                  style={{
+                    width: '100%', padding: '10px 14px', borderRadius: 12,
+                    border: `2px solid ${nameErrorEasy(easyNameInput.trim()) ? P.no : P.border}`,
+                    background: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.875rem', fontWeight: 600, color: P.text,
+                    textAlign: 'center', outline: 'none', fontFamily: 'inherit',
+                  }}
+                />
+                {nameErrorEasy(easyNameInput.trim()) && (
+                  <div style={{ fontSize: '0.75rem', color: P.no, fontWeight: 600 }}>
+                    {nameErrorEasy(easyNameInput.trim())}
+                  </div>
+                )}
+              </>
+            )}
           </div>
         )}
-        {/* Actions: share + play again on same line */}
+        {/* Actions: share + save/play again on same line */}
         <div style={{ display: 'flex', gap: 12, animation: 'op-up 0.3s 0.3s both' }}>
           <Btn onClick={handleShare}>
             {copied ? 'copied!' : 'share'}
           </Btn>
+          {gameMode === 'easy' && !easyNameSaved && !getEasySavedName() && easyNameInput.trim() && !nameErrorEasy(easyNameInput.trim()) && (
+            <Btn onClick={() => {
+              const n = easyNameInput.trim();
+              if (n && !nameErrorEasy(n)) {
+                setEasySavedName(n); setSavedName(n); setEasyNameSaved(true);
+              }
+            }}>save name</Btn>
+          )}
           <Btn onClick={() => { sfx.click(); setPhase('menu'); }}>play again</Btn>
         </div>
         </div>
@@ -1225,6 +1363,7 @@
 
   // ─── MAIN RENDER ───
   const content = phase === 'menu' ? renderMenu()
+    : phase === 'nameEntry' ? renderNameEntry()
     : phase === 'play' ? renderPlay()
     : phase === 'reveal' ? renderReveal()
     : renderDone();
