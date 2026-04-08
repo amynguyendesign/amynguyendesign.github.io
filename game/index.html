@@ -99,8 +99,6 @@
   const [hoveredSwatch, setHoveredSwatch] = useState(-1);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
   const [gameMode, setGameMode] = useState(null); // 'easy' or 'hard'
-  const [easyNameInput, setEasyNameInput] = useState('');
-  const [easyNameSaved, setEasyNameSaved] = useState(false);
 
   const audioRef = useRef(null);
   const wrapRef = useRef(null);
@@ -495,20 +493,7 @@
     return null;
   };
 
-  const nameErrorEasy = (n) => {
-    if (!n) return null;
-    if (n.length < 2) return 'min 2 characters';
-    if (isProfane(n)) return 'keep it clean!';
-    return null;
-  };
 
-  const getEasySavedName = () => {
-    try { return localStorage.getItem('oddpalette_easy_name') || ''; } catch { return ''; }
-  };
-
-  const setEasySavedName = (n) => {
-    try { localStorage.setItem('oddpalette_easy_name', n); } catch {}
-  };
 
   const launchGame = (mode) => {
     setGameMode(mode);
@@ -519,14 +504,11 @@
     setRound(0); setScore(0); setStreak(0); setBestStreak(0);
     setHistory([]); setPicked(-1); setSaved(false);
     setRank(null); setTotalPlays(0);
-    setEasyNameInput(''); setEasyNameSaved(false);
     setPuzzle(mode === 'easy' ? genEasyPuzzle(0) : genMixPuzzle(difficultyForRound(0)));
     setPhase('play');
   };
 
   const startEasy = () => {
-    const existing = getEasySavedName();
-    if (existing) setSavedName(existing);
     launchGame('easy');
   };
 
@@ -595,9 +577,8 @@
           setSaved(true);
         }
       } else {
-        // Easy mode: save with name if they have one, otherwise anonymous
-        const n = savedName || getEasySavedName();
-        saveToFirebase({ name: n || 'anonymous', score, rounds: ROUNDS, mode: 'easy', bestStreak, duration: Math.round((Date.now() - gameStartRef.current) / 1000), ts: Date.now() });
+        // Easy mode: anonymous for stats tracking
+        saveToFirebase({ name: 'anonymous', score, rounds: ROUNDS, mode: 'easy', bestStreak, duration: Math.round((Date.now() - gameStartRef.current) / 1000), ts: Date.now() });
         setSaved(true);
       }
       setPhase('done');
@@ -849,14 +830,14 @@
         }}>m{'\u00E9'}lange</h1>
         {/* Description / Welcome */}
         {(() => {
-          const easyName = getEasySavedName();
-          return easyName ? (
+          const hardName = getSavedName();
+          return hardName ? (
             <p style={{
               fontSize: '1rem', color: P.cta, fontWeight: 600,
               textAlign: 'center', lineHeight: 1.7,
               margin: isMobile ? '0 0 0' : '4px 0 0',
               animation: 'op-up 0.2s both',
-            }}>welcome back, {easyName}!</p>
+            }}>welcome back, {hardName}!</p>
           ) : (
             <p style={{
               fontSize: '1rem', color: P.subtitle, fontWeight: 500,
@@ -1169,7 +1150,7 @@
   const [copied, setCopied] = useState(false);
 
   const getShareName = () => {
-    const n = (savedName || nameInput || getEasySavedName() || getSavedName()).trim();
+    const n = (savedName || nameInput || getSavedName()).trim();
     return n || '';
   };
 
@@ -1356,58 +1337,15 @@
           </div>
         )}
         {gameMode === 'easy' && (
-          <div style={{ animation: 'op-up 0.3s 0.2s both', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, width: '100%', maxWidth: 280 }}>
-            {easyNameSaved || getEasySavedName() ? (
-              <div style={{ fontSize: '0.8125rem', color: P.cta, fontWeight: 600, textAlign: 'center' }}>
-                {easyNameSaved ? 'saved!' : `playing as ${getEasySavedName()}`} — try hard mode to get ranked!
-              </div>
-            ) : (
-              <>
-                <div style={{ fontSize: '0.8125rem', color: P.dim, fontWeight: 500, textAlign: 'center' }}>
-                  save your name to track your streak?
-                </div>
-                <input
-                  className="op-input"
-                  value={easyNameInput}
-                  onChange={(e) => setEasyNameInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    const n = easyNameInput.trim();
-                    if (e.key === 'Enter' && n && !nameErrorEasy(n)) {
-                      setEasySavedName(n); setSavedName(n); setEasyNameSaved(true);
-                    }
-                  }}
-                  placeholder="your name"
-                  maxLength={20}
-                  style={{
-                    width: '100%', padding: '10px 14px', borderRadius: 12,
-                    border: `2px solid ${nameErrorEasy(easyNameInput.trim()) ? P.no : P.border}`,
-                    background: 'rgba(255,255,255,0.9)',
-                    fontSize: '0.875rem', fontWeight: 600, color: P.text,
-                    textAlign: 'center', outline: 'none', fontFamily: 'inherit',
-                  }}
-                />
-                {nameErrorEasy(easyNameInput.trim()) && (
-                  <div style={{ fontSize: '0.75rem', color: P.no, fontWeight: 600 }}>
-                    {nameErrorEasy(easyNameInput.trim())}
-                  </div>
-                )}
-              </>
-            )}
+          <div style={{ animation: 'op-up 0.3s 0.2s both', fontSize: '0.8125rem', color: P.dim, fontWeight: 500, textAlign: 'center' }}>
+            try hard mode to get ranked!
           </div>
         )}
-        {/* Actions: share + save/play again on same line */}
+        {/* Actions: share + play again */}
         <div style={{ display: 'flex', gap: 12, animation: 'op-up 0.3s 0.3s both' }}>
           <Btn onClick={handleShare}>
             {copied ? 'copied!' : 'share'}
           </Btn>
-          {gameMode === 'easy' && !easyNameSaved && !getEasySavedName() && easyNameInput.trim() && !nameErrorEasy(easyNameInput.trim()) && (
-            <Btn onClick={() => {
-              const n = easyNameInput.trim();
-              if (n && !nameErrorEasy(n)) {
-                setEasySavedName(n); setSavedName(n); setEasyNameSaved(true);
-              }
-            }}>save name</Btn>
-          )}
           <Btn onClick={() => { sfx.click(); setPhase('menu'); }}>play again</Btn>
         </div>
         </div>
