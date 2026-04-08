@@ -30,6 +30,22 @@
 			gtag("config", "G-DHB2BNWHZG");
 		</script>
 
+		<!-- Firebase -->
+		<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+		<script>
+			firebase.initializeApp({
+				apiKey: "AIzaSyC5pbJ5B-e1TkhIt6uNQk7JqLjagXyyJGo",
+				authDomain: "odd-palette.firebaseapp.com",
+				databaseURL: "https://odd-palette-default-rtdb.firebaseio.com",
+				projectId: "odd-palette",
+				storageBucket: "odd-palette.firebasestorage.app",
+				messagingSenderId: "411802611410",
+				appId: "1:411802611410:web:46363820ae772b170e470b",
+			});
+			var db = firebase.database();
+		</script>
+
 		<!-- React + Babel -->
 		<script
 			crossorigin
@@ -1158,11 +1174,77 @@
    ───────────────────────────────────────────── */
 
 			function PageContact() {
+				const BLOCKED = ['fuck','fuk','fck','fuc','shit','sht','ass','arse','damn','bitch','btch','dick','dik','cock','cok','pussy','puss','cunt','cnt','fag','fgt','nigger','nigga','niga','retard','tard','slut','whore','hoe','penis','peen','vagina','bastard','wank','twat','bollock','piss','pee','poo','poop','tit','boob','nazi','hitler','rape','molest','pedo','paedo','perv','kill','die','stfu','gtfo','wtf','lmao','lmfao','porn','sex','sexy','69','420','kkk','homo','anal','dildo','fetish','orgasm','erect','scrotum','testicl','nudes','thot','simp','incel','cum','jizz','semen','cooch','schlong','dong','ballsack','butthole','blowjob','handjob'];
+				const isProfane = (s) => {
+					if (!s) return false;
+					const lower = s.toLowerCase().replace(/[^a-z]/g, '');
+					return BLOCKED.some(w => lower.includes(w));
+				};
+
+				const isMob = window.innerWidth <= 480;
+				const [name, setName] = React.useState('');
+				const [email, setEmail] = React.useState('');
+				const [message, setMessage] = React.useState('');
+				const [status, setStatus] = React.useState('idle'); // idle, sending, sent, error
+				const [errorMsg, setErrorMsg] = React.useState('');
+
+				const hasSent = React.useMemo(() => {
+					try { return localStorage.getItem('amynguyen_msg_sent') === 'true'; } catch { return false; }
+				}, []);
+
 				const linkStyle = {
 					color: COLORS.accent,
 					textDecoration: "underline",
 					textUnderlineOffset: 3,
 				};
+
+				const inputStyle = {
+					width: '100%',
+					padding: '8px 10px',
+					borderRadius: 6,
+					border: '1.5px solid ' + COLORS.muted + '55',
+					background: 'rgba(255,255,255,0.5)',
+					fontSize: 12,
+					fontFamily: MONO,
+					fontWeight: 600,
+					color: COLORS.ink,
+					outline: 'none',
+					letterSpacing: '0.03em',
+					boxSizing: 'border-box',
+				};
+
+				const handleSubmit = (e) => {
+					e.preventDefault();
+					if (!name.trim() || !email.trim() || !message.trim()) {
+						setErrorMsg('all fields are required');
+						return;
+					}
+					if (isProfane(name) || isProfane(message)) {
+						setErrorMsg('keep it clean!');
+						return;
+					}
+					// Basic email check
+					if (!/\S+@\S+\.\S+/.test(email.trim())) {
+						setErrorMsg('enter a valid email');
+						return;
+					}
+					setStatus('sending');
+					setErrorMsg('');
+					db.ref('messages').push({
+						name: name.trim(),
+						email: email.trim(),
+						message: message.trim(),
+						ts: Date.now(),
+					}).then(() => {
+						setStatus('sent');
+						try { localStorage.setItem('amynguyen_msg_sent', 'true'); } catch {}
+						track('contact_form_submit', { name: name.trim() });
+					}).catch(() => {
+						setStatus('error');
+						setErrorMsg('something went wrong, try again');
+					});
+				};
+
 				return (
 					<div
 						className="tw-page-contact"
@@ -1174,40 +1256,80 @@
 						}}
 					>
 						<div>
-							<PageHeader title="Contact" />
+							<PageHeader title="Get in touch" />
+							{status === 'sent' || hasSent ? (
+								<div style={{
+									fontSize: 13, color: COLORS.accent, fontWeight: 700,
+									letterSpacing: '0.03em', lineHeight: '20px',
+									marginBottom: 16,
+								}}>
+									note sent — thanks for reaching out!
+								</div>
+							) : (
+								<form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 10 }}>
+									<div style={{ display: 'flex', gap: isMob ? 6 : 8, flexDirection: isMob ? 'column' : 'row' }}>
+										<input
+											value={name}
+											onChange={(e) => setName(e.target.value)}
+											placeholder="name"
+											maxLength={50}
+											style={{ ...inputStyle, flex: isMob ? 'unset' : '0 0 35%' }}
+										/>
+										<input
+											value={email}
+											onChange={(e) => setEmail(e.target.value)}
+											placeholder="email"
+											maxLength={100}
+											type="email"
+											style={{ ...inputStyle, flex: 1 }}
+										/>
+									</div>
+									<textarea
+										value={message}
+										onChange={(e) => setMessage(e.target.value)}
+										placeholder="your message"
+										maxLength={200}
+										rows={2}
+										style={{ ...inputStyle, resize: 'none', lineHeight: '18px' }}
+									/>
+									{errorMsg && (
+										<div style={{ fontSize: 11, color: '#c0392b', fontWeight: 700, letterSpacing: '0.03em' }}>
+											{errorMsg}
+										</div>
+									)}
+									<button
+										type="submit"
+										disabled={status === 'sending'}
+										style={{
+											padding: '8px 16px',
+											borderRadius: 8,
+											border: 'none',
+											background: COLORS.accent,
+											color: '#fff',
+											fontSize: 12,
+											fontFamily: MONO,
+											fontWeight: 700,
+											letterSpacing: '0.05em',
+											cursor: status === 'sending' ? 'wait' : 'pointer',
+											opacity: status === 'sending' ? 0.6 : 1,
+											alignSelf: 'flex-start',
+										}}
+									>
+										{status === 'sending' ? 'sending...' : 'send note'}
+									</button>
+								</form>
+							)}
 							<div
 								style={{
-									fontSize: 13,
-									color: COLORS.ink,
-									lineHeight: "20px",
+									fontSize: 11,
+									color: COLORS.muted,
+									lineHeight: "18px",
 									letterSpacing: "0.03em",
 									fontWeight: 600,
 								}}
 							>
-								<p style={{ marginBottom: 12 }}>
-									If you want to discuss design, tech, culture
-									-- or debate whether Comic Sans is ever
-									acceptable,{" "}
-									<a
-										href="https://www.linkedin.com/in/nguyen-amy"
-										target="_blank"
-										rel="noopener noreferrer"
-										onClick={() =>
-											track("outbound_click", {
-												link_url: "linkedin",
-												link_text:
-													"message me on LinkedIn",
-											})
-										}
-										style={linkStyle}
-									>
-										message me on LinkedIn
-									</a>
-									.
-								</p>
-								<p style={{ marginBottom: 12 }}>
-									You can also keep up with what I'm reading
-									on{" "}
+								<p style={{ marginBottom: 0 }}>
+									Find me on{" "}
 									<a
 										href="https://goodreads.com/amynlha"
 										target="_blank"
@@ -1222,7 +1344,36 @@
 									>
 										Goodreads
 									</a>
-									.
+									{" · "}
+									<a
+										href="https://www.linkedin.com/in/nguyen-amy"
+										target="_blank"
+										rel="noopener noreferrer"
+										onClick={() =>
+											track("outbound_click", {
+												link_url: "linkedin",
+												link_text: "LinkedIn",
+											})
+										}
+										style={linkStyle}
+									>
+										LinkedIn
+									</a>
+									{" · "}
+									<a
+										href="https://substack.com/@amyle"
+										target="_blank"
+										rel="noopener noreferrer"
+										onClick={() =>
+											track("outbound_click", {
+												link_url: "substack",
+												link_text: "Substack",
+											})
+										}
+										style={linkStyle}
+									>
+										Substack
+									</a>
 								</p>
 							</div>
 						</div>
