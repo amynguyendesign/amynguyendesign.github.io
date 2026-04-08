@@ -436,8 +436,16 @@
   }, []);
 
   const getBoard = () => board;
-  // Leaderboard only shows hard mode entries (or legacy entries without mode field)
-  const hardBoard = board.filter(e => !e.mode || e.mode === 'hard');
+  // Leaderboard: best score per player, hard mode only (+ legacy entries without mode)
+  const hardBoard = (() => {
+    const hardEntries = board.filter(e => !e.mode || e.mode === 'hard');
+    const best = {};
+    hardEntries.forEach(e => {
+      const key = e.name.toLowerCase();
+      if (!best[key] || e.score > best[key].score) best[key] = e;
+    });
+    return Object.values(best).sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
+  })();
 
   const lastEntryKeyRef = useRef(null);
   const saveToFirebase = (entry) => {
@@ -460,6 +468,17 @@
     return board.some(e => e.name.toLowerCase() === n.toLowerCase());
   };
 
+  const isReturningHard = (n) => {
+    if (!n) return false;
+    return hardBoard.some(e => e.name.toLowerCase() === n.toLowerCase());
+  };
+
+  const getHardBest = (n) => {
+    if (!n) return null;
+    const entry = hardBoard.find(e => e.name.toLowerCase() === n.toLowerCase());
+    return entry ? entry.score : null;
+  };
+
   const BLOCKED = ['fuck','fuk','fck','fuc','shit','sht','ass','arse','damn','bitch','btch','dick','dik','cock','cok','pussy','puss','cunt','cnt','fag','fgt','nigger','nigga','niga','retard','tard','slut','whore','hoe','penis','peen','vagina','bastard','wank','twat','bollock','piss','pee','poo','poop','tit','boob','nazi','hitler','rape','molest','pedo','paedo','perv','kill','die','stfu','gtfo','wtf','lmao','lmfao','porn','sex','sexy','69','420','kkk','homo','anal','dildo','fetish','orgasm','erect','scrotum','testicl','nudes','thot','simp','incel','cum','jizz','semen','cooch','schlong','dong','ballsack','butthole','blowjob','handjob'];
   const isProfane = (n) => {
     if (!n) return false;
@@ -471,7 +490,8 @@
     if (!n) return null;
     if (n.length < 2) return 'min 2 characters';
     if (isProfane(n)) return 'keep it clean!';
-    if (isNameTaken(n)) return 'name taken — try another!';
+    // Allow returning hard mode players to reuse their name
+    if (isNameTaken(n) && !isReturningHard(n)) return 'name taken — try another!';
     return null;
   };
 
@@ -512,7 +532,8 @@
 
   const startHard = () => {
     setGameMode('hard');
-    setNameInput(getSavedName());
+    const saved = getSavedName();
+    setNameInput(saved);
     setPhase('nameEntry');
   };
 
@@ -556,7 +577,21 @@
       if (gameMode === 'hard') {
         const n = savedName || nameInput.trim() || getSavedName();
         if (n) {
-          saveToFirebase({ name: n, score, rounds: ROUNDS, mode: 'hard', bestStreak, duration: Math.round((Date.now() - gameStartRef.current) / 1000), ts: Date.now() });
+          const dur = Math.round((Date.now() - gameStartRef.current) / 1000);
+          // Check if returning player with existing entry
+          const existing = board.find(e => (e.mode === 'hard' || !e.mode) && e.name.toLowerCase() === n.toLowerCase());
+          if (existing && existing.key) {
+            // Always log the game for stats
+            saveToFirebase({ name: n, score, rounds: ROUNDS, mode: 'hard_log', bestStreak, duration: dur, ts: Date.now() });
+            // Update leaderboard entry only if new score is higher
+            if (score > (existing.score || 0)) {
+              db.ref('scores/' + existing.key).update({ score, bestStreak, duration: dur, ts: Date.now() });
+            }
+          } else {
+            saveToFirebase({ name: n, score, rounds: ROUNDS, mode: 'hard', bestStreak, duration: dur, ts: Date.now() });
+          }
+          // Save name to localStorage for auto-fill
+          try { localStorage.setItem('oddpalette_name', n); } catch {}
           setSaved(true);
         }
       } else {
@@ -852,8 +887,11 @@
   };
 
   const renderNameEntry = () => {
-    const err = nameErrorHard(nameInput.trim());
-    const canGo = nameInput.trim() && !err;
+    const trimmed = nameInput.trim();
+    const err = nameErrorHard(trimmed);
+    const canGo = trimmed && !err;
+    const returning = trimmed && isReturningHard(trimmed);
+    const prevBest = returning ? getHardBest(trimmed) : null;
     return (
       <div style={{
         display: 'flex', flexDirection: 'column', alignItems: 'center',
@@ -869,12 +907,20 @@
           fontSize: isMobile ? '2.375rem' : '3rem', fontWeight: 800, color: P.title,
           margin: 0, letterSpacing: '-0.03em', lineHeight: 1,
         }}>hard mode</h1>
-        <p style={{
-          fontSize: '1rem', color: P.subtitle, fontWeight: 500,
-          textAlign: 'center', lineHeight: 1.7,
-          margin: isMobile ? '4px 0 0' : '8px 0 0',
-          maxWidth: isMobile ? 260 : 320,
-        }}>enter a unique name for the leaderboard.</p>
+        {returning ? (
+          <p style={{
+            fontSize: '1rem', color: P.cta, fontWeight: 600,
+            textAlign: 'center', lineHeight: 1.7,
+            margin: isMobile ? '4px 0 0' : '8px 0 0',
+          }}>welcome back, {trimmed}! your best: {prevBest}/{GAME_ROUNDS}</p>
+        ) : (
+          <p style={{
+            fontSize: '1rem', color: P.subtitle, fontWeight: 500,
+            textAlign: 'center', lineHeight: 1.7,
+            margin: isMobile ? '4px 0 0' : '8px 0 0',
+            maxWidth: isMobile ? 260 : 320,
+          }}>enter a name for the leaderboard.</p>
+        )}
         <div style={{ marginTop: isMobile ? 28 : 40, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, width: '100%', maxWidth: 280 }}>
           <input
             className="op-input"
@@ -1302,6 +1348,11 @@
                 );
               })}
             </div>
+            {board.length > 0 && (
+              <div style={{ padding: '8px 0 10px', textAlign: 'center', fontSize: '0.6875rem', color: P.dim, fontWeight: 500 }}>
+                {board.length.toLocaleString()} games played
+              </div>
+            )}
           </div>
         )}
         {gameMode === 'easy' && (
