@@ -3,20 +3,36 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="color-scheme" content="light" />
+		<meta name="theme-color" content="#FDFAF6" />
 		<title>Amy Nguyen</title>
 		<meta
 			name="description"
 			content="Amy Nguyen - Engineer. Designer. Stanford-trained. SF-based."
 		/>
-		<link rel="icon" type="image/x-icon" href="./favicon.png" />
-		<link rel="apple-touch-icon" href="./apple-touch-icon.png" />
-		<meta property="og:title" content="Amy Nguyen" />
-		<meta
-			property="og:description"
-			content="Engineer. Designer. Stanford-trained. SF-based."
-		/>
+		<link rel="canonical" href="https://amynguyen.studio/" />
+		<link rel="icon" type="image/svg+xml" href="./public/favicon.svg" />
+		<link rel="icon" type="image/x-icon" href="./favicon.ico" />
+		<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
 
-		<!-- Analytics -->
+		<!-- Open Graph -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="https://amynguyen.studio/" />
+		<meta property="og:title" content="Amy Nguyen" />
+		<meta property="og:description" content="Engineer. Designer. Stanford-trained. SF-based." />
+		<meta property="og:image" content="https://amynguyen.studio/public/favicon-96x96.png" />
+
+		<!-- Twitter Card -->
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:title" content="Amy Nguyen" />
+		<meta name="twitter:description" content="Engineer. Designer. Stanford-trained. SF-based." />
+
+		<!-- Preconnect to CDNs -->
+		<link rel="preconnect" href="https://unpkg.com" crossorigin />
+		<link rel="preconnect" href="https://www.gstatic.com" crossorigin />
+		<link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+
+		<!-- Analytics (deferred) -->
 		<script
 			async
 			src="https://www.googletagmanager.com/gtag/js?id=G-DHB2BNWHZG"
@@ -30,20 +46,22 @@
 			gtag("config", "G-DHB2BNWHZG");
 		</script>
 
-		<!-- Firebase -->
-		<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-		<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-		<script>
-			firebase.initializeApp({
-				apiKey: "AIzaSyC5pbJ5B-e1TkhIt6uNQk7JqLjagXyyJGo",
-				authDomain: "odd-palette.firebaseapp.com",
-				databaseURL: "https://odd-palette-default-rtdb.firebaseio.com",
-				projectId: "odd-palette",
-				storageBucket: "odd-palette.firebasestorage.app",
-				messagingSenderId: "411802611410",
-				appId: "1:411802611410:web:46363820ae772b170e470b",
+		<!-- Firebase (defer to unblock render) -->
+		<script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+		<script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+		<script defer>
+			window.addEventListener("DOMContentLoaded", function () {
+				firebase.initializeApp({
+					apiKey: "AIzaSyC5pbJ5B-e1TkhIt6uNQk7JqLjagXyyJGo",
+					authDomain: "odd-palette.firebaseapp.com",
+					databaseURL: "https://odd-palette-default-rtdb.firebaseio.com",
+					projectId: "odd-palette",
+					storageBucket: "odd-palette.firebasestorage.app",
+					messagingSenderId: "411802611410",
+					appId: "1:411802611410:web:46363820ae772b170e470b",
+				});
+				window.db = firebase.database();
 			});
-			var db = firebase.database();
 		</script>
 
 		<!-- React + Babel -->
@@ -971,7 +989,9 @@
 						<PageHeader title="About me" />
 						<img
 							src="src/assets/amy.jpg"
-							alt="Amy"
+							alt="Amy Nguyen portrait photo"
+							loading="lazy"
+							width={130}
 							className="tw-about-photo"
 							style={{
 								width: 130,
@@ -1080,6 +1100,9 @@
 							<img
 								src={img.src}
 								alt={img.alt}
+								loading="lazy"
+								width={300}
+								height={300}
 								style={{
 									width: "100%",
 									height: "100%",
@@ -1556,6 +1579,7 @@
 									<img
 										src="./typewriter.png"
 										alt="Typewriter"
+										fetchpriority="high"
 										style={{
 											width: "100%",
 											display: "block",
