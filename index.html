@@ -58,6 +58,14 @@
 		<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
 		<link rel="stylesheet" href="./styles.css" />
+		<style>
+			@media (prefers-reduced-motion: reduce) {
+				*, *::before, *::after {
+					animation-duration: 0.01ms !important;
+					transition-duration: 0.01ms !important;
+				}
+			}
+		</style>
 	</head>
 	<body>
 		<div id="root"></div>
@@ -82,9 +90,8 @@
 			const TABS = [
 				{ id: "home", label: "HOME", color: "#EDD9A3" },
 				{ id: "about", label: "ABOUT", color: "#EDD9A3" },
-				{ id: "art", label: "ART", color: "#EDD9A3" },
+				{ id: "studio", label: "STUDIO", color: "#EDD9A3" },
 				{ id: "contact", label: "CONTACT", color: "#EDD9A3" },
-				{ id: "game", label: "GAME", color: "#EDD9A3" },
 			];
 
 			const ART_IMAGES = [
@@ -360,24 +367,26 @@
 			function PageHeader({ title, children }) {
 				return (
 					<div style={{ marginBottom: 13 }}>
-						<div
+						<h2
 							style={{
-								fontSize: 26,
-								color: COLORS.ink,
-								letterSpacing: "0.06em",
+								fontFamily: MONO,
+								fontSize: "1.35rem",
+								color: COLORS.dark,
 								fontWeight: 700,
+								lineHeight: 1.5,
+								marginBottom: 2,
 							}}
 						>
 							{title}
 							<span style={{ color: COLORS.accent }}>.</span>
-						</div>
+						</h2>
 						<div
 							style={{
 								width: 40,
-								height: 1,
-								background: COLORS.separator,
-								margin: "8px 0",
-								opacity: 0.15,
+								height: 2,
+								background: COLORS.accent,
+								marginBottom: 12,
+								borderRadius: 1,
 							}}
 						/>
 						{children}
@@ -751,11 +760,6 @@
 									index={i}
 									isActive={isActive}
 									onClick={() => {
-										if (tab.id === "game") {
-											track("tab_click", { tab_name: "game" });
-											window.location.href = "/game";
-											return;
-										}
 										const newTab =
 											tab.id === "home"
 												? null
@@ -1170,6 +1174,86 @@
 			}
 
 			/* ─────────────────────────────────────────────
+   Page: Studio (Table of Contents)
+   ───────────────────────────────────────────── */
+
+			function PageStudio() {
+				const projects = [
+					{ num: 1, title: "art", desc: "gallery", href: "/art" },
+					{ num: 2, title: "mélange", desc: "game", href: "/game" },
+				];
+
+				const dotLeader = (title, desc) => {
+					const maxDots = 16;
+					const used = title.length + desc.length;
+					const dots = Math.max(2, maxDots - used);
+					return " " + ".".repeat(dots) + " ";
+				};
+
+				return (
+					<div style={{ padding: "12px 16px 16px" }}>
+						<h2 style={{
+							fontFamily: MONO,
+							fontSize: "1.35rem",
+							fontWeight: 700,
+							color: COLORS.dark,
+							lineHeight: 1.5,
+							marginBottom: 2,
+						}}>Studio.</h2>
+						<div style={{
+							width: 40,
+							height: 2,
+							background: COLORS.accent,
+							marginBottom: 18,
+							borderRadius: 1,
+						}} role="presentation" />
+						<nav aria-label="Studio projects" style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+							{projects.map((p) => (
+								<a
+									key={p.num}
+									href={p.href}
+									style={{
+										display: "block",
+										textDecoration: "none",
+										color: COLORS.dark,
+										fontFamily: MONO,
+										fontSize: "1rem",
+										lineHeight: 1.5,
+										letterSpacing: "0.02em",
+										cursor: "pointer",
+										transition: "color 0.15s ease",
+										padding: "10px 0",
+										minHeight: 44,
+										outline: "none",
+										borderRadius: 4,
+									}}
+									onMouseEnter={(e) => e.currentTarget.style.color = COLORS.accent}
+									onMouseLeave={(e) => e.currentTarget.style.color = COLORS.dark}
+									onFocus={(e) => { e.currentTarget.style.outline = "2px solid " + COLORS.accent; e.currentTarget.style.outlineOffset = "2px"; }}
+									onBlur={(e) => { e.currentTarget.style.outline = "none"; }}
+									onClick={() => track("studio_click", { project: p.title })}
+								>
+									<span style={{ color: COLORS.muted, marginRight: 8 }}>{p.num}.</span>
+									<span style={{ fontWeight: 600 }}>{p.title}</span>
+									<span style={{ color: COLORS.muted, whiteSpace: "pre" }}>{dotLeader(p.title, p.desc)}</span>
+									<span style={{ color: COLORS.muted, fontStyle: "italic" }}>{p.desc}</span>
+								</a>
+							))}
+						</nav>
+						<p style={{
+							fontFamily: MONO,
+							fontSize: "0.75rem",
+							color: COLORS.muted,
+							marginTop: 24,
+							fontStyle: "italic",
+							lineHeight: 1.5,
+							letterSpacing: "0.05em",
+						}}>more chapters coming soon.</p>
+					</div>
+				);
+			}
+
+			/* ─────────────────────────────────────────────
    Page: Contact
    ───────────────────────────────────────────── */
 
@@ -1390,10 +1474,11 @@
    ───────────────────────────────────────────── */
 
 			function App() {
-				const [activeTab, setActiveTab] = React.useState(null);
+				const urlTab = new URLSearchParams(window.location.search).get("tab");
+				const [activeTab, setActiveTab] = React.useState(urlTab || null);
 				const [lightboxImg, setLightboxImg] = React.useState(null);
 				const [hoveredCard, setHoveredCard] = React.useState(null);
-				const [zoomed, setZoomed] = React.useState(false);
+				const [zoomed, setZoomed] = React.useState(!!urlTab && window.innerWidth <= 768);
 				const [zoomClosing, setZoomClosing] = React.useState(false);
 				const handleZoomClose = () => {
 					setZoomClosing(true);
@@ -1528,8 +1613,9 @@
 										}}
 									>
 										{isMobileZoom && zoomed && (
-											<div
+											<button
 												onClick={handleZoomClose}
+												aria-label="Close overlay"
 												style={{
 													position: "absolute",
 													top: 16,
@@ -1538,11 +1624,19 @@
 													cursor: "pointer",
 													fontSize: 20,
 													fontWeight: 700,
-													color: COLORS.muted,
+													color: COLORS.dark,
 													lineHeight: 1,
-													padding: "8px 10px",
+													padding: "12px 14px",
+													minWidth: 44,
+													minHeight: 44,
+													background: "none",
+													border: "none",
+													fontFamily: MONO,
+													display: "flex",
+													alignItems: "center",
+													justifyContent: "center",
 												}}
-											>&times;</div>
+											>&times;</button>
 										)}
 										<div
 											className="paper-scroll"
@@ -1561,15 +1655,8 @@
 													easterEggPos={easterEggPos}
 												/>
 											)}
-											{activeTab === "art" && (
-												<PageArt
-													lightboxImg={lightboxImg}
-													onImageClick={
-														setLightboxImg
-													}
-													hoveredCard={hoveredCard}
-													onHoverCard={setHoveredCard}
-												/>
+											{activeTab === "studio" && (
+												<PageStudio />
 											)}
 											{activeTab === "about" && (
 												<PageAbout
