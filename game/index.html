@@ -1394,6 +1394,32 @@
         .op-input:focus { border-color: ${P.cta} !important; outline: none; }
         .op-input::placeholder { color: ${P.dim}; }
       `}</style>
+      {phase === 'menu' && (
+        <nav aria-label="Breadcrumb" style={{ padding: isMobile ? '16px 20px 0' : '20px 40px 0' }}>
+          <a
+            href="/?tab=studio"
+            style={{
+              fontFamily: '"Courier New", Courier, monospace',
+              fontSize: '0.875rem',
+              color: P.text,
+              textDecoration: 'none',
+              letterSpacing: '0.03em',
+              transition: 'color 0.15s ease',
+              display: 'inline-flex',
+              alignItems: 'center',
+              minHeight: 44,
+              padding: '8px 0',
+              outline: 'none',
+              borderRadius: 4,
+              opacity: 0.6,
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = P.cta; e.currentTarget.style.opacity = 1; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = P.text; e.currentTarget.style.opacity = 0.6; }}
+            onFocus={(e) => { e.currentTarget.style.outline = '2px solid ' + P.cta; e.currentTarget.style.outlineOffset = '2px'; }}
+            onBlur={(e) => { e.currentTarget.style.outline = 'none'; }}
+          >&#8592; studio</a>
+        </nav>
+      )}
       {(phase === 'play' || phase === 'reveal') && (
         <div style={{ padding: isMobile ? '20px 20px 0' : '36px 40px 0', display: 'flex', justifyContent: 'center' }}>
           <GameProgressBar />
