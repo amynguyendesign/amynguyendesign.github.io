@@ -101,7 +101,6 @@
 				muted: "#8A7A60",
 				faded: "#A09080",
 				paper: "#FDFAF6",
-				pageNum: "#B8B0A0",
 				separator: "#3A3020",
 			};
 
@@ -412,20 +411,6 @@
 				);
 			}
 
-			function PageNumber({ number }) {
-				return (
-					<div
-						style={{
-							textAlign: "center",
-							fontSize: 8,
-							color: COLORS.pageNum,
-							letterSpacing: "0.15em",
-						}}
-					>
-						- {number} -
-					</div>
-				);
-			}
 
 			function Cursor({ visible }) {
 				return (
@@ -965,7 +950,6 @@
 						</div>
 
 						<div style={{ flex: 1 }} />
-						<PageNumber number={1} />
 						<div style={{ paddingBottom: 14 }} />
 
 						<EasterEggNote
@@ -1048,9 +1032,6 @@
 								knowing which one to pull and when.
 							</p>
 							<div style={{ clear: "both" }} />
-						</div>
-						<div style={{ textAlign: "center", marginTop: 20 }}>
-							<PageNumber number={2} />
 						</div>
 					</div>
 				);
@@ -1188,9 +1169,6 @@
 									}}
 								/>
 							))}
-						</div>
-						<div style={{ textAlign: "center", marginTop: 24 }}>
-							<PageNumber number={3} />
 						</div>
 					</div>
 				);
@@ -1485,9 +1463,7 @@
 							</div>
 						</div>
 						<div style={{ flex: 1 }} />
-						<div style={{ paddingBottom: 14 }}>
-							<PageNumber number={4} />
-						</div>
+						<div style={{ paddingBottom: 14 }} />
 					</div>
 				);
 			}
