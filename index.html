@@ -1393,6 +1393,17 @@
 				const [activeTab, setActiveTab] = React.useState(null);
 				const [lightboxImg, setLightboxImg] = React.useState(null);
 				const [hoveredCard, setHoveredCard] = React.useState(null);
+				const [zoomed, setZoomed] = React.useState(false);
+				const [zoomClosing, setZoomClosing] = React.useState(false);
+				const handleZoomClose = () => {
+					setZoomClosing(true);
+					setTimeout(() => {
+						setZoomClosing(false);
+						setZoomed(false);
+						setActiveTab(null);
+					}, 280);
+				};
+				const isMobileZoom = window.innerWidth <= 768;
 
 				const showCursor = useBlinkingCursor();
 				const doodles = useFloatingDoodles();
@@ -1477,13 +1488,32 @@
 
 									<EarTabs
 										activeTab={activeTab}
-										onTabChange={setActiveTab}
+										onTabChange={(tab) => {
+											setActiveTab(tab);
+											if (isMobileZoom) setZoomed(!!tab);
+										}}
 									/>
 
 									{/* Paper content area */}
 									<div
 										className="tw-paper-overlay"
-										style={{
+										style={(isMobileZoom && zoomed) ? {
+											position: "fixed",
+											top: 0,
+											left: 0,
+											right: 0,
+											bottom: 0,
+											overflow: "hidden",
+											display: "flex",
+											flexDirection: "column",
+											fontFamily: MONO,
+											zIndex: 9999,
+											background: "#f5f0e8",
+											padding: "0 20px",
+											transition: "opacity 0.28s ease, transform 0.28s ease",
+											opacity: zoomClosing ? 0 : 1,
+											transform: zoomClosing ? "translateY(12px)" : "translateY(0)",
+										} : {
 											position: "absolute",
 											top: "1%",
 											left: "25%",
@@ -1497,6 +1527,23 @@
 											zIndex: 10,
 										}}
 									>
+										{isMobileZoom && zoomed && (
+											<div
+												onClick={handleZoomClose}
+												style={{
+													position: "absolute",
+													top: 16,
+													right: 16,
+													zIndex: 10000,
+													cursor: "pointer",
+													fontSize: 20,
+													fontWeight: 700,
+													color: COLORS.muted,
+													lineHeight: 1,
+													padding: "8px 10px",
+												}}
+											>&times;</div>
+										)}
 										<div
 											className="paper-scroll"
 											style={{
