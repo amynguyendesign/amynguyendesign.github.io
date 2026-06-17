@@ -248,11 +248,11 @@
           {d.examples.map((e,j)=>(
             <button key={j} onClick={()=>phonSpeak(e.w,wordLang)} style={btnWord}>{hlSub(e.w,e.hl)}</button>
           ))}
-          {d.note && <span style={{width:"100%",fontSize:"11px",fontStyle:"italic",color:C.muted,marginTop:2}}>{d.note}</span>}
+          {d.note && <span style={{width:"100%",fontSize:"12px",fontWeight:600,fontStyle:"italic",letterSpacing:"0.02em",lineHeight:"18px",color:C.muted,marginTop:4}}>{d.note}</span>}
         </>);
       };
 
-      const btnWord = {fontFamily:MONO,fontSize:"14px",color:C.ink,background:"none",border:"none",padding:0,cursor:"pointer"};
+      const btnWord = {fontFamily:MONO,fontSize:"14.5px",fontWeight:600,letterSpacing:"0.03em",lineHeight:"22px",color:C.ink,background:"none",border:"none",padding:0,cursor:"pointer"};
 
       return (
         <div style={{maxWidth:780,margin:"0 auto",padding:"20px 16px 60px"}}>
@@ -260,8 +260,9 @@
              onMouseEnter={e=>e.currentTarget.style.color=C.accent}
              onMouseLeave={e=>e.currentTarget.style.color=C.muted}>&larr; back to amynguyen.studio</a>
 
-          <h1 style={{fontSize:"1.9rem",fontWeight:700,color:C.dark,margin:"0 0 2px"}}>{t.title.split("—")[0].trim()}<span style={{color:C.accent}}>.</span></h1>
-          <p style={{fontSize:"0.9rem",color:C.muted,margin:"0 0 16px"}}>{t.sub}</p>
+          <h1 style={{fontFamily:MONO,fontSize:"1.35rem",fontWeight:700,color:C.dark,lineHeight:1.5,margin:"0 0 2px"}}>{t.title.split("—")[0].trim()}<span style={{color:C.accent}}>.</span></h1>
+          <div style={{width:40,height:2,background:C.accent,borderRadius:1,marginBottom:12}} />
+          <p style={{fontSize:"13px",fontWeight:600,letterSpacing:"0.03em",lineHeight:"20px",color:C.ink,margin:"0 0 16px"}}>{t.sub}</p>
 
           {/* Language tabs */}
           <div style={{display:"flex",gap:8,marginBottom:12}}>
@@ -276,7 +277,7 @@
           </div>
 
           {/* Audible banner */}
-          <div style={{background:C.chip,border:"1px solid "+C.border,borderRadius:10,padding:"8px 12px",textAlign:"center",fontSize:"13px",color:C.dark,marginBottom:14}}>{t.banner}</div>
+          <div style={{background:C.chip,border:"1px solid "+C.border,borderRadius:10,padding:"10px 12px",textAlign:"center",fontSize:"13px",fontWeight:600,letterSpacing:"0.03em",lineHeight:"19px",color:C.dark,marginBottom:16}}>{t.banner}</div>
 
           {/* Category filter */}
           <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:18}}>
@@ -290,18 +291,18 @@
           </div>
 
           {/* Cards */}
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(178px,1fr))",gap:10}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(208px,1fr))",gap:12}}>
             {list.map((p,i)=>(
-              <div key={i} style={{border:"1px solid "+C.border,borderRadius:12,padding:12,background:C.card}}>
+              <div key={i} style={{border:"1px solid "+C.border,borderRadius:12,padding:14,background:C.card}}>
                 <button onClick={()=>phonSpeak(p.say,'fr-FR')} style={{background:"none",border:"none",padding:0,cursor:"pointer",marginBottom:6,display:"block"}}>
                   <span style={{fontSize:"22px",fontWeight:700,color:C.accent,fontFamily:MONO}}>/{p.ipa}/</span>
                 </button>
                 <div style={{display:"flex",flexWrap:"wrap",gap:4,marginBottom:6}}>
                   {p.fr.spellings.map((s,j)=>(
-                    <span key={j} style={{fontSize:"10px",background:C.chip,color:C.dark,borderRadius:4,padding:"2px 6px",fontFamily:MONO}}>{s}</span>
+                    <span key={j} style={{fontSize:"11px",fontWeight:600,letterSpacing:"0.02em",background:C.chip,color:C.dark,borderRadius:4,padding:"2px 7px",fontFamily:MONO}}>{s}</span>
                   ))}
                 </div>
-                <div style={{display:"flex",flexWrap:"wrap",gap:"2px 12px",alignItems:"baseline"}}>
+                <div style={{display:"flex",flexWrap:"wrap",gap:"5px 14px",alignItems:"baseline"}}>
                   {renderExamples(p)}
                 </div>
               </div>
