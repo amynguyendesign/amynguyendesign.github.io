@@ -193,20 +193,37 @@
     },
   };
 
+    function pickVoice(pref){
+      const voices = window.speechSynthesis.getVoices() || [];
+      const cands = voices.filter(v => v.lang && v.lang.toLowerCase().replace('_','-').startsWith(pref));
+      if(!cands.length) return null;
+      if(pref === 'fr'){
+        return cands.find(v => /amélie|amelie|thomas|audrey|aurélie|aurelie|marie|virginie|google fran/i.test(v.name))
+            || cands.find(v => v.lang.toLowerCase().replace('_','-') === 'fr-fr')
+            || cands[0];
+      }
+      return cands.find(v => v.default) || cands[0];
+    }
+    function doSpeak(text, lang){
+      const synth = window.speechSynthesis;
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang || 'fr-FR';
+      const v = pickVoice((lang||'fr').slice(0,2).toLowerCase());
+      if(v) u.voice = v;
+      u.rate = 0.85;
+      synth.speak(u);
+    }
     function phonSpeak(text, lang){
       if(!window.speechSynthesis || !text) return;
       const synth = window.speechSynthesis;
       synth.cancel();
-      setTimeout(()=>{
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = lang || 'fr-FR';
-        const pref = (lang||'fr').slice(0,2).toLowerCase();
-        const voices = synth.getVoices() || [];
-        const v = voices.find(x=>x.lang && x.lang.toLowerCase().startsWith(pref));
-        if(v) u.voice = v;
-        u.rate = 0.85;
-        synth.speak(u);
-      }, 60);
+      const voices = synth.getVoices() || [];
+      if(voices.length){ setTimeout(()=>doSpeak(text, lang), 50); return; }
+      // voices not loaded yet — wait for them so we don't fall back to an English voice
+      let done = false;
+      const fire = ()=>{ if(done) return; done = true; doSpeak(text, lang); };
+      synth.addEventListener('voiceschanged', fire, { once:true });
+      setTimeout(fire, 600);
     }
 
     function hi(text, start, len){
