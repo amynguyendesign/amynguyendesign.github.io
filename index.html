@@ -101,7 +101,8 @@ const ART_IMAGES = [
 	{ src: "src/assets/toast.jpg", title: "Toast", medium: "Watercolor", alt: "Toast" },
 ];
 
-const NAV_ITEMS = ["home", "about", "art", "studio", "contact"];
+const NAV_ITEMS = ["home", "about", "studio", "contact"];
+const VALID_SECTIONS = ["home", "about", "art", "studio", "contact"];
 
 function track(name, params) {
 	if (typeof gtag === "function") gtag("event", name, params || {});
@@ -116,7 +117,7 @@ function App() {
 	const [, tickR] = useState(0);
 
 	const initTab = (new URLSearchParams(window.location.search).get("tab") || "home").toLowerCase();
-	const [section, setSection] = useState(NAV_ITEMS.indexOf(initTab) >= 0 ? initTab : "home");
+	const [section, setSection] = useState(VALID_SECTIONS.indexOf(initTab) >= 0 ? initTab : "home");
 	const [navHover, setNavHover] = useState(null);
 	const [hoveredArt, setHoveredArt] = useState(null);
 	const [lightbox, setLightbox] = useState(null);
@@ -245,7 +246,8 @@ function App() {
 
 			<nav className="an-nav" style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 6, padding: "18px 16px 12px", zIndex: 20, flexShrink: 0 }}>
 				{NAV_ITEMS.map((id) => {
-					const active = section === id, hov = navHover === id;
+					const active = section === id || (id === "studio" && section === "art");
+					const hov = navHover === id;
 					return (
 						<button key={id} onClick={(e) => { e.stopPropagation(); goTo(id); }}
 							onMouseEnter={() => setNavHover(id)} onMouseLeave={() => setNavHover(null)}
