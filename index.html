@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 		<meta name="color-scheme" content="light" />
 		<meta name="theme-color" content="#FFFFFF" />
 		<title>Amy Nguyen</title>
@@ -55,7 +55,7 @@
 			* { box-sizing: border-box; }
 			html, body { margin: 0; padding: 0; background: #FFFFFF; }
 			#root { min-height: 100vh; min-height: 100dvh; }
-			.ps { -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+			.ps { -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding-bottom: env(safe-area-inset-bottom); }
 			@media (hover: none) and (pointer: coarse) { .an-root { cursor: default !important; } }
 			.ps::-webkit-scrollbar { width: 5px; }
 			.ps::-webkit-scrollbar-track { background: transparent; }
@@ -72,7 +72,9 @@
 				.an-art-grid { grid-template-columns: repeat(2, 1fr) !important; }
 				.an-nav button { font-size: 11px !important; padding: 6px 11px !important; }
 				.an-about-row { flex-direction: column !important; }
-				.an-about-photo { float: none !important; margin: 0 0 14px 0 !important; }
+				.an-about-photo { float: none !important; display: block; margin: 0 auto 16px !important; }
+				.ps { padding-bottom: calc(40px + env(safe-area-inset-bottom)) !important; }
+				.an-section { padding: 16px 20px 28px !important; }
 			}
 			@media (prefers-reduced-motion: reduce) {
 				*, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
@@ -131,6 +133,7 @@ function App() {
 	const [lightbox, setLightbox] = useState(null);
 	const [hoveredStudio, setHoveredStudio] = useState(null);
 	const [goodiesOpen, setGoodiesOpen] = useState(false);
+	const [aboutHover, setAboutHover] = useState(false);
 
 	useEffect(() => {
 		lettersRef.current = NAME.split("").map((char, i) => ({
@@ -277,7 +280,7 @@ function App() {
 				</div>
 			)}
 
-			<nav className="an-nav" style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 6, padding: "18px 16px 12px", zIndex: 20, flexShrink: 0 }}>
+			<nav className="an-nav" style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 6, padding: "calc(16px + env(safe-area-inset-top)) 16px 12px", zIndex: 20, flexShrink: 0 }}>
 				{NAV_ITEMS.map((id) => {
 					const active = section === id || (id === "studio" && section === "art");
 					const hov = navHover === id;
@@ -317,13 +320,13 @@ function App() {
 				{/* ABOUT */}
 				{section === "about" && (
 					<div className="ps" style={{ position: "absolute", inset: 0, overflow: "auto" }}>
-						<div style={{ maxWidth: 620, margin: "0 auto", padding: "20px 28px 32px", animation: "contentIn 0.35s ease" }}>
+						<div className="an-section" style={{ maxWidth: 620, margin: "0 auto", padding: "20px 28px 32px", animation: "contentIn 0.35s ease" }}>
 							<div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
 								<div style={{ width: 6, height: 34, background: NAV_COLOR, borderRadius: 3 }} />
 								<h2 style={{ fontFamily: DISP, fontSize: 34, fontWeight: 700, color: BLACK, margin: 0 }}>About me</h2>
 							</div>
 							<div className="an-about-row">
-								<img className="an-about-photo" src="src/assets/amy.jpg" alt="Amy" style={{ width: 140, float: "right", marginLeft: 18, marginBottom: 10, border: "2px solid " + BLACK, borderRadius: 5, transform: "rotate(1.5deg)" }} />
+								<img className="an-about-photo" src="src/assets/amy.jpg" alt="Amy" onMouseEnter={() => setAboutHover(true)} onMouseLeave={() => setAboutHover(false)} onClick={(e) => { e.stopPropagation(); setLightbox("src/assets/amy.jpg"); track("about_photo_open", {}); }} style={{ width: 140, float: "right", position: "relative", zIndex: 3, marginLeft: 18, marginBottom: 10, cursor: "pointer", border: "2px solid " + (aboutHover ? PASTELS[2] : BLACK), borderRadius: 5, transform: aboutHover ? "translateY(-4px) rotate(-0.5deg)" : "rotate(1.5deg)", boxShadow: aboutHover ? "4px 4px 0 " + PASTELS[2] : "none", transition: "all 0.25s cubic-bezier(0.34,1.56,0.64,1)" }} />
 								<div style={{ fontFamily: DISP, fontSize: 15, color: BLACK, lineHeight: "26px", opacity: 0.88, fontWeight: 500 }}>
 									<p style={{ marginBottom: 12 }}>I entered Stanford with a background in writing and literature, but chose to pursue Computer Science because I wanted to push myself toward an intellectual challenge I hadn't yet mastered.</p>
 									<p style={{ marginBottom: 12 }}>With no prior technical experience, I started from scratch: multivariable calculus, first-order logic, my first lines of code. Computer Science gave me a second language for thinking: decompose, debug, build.</p>
@@ -339,7 +342,7 @@ function App() {
 				{/* ART */}
 				{section === "art" && (
 					<div className="ps" style={{ position: "absolute", inset: 0, overflow: "auto" }}>
-						<div style={{ maxWidth: 640, margin: "0 auto", padding: "20px 28px 32px", animation: "contentIn 0.35s ease" }}>
+						<div className="an-section" style={{ maxWidth: 640, margin: "0 auto", padding: "20px 28px 32px", animation: "contentIn 0.35s ease" }}>
 							<div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
 								<div style={{ width: 6, height: 34, background: NAV_COLOR, borderRadius: 3 }} />
 								<h2 style={{ fontFamily: DISP, fontSize: 34, fontWeight: 700, color: BLACK, margin: 0 }}>Art</h2>
@@ -370,7 +373,7 @@ function App() {
 				{/* STUDIO */}
 				{section === "studio" && (
 					<div className="ps" style={{ position: "absolute", inset: 0, overflow: "auto" }}>
-						<div style={{ maxWidth: 560, margin: "0 auto", padding: "20px 28px 32px", animation: "contentIn 0.35s ease" }}>
+						<div className="an-section" style={{ maxWidth: 560, margin: "0 auto", padding: "20px 28px 32px", animation: "contentIn 0.35s ease" }}>
 							<div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
 								<div style={{ width: 6, height: 34, background: NAV_COLOR, borderRadius: 3 }} />
 								<h2 style={{ fontFamily: DISP, fontSize: 34, fontWeight: 700, color: BLACK, margin: 0 }}>Studio</h2>
@@ -404,7 +407,7 @@ function App() {
 									<span style={{ width: 28, height: 28, borderRadius: 6, background: PASTELS[1], color: BLACK, fontFamily: DISP, fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", marginRight: 14, flexShrink: 0 }}>03</span>
 									<span style={{ fontFamily: DISP, fontSize: 18, fontWeight: 700, color: BLACK }}>goodies</span>
 									<span style={{ flex: 1, borderBottom: "1.5px dotted " + BLACK + "20", margin: "0 14px", marginBottom: -2 }} />
-									<span style={{ fontFamily: DISP, fontSize: 12, color: BLACK, opacity: 0.55, fontWeight: 500 }}>freebies &amp; digital swags</span>
+									<span style={{ fontFamily: DISP, fontSize: 12, color: BLACK, opacity: 0.55, fontWeight: 500 }}>freebies for you! yes, you</span>
 									<span style={{ marginLeft: 10, color: BLACK, fontWeight: 700, fontSize: 16, opacity: 0.5, transform: goodiesOpen ? "rotate(90deg)" : "rotate(0deg)", transition: "transform 0.25s ease" }}>&rsaquo;</span>
 								</button>
 								{goodiesOpen && (
@@ -428,7 +431,7 @@ function App() {
 				{/* CONTACT */}
 				{section === "contact" && (
 					<div className="ps" style={{ position: "absolute", inset: 0, overflow: "auto" }}>
-						<div style={{ maxWidth: 560, margin: "0 auto", padding: "20px 28px 32px", animation: "contentIn 0.35s ease" }}>
+						<div className="an-section" style={{ maxWidth: 560, margin: "0 auto", padding: "20px 28px 32px", animation: "contentIn 0.35s ease" }}>
 							<div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
 								<div style={{ width: 6, height: 34, background: NAV_COLOR, borderRadius: 3 }} />
 								<h2 style={{ fontFamily: DISP, fontSize: 34, fontWeight: 700, color: BLACK, margin: 0 }}>Contact</h2>
@@ -442,7 +445,7 @@ function App() {
 				)}
 			</div>
 
-			<div style={{ padding: "10px 24px 16px", display: "flex", justifyContent: "center", flexShrink: 0, zIndex: 10 }}>
+			<div style={{ padding: "10px 24px calc(16px + env(safe-area-inset-bottom))", display: "flex", justifyContent: "center", flexShrink: 0, zIndex: 10 }}>
 				<span style={{ fontFamily: DISP, fontSize: 11, color: BLACK, opacity: 0.5, letterSpacing: "0.08em", fontWeight: 500 }}>Amy Nguyen &copy; 2026</span>
 			</div>
 		</div>
