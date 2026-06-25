@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>One Session — Gym Sheet · Amy Nguyen</title>
+<meta name="description" content="A beautifully designed printable workout tracker. For when your phone dies mid-workout." />
+<link rel="canonical" href="https://amynguyen.studio/workout/" />
+<link rel="icon" type="image/svg+xml" href="../public/favicon.svg" />
+<link rel="icon" type="image/x-icon" href="../favicon.ico" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DHB2BNWHZG"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-DHB2BNWHZG");</script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: #fff; }
+  body { font-family: "Space Grotesk", "Helvetica Neue", Arial, sans-serif; color: #000; max-width: 780px; margin: 0 auto; padding: 28px 24px 32px; }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .card { border: 2.5px solid #000; border-radius: 8px; overflow: hidden; break-inside: avoid; }
+  .card-head { display: flex; align-items: stretch; border-bottom: 2.5px solid #000; }
+  .card-num { width: 42px; background: #000; color: #fff; font-size: 20px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .card-tab { width: 8px; flex-shrink: 0; }
+  .card-name { flex: 1; padding: 0 10px; display: flex; flex-direction: column; justify-content: center; }
+  .card-name label { font-size: 7px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.55; margin-bottom: 1px; }
+  .write-line { border-bottom: 2px solid #000; height: 20px; }
+  .sets { display: flex; }
+  .set-col { flex: 1; padding: 8px 6px 9px; text-align: center; }
+  .set-col + .set-col { border-left: 2px solid #000; }
+  .set-label { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.55; margin-bottom: 7px; }
+  .field-label { font-size: 7px; font-weight: 600; opacity: 0.45; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+  .notes { border: 2.5px solid #000; border-radius: 8px; padding: 10px 14px 14px; margin-top: 14px; }
+  .notes-label { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.55; margin-bottom: 8px; }
+  .notes-line { border-bottom: 2px solid #000; height: 24px; }
+  .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+  .back-link { font-size: 12px; font-weight: 600; color: #000; text-decoration: none; border-bottom: 2px solid #748DA6; padding-bottom: 1px; }
+  .back-link:hover { border-color: #000; }
+  .print-btn { font-family: "Space Grotesk", sans-serif; font-size: 13px; font-weight: 700; color: #fff; background: #000; border: none; padding: 10px 22px; border-radius: 8px; cursor: pointer; letter-spacing: 0.02em; }
+  .print-btn:hover { background: #333; }
+  @media (max-width: 520px) {
+    body { padding: 16px 14px 24px; }
+    .grid { grid-template-columns: 1fr; }
+    .title { font-size: 32px !important; }
+  }
+  @media print {
+    .no-print { display: none !important; }
+    body { padding: 12px 8px; max-width: none; }
+    .grid { gap: 8px; }
+    .card { page-break-inside: avoid; }
+    .notes-line { height: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div style="border-bottom: 3px solid #000; padding-bottom: 14px; margin-bottom: 18px; display: flex; align-items: flex-end; justify-content: space-between;">
+  <div>
+    <div class="title" style="font-size: 42px; font-weight: 700; line-height: 1; letter-spacing: -0.03em;">one session</div>
+    <div style="font-size: 13px; font-weight: 600; margin-top: 6px; opacity: 0.5; font-style: italic;">for when your phone dies mid-workout</div>
+    <div style="font-size: 11px; font-weight: 600; margin-top: 4px; letter-spacing: 0.06em; opacity: 0.7;">AMYNGUYEN.STUDIO</div>
+  </div>
+  <div style="text-align: right;">
+    <div style="font-size: 7px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.55; margin-bottom: 4px;">date</div>
+    <div style="width: 110px; border-bottom: 2px solid #000; height: 20px;"></div>
+  </div>
+</div>
+
+<!-- 8 exercise grid -->
+<div class="grid">
+  <div class="card"><div class="card-head"><div class="card-num">01</div><div class="card-tab" style="background:#F2D7D9;"></div><div class="card-name"><label>exercise</label><div class="write-line"></div></div></div><div class="sets"><div class="set-col"><div class="set-label">set 1</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div><div class="set-col"><div class="set-label">set 2</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div><div class="set-col"><div class="set-label">set 3</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div></div></div>
+  <div class="card"><div class="card-head"><div class="card-num">02</div><div class="card-tab" style="background:#D3CEDF;"></div><div class="card-name"><label>exercise</label><div class="write-line"></div></div></div><div class="sets"><div class="set-col"><div class="set-label">set 1</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div><div class="set-col"><div class="set-label">set 2</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div><div class="set-col"><div class="set-label">set 3</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div></div></div>
+  <div class="card"><div class="card-head"><div class="card-num">03</div><div class="card-tab" style="background:#9CB4CC;"></div><div class="card-name"><label>exercise</label><div class="write-line"></div></div></div><div class="sets"><div class="set-col"><div class="set-label">set 1</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div><div class="set-col"><div class="set-label">set 2</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div><div class="set-col"><div class="set-label">set 3</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div></div></div>
+  <div class="card"><div class="card-head"><div class="card-num">04</div><div class="card-tab" style="background:#748DA6;"></div><div class="card-name"><label>exercise</label><div class="write-line"></div></div></div><div class="sets"><div class="set-col"><div class="set-label">set 1</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div><div class="set-col"><div class="set-label">set 2</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div><div class="set-col"><div class="set-label">set 3</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div></div></div>
+  <div class="card"><div class="card-head"><div class="card-num">05</div><div class="card-tab" style="background:#F2D7D9;"></div><div class="card-name"><label>exercise</label><div class="write-line"></div></div></div><div class="sets"><div class="set-col"><div class="set-label">set 1</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div><div class="set-col"><div class="set-label">set 2</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div><div class="set-col"><div class="set-label">set 3</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div></div></div>
+  <div class="card"><div class="card-head"><div class="card-num">06</div><div class="card-tab" style="background:#D3CEDF;"></div><div class="card-name"><label>exercise</label><div class="write-line"></div></div></div><div class="sets"><div class="set-col"><div class="set-label">set 1</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div><div class="set-col"><div class="set-label">set 2</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div><div class="set-col"><div class="set-label">set 3</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div></div></div>
+  <div class="card"><div class="card-head"><div class="card-num">07</div><div class="card-tab" style="background:#9CB4CC;"></div><div class="card-name"><label>exercise</label><div class="write-line"></div></div></div><div class="sets"><div class="set-col"><div class="set-label">set 1</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div><div class="set-col"><div class="set-label">set 2</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div><div class="set-col"><div class="set-label">set 3</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div></div></div>
+  <div class="card"><div class="card-head"><div class="card-num">08</div><div class="card-tab" style="background:#748DA6;"></div><div class="card-name"><label>exercise</label><div class="write-line"></div></div></div><div class="sets"><div class="set-col"><div class="set-label">set 1</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div><div class="set-col"><div class="set-label">set 2</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div><div class="set-col"><div class="set-label">set 3</div><div class="write-line"></div><div class="field-label">reps</div><div class="write-line" style="margin-top:8px;"></div><div class="field-label">weight</div></div></div></div>
+</div>
+
+<!-- Notes -->
+<div class="notes">
+  <div class="notes-label">notes</div>
+  <div class="notes-line"></div>
+  <div class="notes-line"></div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <a href="/" class="back-link no-print">&larr; amynguyen.studio</a>
+  <div style="display:flex;gap:3px;">
+    <div style="width:10px;height:10px;border-radius:2px;background:#F2D7D9;"></div>
+    <div style="width:10px;height:10px;border-radius:50%;background:#D3CEDF;"></div>
+    <div style="width:10px;height:10px;border-radius:2px;background:#9CB4CC;"></div>
+    <div style="width:10px;height:10px;border-radius:50%;background:#748DA6;"></div>
+  </div>
+  <button class="print-btn no-print" onclick="window.print();">print</button>
+</div>
+
+</body>
+</html>
