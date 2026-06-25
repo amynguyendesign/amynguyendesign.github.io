@@ -54,13 +54,19 @@
 		<style>
 			* { box-sizing: border-box; }
 			html, body { margin: 0; padding: 0; background: #FFFFFF; }
-			#root { min-height: 100vh; }
+			#root { min-height: 100vh; min-height: 100dvh; }
+			.ps { -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+			@media (hover: none) and (pointer: coarse) { .an-root { cursor: default !important; } }
 			.ps::-webkit-scrollbar { width: 5px; }
 			.ps::-webkit-scrollbar-track { background: transparent; }
 			.ps::-webkit-scrollbar-thumb { background: #D3CEDF; border-radius: 4px; }
 			@keyframes contentIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 			@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 			@keyframes subSlide { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 240px; } }
+			@keyframes blkFloatA { 0%,100%{transform:rotate(-12deg) translateY(0);} 50%{transform:rotate(-4deg) translateY(-14px);} }
+			@keyframes blkFloatB { 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(-18px) rotate(40deg);} }
+			@keyframes blkFloatC { 0%,100%{transform:rotate(8deg) translateY(0);} 50%{transform:rotate(-6deg) translateY(12px);} }
+			@keyframes blkFloatD { 0%,100%{transform:rotate(-4deg) translateX(0);} 50%{transform:rotate(6deg) translateX(14px);} }
 			.an-art-grid { grid-template-columns: repeat(3, 1fr); }
 			@media (max-width: 600px) {
 				.an-art-grid { grid-template-columns: repeat(2, 1fr) !important; }
@@ -85,7 +91,8 @@ const PASTELS = ["#F2D7D9", "#D3CEDF", "#9CB4CC", "#748DA6"];
 const NAV_COLOR = "#D3CEDF";
 const DISP = '"Space Grotesk", "Helvetica Neue", Arial, sans-serif';
 const NAME = "amy nguyen";
-const SPRING = 0.058, DAMPING = 0.78, REPEL_RADIUS = 148, REPEL_FORCE = 2000;
+const SPRING = 0.06, DAMPING = 0.8, REPEL_RADIUS = 150, REPEL_FORCE = 2000;
+const IS_TOUCH = (typeof window !== 'undefined') && window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)').matches;
 
 const ART_IMAGES = [
 	{ src: "src/assets/graphite.jpg", title: "Graphite Study", medium: "Graphite", alt: "Graphite" },
@@ -114,6 +121,7 @@ function App() {
 	const lettersRef = useRef([]);
 	const particlesRef = useRef([]);
 	const frameRef = useRef(null);
+	const startRef = useRef(performance.now());
 	const [, tickR] = useState(0);
 
 	const initTab = (new URLSearchParams(window.location.search).get("tab") || "home").toLowerCase();
@@ -125,11 +133,30 @@ function App() {
 	const [goodiesOpen, setGoodiesOpen] = useState(false);
 
 	useEffect(() => {
-		lettersRef.current = NAME.split("").map((char) => ({
-			char, homeX: 0, homeY: 0, x: 0, y: 0, vx: 0, vy: 0, rotation: 0, vr: 0, scale: 1, speed: 0,
+		lettersRef.current = NAME.split("").map((char, i) => ({
+			char, homeX: 0, homeY: 0, x: 0, y: 0, vx: 0, vy: 0, rotation: 0, vr: 0, scale: 1, speed: 0, phase: i * 0.55,
 		}));
 		track("page_view", { page_title: initTab, page_location: "/" + initTab });
 	}, []);
+
+	// Periodic gust — a gentle wave travels through the letters
+	useEffect(() => {
+		let timers = [];
+		const wave = () => {
+			lettersRef.current.forEach((L, i) => {
+				const tt = setTimeout(() => {
+					if (L.char === " ") return;
+					L.vy -= 7.5;
+					L.vr += (i % 2 ? 1 : -1) * 2.2;
+				}, i * 65);
+				timers.push(tt);
+			});
+		};
+		const first = setTimeout(wave, 2200);
+		const iv = setInterval(wave, 6000);
+		return () => { clearTimeout(first); clearInterval(iv); timers.forEach(clearTimeout); };
+	}, []);
+
 
 	const goTo = (id) => {
 		setSection(id);
@@ -164,11 +191,15 @@ function App() {
 		let last = performance.now();
 		const loop = (now) => {
 			const dt = Math.min((now - last) / 16, 3); last = now;
+			const t = (now - startRef.current) / 1000;
 			const mx = mouseRef.current.x, my = mouseRef.current.y;
 			lettersRef.current.forEach((L) => {
 				if (L.char === " ") return;
-				const dx = L.homeX - L.x, dy = L.homeY - L.y;
-				let ax = dx * SPRING, ay = dy * SPRING;
+				const idleX = Math.sin(t * 0.9 + L.phase) * 2.6;
+				const idleY = Math.sin(t * 1.25 + L.phase) * 6.0;
+				const idleRot = Math.sin(t * 0.7 + L.phase) * 2.4;
+				const tx = L.homeX + idleX, ty = L.homeY + idleY;
+				let ax = (tx - L.x) * SPRING, ay = (ty - L.y) * SPRING;
 				const mdx = L.x - mx, mdy = L.y - my, md = Math.sqrt(mdx * mdx + mdy * mdy);
 				if (md < REPEL_RADIUS && md > 1) {
 					const f = (1 - md / REPEL_RADIUS) * (1 - md / REPEL_RADIUS) * REPEL_FORCE;
@@ -177,7 +208,7 @@ function App() {
 				}
 				L.vx = (L.vx + ax * dt) * DAMPING; L.vy = (L.vy + ay * dt) * DAMPING;
 				L.x += L.vx * dt; L.y += L.vy * dt;
-				L.vr += (-L.rotation * 0.04) * dt; L.vr *= 0.85; L.rotation += L.vr * dt;
+				L.vr += (idleRot - L.rotation) * 0.05 * dt; L.vr *= 0.86; L.rotation += L.vr * dt;
 				L.speed = Math.sqrt(L.vx * L.vx + L.vy * L.vy);
 				L.scale = 1 + Math.min(L.speed * 0.006, 0.35);
 			});
@@ -214,8 +245,9 @@ function App() {
 			const f = 580 / d;
 			L.vx += (dx / d) * f; L.vy += (dy / d) * f; L.vr += (Math.random() - 0.5) * 14;
 		});
-		for (let i = 0; i < 20; i++) {
-			const a = (Math.PI * 2 * i) / 20, s = 3 + Math.random() * 7;
+		const PARTS = IS_TOUCH ? 12 : 20;
+		for (let i = 0; i < PARTS; i++) {
+			const a = (Math.PI * 2 * i) / PARTS, s = 3 + Math.random() * 7;
 			particlesRef.current.push({
 				x: cx, y: cy, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 3,
 				life: 0.5 + Math.random() * 0.5, size: 5 + Math.random() * 8,
@@ -229,7 +261,8 @@ function App() {
 	return (
 		<div ref={containerRef} onMouseMove={onMove} onClick={onClick}
 			onMouseLeave={() => { mouseRef.current = { x: -999, y: -999 }; }}
-			style={{ width: "100%", minHeight: "100vh", height: "100vh", background: WHITE, position: "relative", overflow: "hidden", cursor: "crosshair", userSelect: "none", display: "flex", flexDirection: "column", fontFamily: DISP }}>
+			className="an-root"
+			style={{ width: "100%", minHeight: "100vh", height: "100dvh", background: WHITE, position: "relative", overflow: "hidden", cursor: "crosshair", userSelect: "none", display: "flex", flexDirection: "column", fontFamily: DISP }}>
 
 			{particlesRef.current.map((p, i) => (
 				<div key={i} style={{ position: "absolute", left: p.x, top: p.y, width: p.size, height: p.size, borderRadius: p.square ? 2 : "50%", background: p.color, opacity: p.life, transform: "translate(-50%,-50%)", pointerEvents: "none", zIndex: 30 }} />
@@ -262,10 +295,10 @@ function App() {
 				{/* HOME */}
 				{section === "home" && (
 					<div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
-						<div style={{ position: "absolute", top: "18%", left: "9%", width: 46, height: 46, background: PASTELS[0], borderRadius: 7, transform: "rotate(-12deg)", animation: "fadeIn 1s ease 0.3s both" }} />
-						<div style={{ position: "absolute", bottom: "20%", right: "11%", width: 32, height: 32, background: PASTELS[2], borderRadius: "50%", animation: "fadeIn 1s ease 0.6s both" }} />
-						<div style={{ position: "absolute", top: "60%", left: "14%", width: 20, height: 58, background: PASTELS[1], borderRadius: 5, transform: "rotate(8deg)", animation: "fadeIn 1s ease 0.9s both" }} />
-						<div style={{ position: "absolute", top: "24%", right: "16%", width: 60, height: 16, background: PASTELS[3], borderRadius: 4, transform: "rotate(-4deg)", animation: "fadeIn 1s ease 1.2s both" }} />
+						<div style={{ position: "absolute", top: "18%", left: "9%", width: 46, height: 46, background: PASTELS[0], borderRadius: 7, animation: "blkFloatA 7s ease-in-out infinite, fadeIn 1s ease 0.3s both" }} />
+						<div style={{ position: "absolute", bottom: "20%", right: "11%", width: 32, height: 32, background: PASTELS[2], borderRadius: "50%", animation: "blkFloatB 9s ease-in-out infinite, fadeIn 1s ease 0.6s both" }} />
+						<div style={{ position: "absolute", top: "60%", left: "14%", width: 20, height: 58, background: PASTELS[1], borderRadius: 5, animation: "blkFloatC 8s ease-in-out infinite, fadeIn 1s ease 0.9s both" }} />
+						<div style={{ position: "absolute", top: "24%", right: "16%", width: 60, height: 16, background: PASTELS[3], borderRadius: 4, animation: "blkFloatD 10s ease-in-out infinite, fadeIn 1s ease 1.2s both" }} />
 
 						<div style={{ display: "flex", whiteSpace: "nowrap", marginBottom: 12, position: "relative", zIndex: 2 }}>
 							{NAME.split("").map((char, i) => {
