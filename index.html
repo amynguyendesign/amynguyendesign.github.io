@@ -4,49 +4,34 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta name="color-scheme" content="light" />
-		<meta name="theme-color" content="#FDFAF6" />
+		<meta name="theme-color" content="#FFFFFF" />
 		<title>Amy Nguyen</title>
-		<meta
-			name="description"
-			content="Amy Nguyen - Engineer. Designer. Stanford-trained. SF-based."
-		/>
+		<meta name="description" content="Amy Nguyen - Engineer. Designer. Stanford-trained. SF-based." />
 		<link rel="canonical" href="https://amynguyen.studio/" />
 		<link rel="icon" type="image/svg+xml" href="./public/favicon.svg" />
 		<link rel="icon" type="image/x-icon" href="./favicon.ico" />
 		<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
-
-		<!-- Open Graph -->
 		<meta property="og:type" content="website" />
 		<meta property="og:url" content="https://amynguyen.studio/" />
 		<meta property="og:title" content="Amy Nguyen" />
 		<meta property="og:description" content="Engineer. Designer. Stanford-trained. SF-based." />
 		<meta property="og:image" content="https://amynguyen.studio/public/favicon-96x96.png" />
-
-		<!-- Twitter Card -->
 		<meta name="twitter:card" content="summary" />
 		<meta name="twitter:title" content="Amy Nguyen" />
 		<meta name="twitter:description" content="Engineer. Designer. Stanford-trained. SF-based." />
-
-		<!-- Preconnect to CDNs -->
 		<link rel="preconnect" href="https://unpkg.com" crossorigin />
 		<link rel="preconnect" href="https://www.gstatic.com" crossorigin />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-
-		<!-- Analytics (deferred) -->
-		<script
-			async
-			src="https://www.googletagmanager.com/gtag/js?id=G-DHB2BNWHZG"
-		></script>
+		<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-DHB2BNWHZG"></script>
 		<script>
 			window.dataLayer = window.dataLayer || [];
-			function gtag() {
-				dataLayer.push(arguments);
-			}
+			function gtag() { dataLayer.push(arguments); }
 			gtag("js", new Date());
 			gtag("config", "G-DHB2BNWHZG");
 		</script>
-
-		<!-- Firebase (defer to unblock render) -->
 		<script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 		<script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 		<script defer>
@@ -63,1646 +48,375 @@
 				window.db = firebase.database();
 			});
 		</script>
-
-		<!-- React + Babel -->
-		<script
-			crossorigin
-			src="https://unpkg.com/react@18/umd/react.production.min.js"
-		></script>
-		<script
-			crossorigin
-			src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
-		></script>
+		<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+		<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 		<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
-
-		<link rel="stylesheet" href="./styles.css" />
 		<style>
+			* { box-sizing: border-box; }
+			html, body { margin: 0; padding: 0; background: #FFFFFF; }
+			#root { min-height: 100vh; }
+			.ps::-webkit-scrollbar { width: 5px; }
+			.ps::-webkit-scrollbar-track { background: transparent; }
+			.ps::-webkit-scrollbar-thumb { background: #D3CEDF; border-radius: 4px; }
+			@keyframes contentIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+			@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+			@keyframes subSlide { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 240px; } }
+			.an-art-grid { grid-template-columns: repeat(3, 1fr); }
+			@media (max-width: 600px) {
+				.an-art-grid { grid-template-columns: repeat(2, 1fr) !important; }
+				.an-nav button { font-size: 11px !important; padding: 6px 11px !important; }
+				.an-about-row { flex-direction: column !important; }
+				.an-about-photo { float: none !important; margin: 0 0 14px 0 !important; }
+			}
 			@media (prefers-reduced-motion: reduce) {
-				*, *::before, *::after {
-					animation-duration: 0.01ms !important;
-					transition-duration: 0.01ms !important;
-				}
+				*, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 			}
 		</style>
 	</head>
 	<body>
 		<div id="root"></div>
 		<script type="text/babel">
-			/* ─────────────────────────────────────────────
-   Constants & Data
-   ───────────────────────────────────────────── */
 
-			const MONO = '"Courier New", Courier, monospace';
+const { useState, useRef, useEffect, useCallback } = React;
 
-			const COLORS = {
-				ink: "#2A2418",
-				accent: "#A0785A",
-				dark: "#3A3020",
-				muted: "#8A7A60",
-				faded: "#A09080",
-				paper: "#FDFAF6",
-				separator: "#3A3020",
-			};
+const WHITE = "#FFFFFF";
+const BLACK = "#0A0A0A";
+const PASTELS = ["#F2D7D9", "#D3CEDF", "#9CB4CC", "#748DA6"];
+const NAV_COLOR = "#D3CEDF";
+const DISP = '"Space Grotesk", "Helvetica Neue", Arial, sans-serif';
+const NAME = "amy nguyen";
+const SPRING = 0.058, DAMPING = 0.78, REPEL_RADIUS = 148, REPEL_FORCE = 2000;
 
-			const TABS = [
-				{ id: "home", label: "HOME", color: "#EDD9A3" },
-				{ id: "about", label: "ABOUT", color: "#EDD9A3" },
-				{ id: "studio", label: "STUDIO", color: "#EDD9A3" },
-				{ id: "contact", label: "CONTACT", color: "#EDD9A3" },
-			];
+const ART_IMAGES = [
+	{ src: "src/assets/graphite.jpg", title: "Graphite Study", medium: "Graphite", alt: "Graphite" },
+	{ src: "src/assets/onions.JPG", title: "Onions", medium: "Watercolor", alt: "Onions" },
+	{ src: "src/assets/cactus.jpg", title: "Cactus", medium: "Watercolor", alt: "Cactus" },
+	{ src: "src/assets/sf.jpg", title: "San Francisco", medium: "Watercolor", alt: "SF" },
+	{ src: "src/assets/chocolate.JPG", title: "Chocolate", medium: "Oil", alt: "Chocolate" },
+	{ src: "src/assets/spatula.JPG", title: "Spatula", medium: "Watercolor", alt: "Spatula" },
+	{ src: "src/assets/bird.jpg", title: "Bird", medium: "Watercolor", alt: "Bird" },
+	{ src: "src/assets/metal.jpg", title: "Metal", medium: "Acrylic", alt: "Metal" },
+	{ src: "src/assets/coffee.jpg", title: "Coffee", medium: "Watercolor", alt: "Coffee" },
+	{ src: "src/assets/surreal.jpg", title: "Surreal", medium: "Oil", alt: "Surreal" },
+	{ src: "src/assets/toast.jpg", title: "Toast", medium: "Watercolor", alt: "Toast" },
+];
 
-			const ART_IMAGES = [
-				{
-					src: "src/assets/graphite.jpg",
-					title: "Graphite Study",
-					medium: "Graphite",
-					alt: "Graphite",
-				},
-				{
-					src: "src/assets/onions.JPG",
-					title: "Onions",
-					medium: "Watercolor",
-					alt: "Onions",
-				},
-				{
-					src: "src/assets/cactus.jpg",
-					title: "Cactus",
-					medium: "Watercolor",
-					alt: "Cactus",
-				},
-				{
-					src: "src/assets/sf.jpg",
-					title: "San Francisco",
-					medium: "Watercolor",
-					alt: "SF",
-				},
-				{
-					src: "src/assets/chocolate.JPG",
-					title: "Chocolate",
-					medium: "Oil",
-					alt: "Chocolate",
-				},
-				{
-					src: "src/assets/spatula.JPG",
-					title: "Spatula",
-					medium: "Watercolor",
-					alt: "Spatula",
-				},
-				{
-					src: "src/assets/bird.jpg",
-					title: "Bird",
-					medium: "Watercolor",
-					alt: "Bird",
-				},
-				{
-					src: "src/assets/metal.jpg",
-					title: "Metal",
-					medium: "Acrylic",
-					alt: "Metal",
-				},
-				{
-					src: "src/assets/coffee.jpg",
-					title: "Coffee",
-					medium: "Watercolor",
-					alt: "Coffee",
-				},
-				{
-					src: "src/assets/surreal.jpg",
-					title: "Surreal",
-					medium: "Oil",
-					alt: "Surreal",
-				},
-				{
-					src: "src/assets/toast.jpg",
-					title: "Toast",
-					medium: "Watercolor",
-					alt: "Toast",
-				},
-			];
+const NAV_ITEMS = ["home", "about", "art", "studio", "contact"];
 
-			const EASTER_EGGS = [
-				{ art: "  /)_/)\n ( . .)\n / づ♡" },
-				{ art: "  ☆  ☆  ☆\n ☆  ♡  ☆\n  ☆  ☆  ☆" },
-				{ art: "  ∧＿∧\n( ･ω･)\nっ  c" },
-				{ art: " ⊹ ˚₊ ⊹\n  ♡\n ⊹ ˚₊ ⊹" },
-				{ art: " ❀ ❁ ✿ ❀\n✿ ❀ ❁ ✿\n ❁ ✿ ❀ ❁" },
-				{ art: "♡♡♡\n♡♡\n♡" },
-				{ art: "✩ . ✩ . ✩\n . ✩ . ✩ .\n✩ . ✩ . ✩" },
-				{ art: "⋆˚✿˖°" },
-				{ art: "⋆☁︎｡⋆｡ ☾" },
-			];
+function track(name, params) {
+	if (typeof gtag === "function") gtag("event", name, params || {});
+}
 
-			const CUTE_CHARS = [
-				"♡",
-				"★",
-				"✿",
-				"☁",
-				"♪",
-				"✦",
-				"◡",
-				"⊹",
-				"✧",
-				"❀",
-				"✩",
-				"·",
-				"✶",
-				"☂",
-				"☼",
-			];
+function App() {
+	const containerRef = useRef(null);
+	const mouseRef = useRef({ x: -999, y: -999 });
+	const lettersRef = useRef([]);
+	const particlesRef = useRef([]);
+	const frameRef = useRef(null);
+	const [, tickR] = useState(0);
 
-			/* ─────────────────────────────────────────────
-   Helpers
-   ───────────────────────────────────────────── */
+	const initTab = (new URLSearchParams(window.location.search).get("tab") || "home").toLowerCase();
+	const [section, setSection] = useState(NAV_ITEMS.indexOf(initTab) >= 0 ? initTab : "home");
+	const [navHover, setNavHover] = useState(null);
+	const [hoveredArt, setHoveredArt] = useState(null);
+	const [lightbox, setLightbox] = useState(null);
+	const [hoveredStudio, setHoveredStudio] = useState(null);
+	const [goodiesOpen, setGoodiesOpen] = useState(false);
 
-			function track(eventName, params) {
-				if (typeof gtag === "function")
-					gtag("event", eventName, params || {});
+	useEffect(() => {
+		lettersRef.current = NAME.split("").map((char) => ({
+			char, homeX: 0, homeY: 0, x: 0, y: 0, vx: 0, vy: 0, rotation: 0, vr: 0, scale: 1, speed: 0,
+		}));
+		track("page_view", { page_title: initTab, page_location: "/" + initTab });
+	}, []);
+
+	const goTo = (id) => {
+		setSection(id);
+		try {
+			const u = new URL(window.location.href);
+			if (id === "home") u.searchParams.delete("tab"); else u.searchParams.set("tab", id);
+			window.history.replaceState({}, "", u);
+		} catch (e) {}
+		track("tab_click", { tab_name: id });
+		track("page_view", { page_title: id, page_location: "/" + id });
+	};
+
+	const computeHomes = useCallback(() => {
+		if (!containerRef.current) return;
+		const els = containerRef.current.querySelectorAll(".k-letter");
+		const cr = containerRef.current.getBoundingClientRect();
+		els.forEach((el, i) => {
+			const L = lettersRef.current[i]; if (!L) return;
+			const r = el.getBoundingClientRect();
+			L.homeX = r.left - cr.left + r.width / 2;
+			L.homeY = r.top - cr.top + r.height / 2;
+			if (L.x === 0 && L.y === 0) {
+				L.x = L.homeX + (Math.random() - 0.5) * 500;
+				L.y = L.homeY - 100 - Math.random() * 200;
+				L.rotation = (Math.random() - 0.5) * 90;
 			}
+		});
+	}, []);
 
-			function pickRandom(arr) {
-				return arr[Math.floor(Math.random() * arr.length)];
-			}
-
-			function randomEasterEggPosition() {
-				const isMobile = window.innerWidth <= 768;
-				if (isMobile) {
-					return {
-						top: Math.max(
-							10,
-							Math.min(18, 10 + Math.floor(Math.random() * 10)),
-						),
-						left: Math.max(
-							70,
-							Math.min(82, 70 + Math.floor(Math.random() * 12)),
-						),
-					};
+	useEffect(() => {
+		computeHomes();
+		let last = performance.now();
+		const loop = (now) => {
+			const dt = Math.min((now - last) / 16, 3); last = now;
+			const mx = mouseRef.current.x, my = mouseRef.current.y;
+			lettersRef.current.forEach((L) => {
+				if (L.char === " ") return;
+				const dx = L.homeX - L.x, dy = L.homeY - L.y;
+				let ax = dx * SPRING, ay = dy * SPRING;
+				const mdx = L.x - mx, mdy = L.y - my, md = Math.sqrt(mdx * mdx + mdy * mdy);
+				if (md < REPEL_RADIUS && md > 1) {
+					const f = (1 - md / REPEL_RADIUS) * (1 - md / REPEL_RADIUS) * REPEL_FORCE;
+					ax += (mdx / md) * f * 0.008; ay += (mdy / md) * f * 0.008;
+					L.vr += (mdx > 0 ? 1 : -1) * f * 0.00014;
 				}
-				const desktopPositions = [
-					{
-						top: Math.min(75, 62 + Math.floor(Math.random() * 13)),
-						left: Math.min(78, 55 + Math.floor(Math.random() * 23)),
-					},
-					{
-						top: Math.min(75, 62 + Math.floor(Math.random() * 13)),
-						left: Math.min(78, 55 + Math.floor(Math.random() * 23)),
-					},
-					{
-						top: Math.max(12, 12 + Math.floor(Math.random() * 12)),
-						left: Math.min(78, 60 + Math.floor(Math.random() * 20)),
-					},
-					{
-						top: Math.max(12, 12 + Math.floor(Math.random() * 10)),
-						left: Math.min(80, 65 + Math.floor(Math.random() * 18)),
-					},
-				];
-				return pickRandom(desktopPositions);
-			}
+				L.vx = (L.vx + ax * dt) * DAMPING; L.vy = (L.vy + ay * dt) * DAMPING;
+				L.x += L.vx * dt; L.y += L.vy * dt;
+				L.vr += (-L.rotation * 0.04) * dt; L.vr *= 0.85; L.rotation += L.vr * dt;
+				L.speed = Math.sqrt(L.vx * L.vx + L.vy * L.vy);
+				L.scale = 1 + Math.min(L.speed * 0.006, 0.35);
+			});
+			particlesRef.current = particlesRef.current.filter((p) => {
+				p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 0.2 * dt;
+				p.life -= 0.025 * dt; p.vx *= 0.98; return p.life > 0;
+			});
+			tickR((n) => n + 1);
+			frameRef.current = requestAnimationFrame(loop);
+		};
+		frameRef.current = requestAnimationFrame(loop);
+		return () => cancelAnimationFrame(frameRef.current);
+	}, [computeHomes]);
 
-			/* ─────────────────────────────────────────────
-   Custom Hooks
-   ───────────────────────────────────────────── */
+	useEffect(() => {
+		const r = () => setTimeout(computeHomes, 50);
+		window.addEventListener("resize", r);
+		return () => window.removeEventListener("resize", r);
+	}, [computeHomes]);
 
-			function useBlinkingCursor(interval = 530) {
-				const [visible, setVisible] = React.useState(true);
-				React.useEffect(() => {
-					const id = setInterval(
-						() => setVisible((c) => !c),
-						interval,
-					);
-					return () => clearInterval(id);
-				}, [interval]);
-				return visible;
-			}
+	const onMove = (e) => {
+		if (!containerRef.current) return;
+		const r = containerRef.current.getBoundingClientRect();
+		mouseRef.current = { x: e.clientX - r.left, y: e.clientY - r.top };
+	};
+	const onClick = (e) => {
+		if (["BUTTON", "A", "IMG"].indexOf(e.target.tagName) >= 0) return;
+		if (!containerRef.current) return;
+		const r = containerRef.current.getBoundingClientRect();
+		const cx = e.clientX - r.left, cy = e.clientY - r.top;
+		lettersRef.current.forEach((L) => {
+			if (L.char === " ") return;
+			const dx = L.x - cx, dy = L.y - cy, d = Math.max(Math.sqrt(dx * dx + dy * dy), 30);
+			const f = 580 / d;
+			L.vx += (dx / d) * f; L.vy += (dy / d) * f; L.vr += (Math.random() - 0.5) * 14;
+		});
+		for (let i = 0; i < 20; i++) {
+			const a = (Math.PI * 2 * i) / 20, s = 3 + Math.random() * 7;
+			particlesRef.current.push({
+				x: cx, y: cy, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 3,
+				life: 0.5 + Math.random() * 0.5, size: 5 + Math.random() * 8,
+				color: PASTELS[Math.floor(Math.random() * PASTELS.length)], square: Math.random() > 0.5,
+			});
+		}
+	};
 
-			function useFloatingDoodles() {
-				const [doodles, setDoodles] = React.useState([]);
-				React.useEffect(() => {
-					const chars = "abcdefghijklmnopqrstuvwxyz";
-					const spawnDoodle = () => {
-						const id = Date.now() + Math.random();
-						const char =
-							chars[Math.floor(Math.random() * chars.length)];
-						const x = 5 + Math.random() * 90;
-						const startY = -10 - Math.random() * 5;
-						const size = 11 + Math.random() * 3;
-						const duration =
-							(window.innerWidth <= 768 ? 20 : 12) +
-							Math.random() * 8;
-						const drift = (Math.random() - 0.5) * 30;
-						const rotate = Math.random() * 360;
-						setDoodles((prev) => [
-							...prev.slice(-18),
-							{
-								id,
-								char,
-								x,
-								startY,
-								size,
-								duration,
-								drift,
-								rotate,
-							},
-						]);
-						setTimeout(
-							() =>
-								setDoodles((prev) =>
-									prev.filter((d) => d.id !== id),
-								),
-							duration * 1000,
-						);
-					};
-					const interval = setInterval(spawnDoodle, 2000);
-					[500, 1200, 2000, 2800].forEach((ms) =>
-						setTimeout(spawnDoodle, ms),
-					);
-					return () => clearInterval(interval);
-				}, []);
-				return doodles;
-			}
+	const craftHL = { background: PASTELS[3], color: WHITE, padding: "2px 8px", borderRadius: 4, fontWeight: 700, letterSpacing: "0.01em" };
 
-			function useTypewriterInput() {
-				const [typed, setTyped] = React.useState("");
-				const [easterEgg, setEasterEgg] = React.useState(null);
-				const [easterEggPos, setEasterEggPos] = React.useState({
-					top: 50,
-					left: 60,
-				});
+	return (
+		<div ref={containerRef} onMouseMove={onMove} onClick={onClick}
+			onMouseLeave={() => { mouseRef.current = { x: -999, y: -999 }; }}
+			style={{ width: "100%", minHeight: "100vh", height: "100vh", background: WHITE, position: "relative", overflow: "hidden", cursor: "crosshair", userSelect: "none", display: "flex", flexDirection: "column", fontFamily: DISP }}>
 
-				const triggerEasterEgg = React.useCallback(
-					(displayChar, source) => {
-						setTyped(displayChar);
-						const pick = pickRandom(EASTER_EGGS);
-						setEasterEgg(pick);
-						setEasterEggPos(randomEasterEggPosition());
-						track("easter_egg", {});
-						track(
-							source === "tap"
-								? "typewriter_tap"
-								: "typewriter_key",
-							{
-								key: displayChar,
-								device:
-									window.innerWidth <= 768
-										? "mobile"
-										: "desktop",
-							},
-						);
-					},
-					[],
-				);
+			{particlesRef.current.map((p, i) => (
+				<div key={i} style={{ position: "absolute", left: p.x, top: p.y, width: p.size, height: p.size, borderRadius: p.square ? 2 : "50%", background: p.color, opacity: p.life, transform: "translate(-50%,-50%)", pointerEvents: "none", zIndex: 30 }} />
+			))}
 
-				React.useEffect(() => {
-					const handleKey = (e) => {
-						if (
-							e.target.tagName === "INPUT" ||
-							e.target.tagName === "TEXTAREA"
-						)
-							return;
-						if (e.key === "Backspace") {
-							e.preventDefault();
-							setTyped("");
-							setEasterEgg(null);
-						} else if (
-							e.key.length === 1 &&
-							/[a-zA-Z]/.test(e.key)
-						) {
-							triggerEasterEgg(e.key, "key");
-						}
-					};
-					window.addEventListener("keydown", handleKey);
-					return () =>
-						window.removeEventListener("keydown", handleKey);
-				}, [triggerEasterEgg]);
-
-				return { typed, easterEgg, easterEggPos, triggerEasterEgg };
-			}
-
-			/* ─────────────────────────────────────────────
-   Shared Components
-   ───────────────────────────────────────────── */
-
-			function PageHeader({ title, children }) {
-				return (
-					<div style={{ marginBottom: 13 }}>
-						<h2
-							style={{
-								fontFamily: MONO,
-								fontSize: "1.35rem",
-								color: COLORS.dark,
-								fontWeight: 700,
-								lineHeight: 1.5,
-								marginBottom: 2,
-							}}
-						>
-							{title}
-							<span style={{ color: COLORS.accent }}>.</span>
-						</h2>
-						<div
-							style={{
-								width: 40,
-								height: 2,
-								background: COLORS.accent,
-								marginBottom: 12,
-								borderRadius: 1,
-							}}
-						/>
-						{children}
+			{lightbox && (
+				<div onClick={() => setLightbox(null)} style={{ position: "fixed", inset: 0, zIndex: 100, background: "rgba(255,255,255,0.92)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", animation: "fadeIn 0.2s", padding: 24 }}>
+					<div style={{ position: "relative" }} onClick={(e) => e.stopPropagation()}>
+						<div onClick={() => setLightbox(null)} style={{ position: "absolute", top: -14, right: -14, width: 30, height: 30, borderRadius: "50%", background: WHITE, border: "2px solid " + BLACK, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontFamily: DISP, fontSize: 14, fontWeight: 700, color: BLACK, zIndex: 101 }}>&times;</div>
+						<img src={lightbox} alt="" style={{ maxWidth: "82vw", maxHeight: "82vh", objectFit: "contain", borderRadius: 4, border: "3px solid " + BLACK, display: "block" }} />
 					</div>
-				);
-			}
+				</div>
+			)}
 
+			<nav className="an-nav" style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 6, padding: "18px 16px 12px", zIndex: 20, flexShrink: 0 }}>
+				{NAV_ITEMS.map((id) => {
+					const active = section === id, hov = navHover === id;
+					return (
+						<button key={id} onClick={(e) => { e.stopPropagation(); goTo(id); }}
+							onMouseEnter={() => setNavHover(id)} onMouseLeave={() => setNavHover(null)}
+							style={{ fontFamily: DISP, fontSize: 13, fontWeight: 700, letterSpacing: "0.02em", cursor: "pointer", padding: "8px 18px", borderRadius: 8, border: "none", color: BLACK, background: active ? NAV_COLOR : (hov ? NAV_COLOR + "66" : "transparent"), transform: hov && !active ? "translateY(-2px)" : "none", transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)" }}>
+							{id}
+						</button>
+					);
+				})}
+			</nav>
 
-			function Cursor({ visible }) {
-				return (
-					<div
-						style={{
-							width: 7,
-							height: 13,
-							background: COLORS.dark,
-							opacity: visible ? 0.6 : 0,
-							transition: "opacity 0.08s",
-						}}
-					/>
-				);
-			}
+			<div style={{ flex: 1, position: "relative", overflow: "hidden" }}>
+				{/* HOME */}
+				{section === "home" && (
+					<div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
+						<div style={{ position: "absolute", top: "18%", left: "9%", width: 46, height: 46, background: PASTELS[0], borderRadius: 7, transform: "rotate(-12deg)", animation: "fadeIn 1s ease 0.3s both" }} />
+						<div style={{ position: "absolute", bottom: "20%", right: "11%", width: 32, height: 32, background: PASTELS[2], borderRadius: "50%", animation: "fadeIn 1s ease 0.6s both" }} />
+						<div style={{ position: "absolute", top: "60%", left: "14%", width: 20, height: 58, background: PASTELS[1], borderRadius: 5, transform: "rotate(8deg)", animation: "fadeIn 1s ease 0.9s both" }} />
+						<div style={{ position: "absolute", top: "24%", right: "16%", width: 60, height: 16, background: PASTELS[3], borderRadius: 4, transform: "rotate(-4deg)", animation: "fadeIn 1s ease 1.2s both" }} />
 
-			/* ─────────────────────────────────────────────
-   Lightbox
-   ───────────────────────────────────────────── */
-
-			function Lightbox({ src, onClose }) {
-				if (!src) return null;
-				return (
-					<div
-						onClick={() => {
-							onClose();
-							track("art_lightbox_close");
-						}}
-						style={{
-							position: "fixed",
-							inset: 0,
-							zIndex: 999,
-							background: "rgba(255,255,255,0.75)",
-							backdropFilter: "blur(3px)",
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-							cursor: "pointer",
-							padding: 24,
-						}}
-					>
-						<div
-							style={{
-								position: "relative",
-								maxWidth: "90%",
-								maxHeight: "85vh",
-							}}
-							onClick={(e) => e.stopPropagation()}
-						>
-							<div
-								onClick={onClose}
-								style={{
-									position: "absolute",
-									top: -14,
-									right: -14,
-									zIndex: 1000,
-									width: 26,
-									height: 26,
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "center",
-									background: COLORS.paper,
-									border: "1.5px solid " + COLORS.dark,
-									borderRadius: "50%",
-									cursor: "pointer",
-									fontSize: 12,
-									color: COLORS.dark,
-									fontFamily: MONO,
-									fontWeight: 600,
-								}}
-							>
-								x
-							</div>
-							<img
-								src={src}
-								alt="Enlarged"
-								style={{
-									maxWidth: "100%",
-									maxHeight: "85vh",
-									objectFit: "contain",
-									border: "2px solid " + COLORS.dark,
-									borderRadius: 1,
-									display: "block",
-								}}
-							/>
+						<div style={{ display: "flex", whiteSpace: "nowrap", marginBottom: 12, position: "relative", zIndex: 2 }}>
+							{NAME.split("").map((char, i) => {
+								const L = lettersRef.current[i];
+								if (!L || char === " ") return <span key={i} className="k-letter" style={{ display: "inline-block", width: "clamp(14px,3.5vw,34px)", fontFamily: DISP, fontSize: "clamp(46px,11vw,104px)" }}>&nbsp;</span>;
+								const ox = L.x - L.homeX, oy = L.y - L.homeY;
+								return <span key={i} className="k-letter" style={{ display: "inline-block", fontFamily: DISP, fontWeight: 700, fontSize: "clamp(46px,11vw,104px)", color: BLACK, lineHeight: 1, transform: "translate(" + ox + "px," + oy + "px) rotate(" + L.rotation + "deg) scale(" + L.scale + ")", willChange: "transform", letterSpacing: "-0.03em" }}>{char}</span>;
+							})}
+						</div>
+						<div style={{ fontFamily: DISP, fontSize: "clamp(13px,2vw,18px)", color: BLACK, fontWeight: 600, letterSpacing: "0.02em", zIndex: 2, animation: "fadeIn 0.8s ease 0.5s both", textAlign: "center", lineHeight: 1.5, padding: "0 20px" }}>
+							Engineer. Designer.<br />Stanford-trained. SF-based.
 						</div>
 					</div>
-				);
-			}
+				)}
 
-			/* ─────────────────────────────────────────────
-   Floating Doodle Background
-   ───────────────────────────────────────────── */
-
-			function DoodleBackground({ doodles }) {
-				return (
-					<div
-						style={{
-							position: "fixed",
-							inset: 0,
-							pointerEvents: "none",
-							zIndex: 0,
-							overflow: "hidden",
-						}}
-					>
-						{doodles.map((d) => (
-							<span
-								key={d.id}
-								style={{
-									position: "absolute",
-									left: d.x + "%",
-									top: d.startY + "%",
-									fontSize: d.size,
-									fontFamily: MONO,
-									fontWeight: 600,
-									color: "#000000",
-									animation: `doodleFloat ${d.duration}s linear forwards`,
-									"--dd": d.drift + "px",
-									"--dr": d.rotate + "deg",
-									opacity: 0,
-									userSelect: "none",
-								}}
-							>
-								{d.char}
-							</span>
-						))}
-					</div>
-				);
-			}
-
-			/* ─────────────────────────────────────────────
-   Easter Egg Note
-   ───────────────────────────────────────────── */
-
-			function EasterEggNote({ egg, position }) {
-				if (!egg) return null;
-				return (
-					<div
-						className="tw-easter-egg"
-						style={{
-							position: "absolute",
-							top: position.top + "%",
-							left: position.left + "%",
-							transform: "translate(-50%, -50%)",
-							zIndex: 5,
-							pointerEvents: "none",
-							animation: "fadeIn 0.4s ease-out",
-						}}
-					>
-						<div
-							style={{
-								display: "inline-block",
-								position: "relative",
-								transform: "rotate(-1.5deg)",
-							}}
-						>
-							<svg
-								style={{
-									position: "absolute",
-									inset: -6,
-									width: "calc(100% + 12px)",
-									height: "calc(100% + 12px)",
-								}}
-								viewBox="0 0 100 80"
-								preserveAspectRatio="none"
-							>
-								<path
-									d="M 3 78 Q 1 75 2 3 Q 4 1 8 2 Q 30 0.5 50 1.5 Q 70 0 92 2 Q 98 3 97 6 Q 99 40 97 75 Q 96 78 92 78 Q 60 79 30 78 Q 10 79 3 78 Z"
-									fill={COLORS.paper}
-									stroke={COLORS.dark}
-									strokeWidth="1.8"
-									strokeLinejoin="round"
-									strokeLinecap="round"
-								/>
-							</svg>
-							<svg
-								style={{
-									position: "absolute",
-									top: -10,
-									left: "50%",
-									transform: "translateX(-50%) rotate(2deg)",
-									width: 40,
-									height: 14,
-									zIndex: 3,
-								}}
-								viewBox="0 0 40 14"
-							>
-								<path
-									d="M 1 12 Q 0 10 1 2 Q 2 0.5 6 1 Q 20 0 34 1 Q 38 0.5 39 2 Q 40 10 39 12 Q 20 13 1 12 Z"
-									fill="rgba(200,184,156,0.5)"
-									stroke={COLORS.dark}
-									strokeWidth="0.6"
-									strokeLinejoin="round"
-								/>
-							</svg>
-							<div
-								style={{
-									position: "relative",
-									padding: "10px 14px 10px",
-									zIndex: 2,
-								}}
-							>
-								<div
-									style={{
-										whiteSpace: "pre",
-										textAlign: "center",
-										fontSize: 14,
-										lineHeight: 1.2,
-										color: COLORS.dark,
-										fontFamily: MONO,
-										letterSpacing: "0.03em",
-									}}
-								>
-									{egg.art}
+				{/* ABOUT */}
+				{section === "about" && (
+					<div className="ps" style={{ position: "absolute", inset: 0, overflow: "auto" }}>
+						<div style={{ maxWidth: 620, margin: "0 auto", padding: "20px 28px 32px", animation: "contentIn 0.35s ease" }}>
+							<div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+								<div style={{ width: 6, height: 34, background: NAV_COLOR, borderRadius: 3 }} />
+								<h2 style={{ fontFamily: DISP, fontSize: 34, fontWeight: 700, color: BLACK, margin: 0 }}>About me</h2>
+							</div>
+							<div className="an-about-row">
+								<img className="an-about-photo" src="src/assets/amy.jpg" alt="Amy" style={{ width: 140, float: "right", marginLeft: 18, marginBottom: 10, border: "2px solid " + BLACK, borderRadius: 5, transform: "rotate(1.5deg)" }} />
+								<div style={{ fontFamily: DISP, fontSize: 15, color: BLACK, lineHeight: "26px", opacity: 0.88, fontWeight: 500 }}>
+									<p style={{ marginBottom: 12 }}>I entered Stanford with a background in writing and literature, but chose to pursue Computer Science because I wanted to push myself toward an intellectual challenge I hadn't yet mastered.</p>
+									<p style={{ marginBottom: 12 }}>With no prior technical experience, I started from scratch: multivariable calculus, first-order logic, my first lines of code. Computer Science gave me a second language for thinking: decompose, debug, build.</p>
+									<p style={{ marginBottom: 12 }}>Working between engineering and design, I take pride in my work and continually strive to refine my skills. Drawn to patterns, I have a gut feeling for how things align, when they work, and where they break.</p>
+									<p style={{ marginBottom: 0 }}>The through line across my work and life is <span style={craftHL}>craft</span>. I bring the same curiosity and rigor to everything I touch. Understand how something is made. Go deep. Do honest work. Repeat.</p>
 								</div>
 							</div>
+							<div style={{ clear: "both" }} />
 						</div>
 					</div>
-				);
-			}
+				)}
 
-			/* ─────────────────────────────────────────────
-   Ear Tabs (Navigation)
-   ───────────────────────────────────────────── */
-
-			function EarTab({ tab, index, isActive, onClick }) {
-				const isMob = window.innerWidth <= 768;
-				const w = 52;
-				const h = 20;
-				return (
-					<div
-						onClick={onClick}
-						className="cursor-pointer"
-						style={{
-							position: "relative",
-							width: w,
-							height: h,
-							marginLeft: index > 0 ? -2 : 0,
-							zIndex: isActive ? 12 : 11,
-							transition: "opacity 0.2s",
-						}}
-					>
-						<svg
-							width={w}
-							height={h}
-							viewBox={"0 0 " + w + " " + h}
-							style={{ position: "absolute", top: 0, left: 0 }}
-						>
-							<path
-								d={
-									"M 1 " +
-									h +
-									" Q 2 " +
-									(h - 2) +
-									" 3 2 Q " +
-									w * 0.2 +
-									" 0.5 " +
-									w * 0.35 +
-									" 1 Q " +
-									w * 0.5 +
-									" " +
-									(index % 2 === 0 ? "0" : "0.8") +
-									" " +
-									w * 0.65 +
-									" " +
-									(index % 2 === 0 ? "1.2" : "0.5") +
-									" Q " +
-									w * 0.8 +
-									" " +
-									(index % 2 === 0 ? "0.3" : "1") +
-									" " +
-									(w - 3) +
-									" 1.5 Q " +
-									(w - 1) +
-									" " +
-									(h - 2) +
-									" " +
-									(w - 1) +
-									" " +
-									h
-								}
-								fill={
-									isActive
-										? "#FFFFFF"
-										: "rgba(253,250,246,0.25)"
-								}
-								stroke={COLORS.dark}
-								strokeWidth={isActive ? 2 : 1.4}
-								strokeLinejoin="round"
-								strokeLinecap="round"
-							/>
-							{isActive && (
-								<line
-									x1="0"
-									y1={h}
-									x2={w}
-									y2={h}
-									stroke="#FFFFFF"
-									strokeWidth="3.5"
-								/>
-							)}
-						</svg>
-						<div
-							style={{
-								position: "relative",
-								zIndex: 2,
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
-								height: "100%",
-								paddingBottom: 2,
-								fontSize: isMob ? 6.5 : (isActive ? 8 : 7),
-								letterSpacing: "0.03em",
-								color: isActive ? COLORS.ink : COLORS.faded,
-								fontWeight: isActive ? 700 : 500,
-								fontFamily: MONO,
-								textDecoration: "none",
-							}}
-						>
-							{tab.label.toLowerCase()}
+				{/* ART */}
+				{section === "art" && (
+					<div className="ps" style={{ position: "absolute", inset: 0, overflow: "auto" }}>
+						<div style={{ maxWidth: 640, margin: "0 auto", padding: "20px 28px 32px", animation: "contentIn 0.35s ease" }}>
+							<div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+								<div style={{ width: 6, height: 34, background: NAV_COLOR, borderRadius: 3 }} />
+								<h2 style={{ fontFamily: DISP, fontSize: 34, fontWeight: 700, color: BLACK, margin: 0 }}>Art</h2>
+							</div>
+							<p style={{ fontFamily: DISP, fontSize: 15, color: BLACK, opacity: 0.7, lineHeight: "23px", marginBottom: 18, marginLeft: 16, fontWeight: 500 }}>A collection of works and studies across oil, watercolor, acrylic, and graphite.</p>
+							<div className="an-art-grid" style={{ display: "grid", gap: 10 }}>
+								{ART_IMAGES.map((img, i) => {
+									const hov = hoveredArt === i; const pc = PASTELS[i % PASTELS.length];
+									return (
+										<div key={i} onMouseEnter={() => setHoveredArt(i)} onMouseLeave={() => setHoveredArt(null)}
+											onClick={(e) => { e.stopPropagation(); setLightbox(img.src); track("art_lightbox_open", { image: img.title, medium: img.medium }); }}
+											style={{ background: WHITE, border: "2px solid " + (hov ? pc : BLACK), borderRadius: 5, overflow: "hidden", cursor: "pointer", transform: hov ? "translateY(-4px) rotate(-0.5deg)" : "none", boxShadow: hov ? "4px 4px 0 " + pc : "none", transition: "all 0.25s cubic-bezier(0.34,1.56,0.64,1)" }}>
+											<div style={{ aspectRatio: "1", overflow: "hidden", borderBottom: "1.5px solid " + (hov ? pc : BLACK) }}>
+												<img src={img.src} alt={img.alt} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+											</div>
+											<div style={{ padding: "6px 9px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+												<span style={{ fontFamily: DISP, fontSize: 11, color: BLACK, fontWeight: 600, opacity: 0.7 }}>{img.title}</span>
+												<span style={{ fontFamily: DISP, fontSize: 10, color: BLACK, opacity: 0.4, fontWeight: 500 }}>{img.medium}</span>
+											</div>
+										</div>
+									);
+								})}
+							</div>
 						</div>
 					</div>
-				);
-			}
+				)}
 
-			function EarTabs({ activeTab, onTabChange }) {
-				return (
-					<div
-						className="tw-ear-tabs"
-						style={{
-							position: "absolute",
-							top: "-2.5%",
-							left: window.innerWidth <= 768 ? "16%" : "24%",
-							right: window.innerWidth <= 768 ? "16%" : "24%",
-							display: "flex",
-							justifyContent: "flex-end",
-							gap: -1,
-							zIndex: 12,
-							paddingRight: 0,
-						}}
-					>
-						{TABS.map((tab, i) => {
-							const isActive =
-								tab.id === "home"
-									? activeTab === null
-									: activeTab === tab.id;
-							return (
-								<EarTab
-									key={tab.id}
-									tab={tab}
-									index={i}
-									isActive={isActive}
-									onClick={() => {
-										const newTab =
-											tab.id === "home"
-												? null
-												: isActive
-													? null
-													: tab.id;
-										const pageName =
-											tab.id === "home"
-												? "home"
-												: isActive
-													? "home"
-													: tab.id;
-										track("tab_click", {
-											tab_name: pageName,
-										});
-										track("page_view", {
-											page_title: pageName,
-											page_location: "/" + pageName,
-										});
-										onTabChange(newTab);
-									}}
-								/>
-							);
-						})}
-					</div>
-				);
-			}
-
-			/* ─────────────────────────────────────────────
-   Keyboard Overlay (Typewriter Tap Targets)
-   ───────────────────────────────────────────── */
-
-			function KeyboardOverlay({ onTap }) {
-				return (
-					<div
-						className="tw-keyboard-overlay"
-						style={{
-							position: "absolute",
-							top: "58%",
-							left: "14%",
-							right: "14%",
-							bottom: "8%",
-							zIndex: 11,
-							cursor: "pointer",
-							display: "grid",
-							gridTemplateColumns: "repeat(5, 1fr)",
-							gridTemplateRows: "repeat(3, 1fr)",
-						}}
-					>
-						{[...Array(15)].map((_, i) => (
-							<div
-								key={i}
-								style={{ width: "100%", height: "100%" }}
-								onClick={(e) => {
-									e.stopPropagation();
-									onTap(CUTE_CHARS[i % CUTE_CHARS.length]);
-								}}
-							/>
-						))}
-					</div>
-				);
-			}
-
-			/* ─────────────────────────────────────────────
-   Page: Home
-   ───────────────────────────────────────────── */
-
-			function PageHome({ typed, showCursor, easterEgg, easterEggPos }) {
-				return (
-					<div
-						className="tw-page-home"
-						style={{
-							padding: "20px 24px 16px",
-							position: "relative",
-							display: "flex",
-							flexDirection: "column",
-							minHeight: "100%",
-							overflow: "hidden",
-						}}
-					>
-						<div style={{ position: "relative", zIndex: 2 }}>
-							<div style={{ marginBottom: 13 }}>
-								<div
-									className="tw-name"
-									style={{
-										fontSize: 32,
-										color: COLORS.ink,
-										letterSpacing: "0.06em",
-										lineHeight: 1.2,
-										fontWeight: 700,
-									}}
-								>
-									Amy Nguyen
-									<span style={{ color: COLORS.accent }}>
-										.
-									</span>
-								</div>
-								<div
-									style={{
-										width: 40,
-										height: 1,
-										background: COLORS.separator,
-										margin: "8px 0",
-										opacity: 0.15,
-									}}
-								/>
+				{/* STUDIO */}
+				{section === "studio" && (
+					<div className="ps" style={{ position: "absolute", inset: 0, overflow: "auto" }}>
+						<div style={{ maxWidth: 560, margin: "0 auto", padding: "20px 28px 32px", animation: "contentIn 0.35s ease" }}>
+							<div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+								<div style={{ width: 6, height: 34, background: NAV_COLOR, borderRadius: 3 }} />
+								<h2 style={{ fontFamily: DISP, fontSize: 34, fontWeight: 700, color: BLACK, margin: 0 }}>Studio</h2>
 							</div>
-							<div
-								style={{
-									fontSize: 13,
-									color: COLORS.ink,
-									lineHeight: "20px",
-									marginBottom: 16,
-									letterSpacing: "0.03em",
-									fontWeight: 600,
-								}}
-							>
-								<span style={{ display: "block" }}>
-									Engineer. Designer.
-								</span>
-								<span style={{ display: "block" }}>
-									Stanford-trained. SF-based.
-								</span>
-							</div>
+							<p style={{ fontFamily: DISP, fontSize: 14, color: BLACK, opacity: 0.5, fontStyle: "italic", marginBottom: 22, marginLeft: 16, fontWeight: 500 }}>I like making stuff</p>
 
-							<div
-								className="tw-prompt"
-								style={{ marginTop: 28 }}
-							>
-								{!typed ? (
-									<div
-										style={{
-											display: "inline-flex",
-											alignItems: "center",
-											gap: 6,
-											whiteSpace: "nowrap",
-										}}
-									>
-										<span
-											style={{
-												fontSize: 8,
-												color: COLORS.muted,
-												letterSpacing: "0.06em",
-												fontWeight: 400,
-												fontFamily: MONO,
-											}}
-										>
-											press any key
-										</span>
-										<Cursor visible={showCursor} />
-										<span
-											style={{
-												fontSize: 8,
-												color: COLORS.faded,
-												marginLeft: 2,
-											}}
-										>
-											&#8595;
-										</span>
-									</div>
-								) : (
-									<div
-										style={{
-											display: "inline-flex",
-											alignItems: "center",
-											gap: 5,
-										}}
-									>
-										<span
-											style={{
-												fontSize: 14,
-												color: COLORS.ink,
-												fontWeight: 700,
-												fontFamily: MONO,
-												animation:
-													"letterPop 0.3s ease-out",
-												display: "inline-block",
-											}}
-										>
-											{typed}
-										</span>
-										<Cursor visible={showCursor} />
+							<button onClick={(e) => { e.stopPropagation(); track("studio_click", { project: "art" }); goTo("art"); }}
+								onMouseEnter={() => setHoveredStudio("art")} onMouseLeave={() => setHoveredStudio(null)}
+								style={{ width: "100%", textAlign: "left", display: "flex", alignItems: "center", padding: "15px 16px", borderRadius: 10, cursor: "pointer", marginBottom: 6, background: hoveredStudio === "art" ? PASTELS[2] + "33" : "transparent", border: "2px solid " + (hoveredStudio === "art" ? PASTELS[2] : BLACK + "15"), transform: hoveredStudio === "art" ? "translateX(6px)" : "none", transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)" }}>
+								<span style={{ width: 28, height: 28, borderRadius: 6, background: PASTELS[2], color: BLACK, fontFamily: DISP, fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", marginRight: 14, flexShrink: 0 }}>01</span>
+								<span style={{ fontFamily: DISP, fontSize: 18, fontWeight: 700, color: BLACK }}>art</span>
+								<span style={{ flex: 1, borderBottom: "1.5px dotted " + BLACK + "20", margin: "0 14px", marginBottom: -2 }} />
+								<span style={{ fontFamily: DISP, fontSize: 12, color: BLACK, opacity: 0.55, fontWeight: 500 }}>occasional paintings</span>
+								<span style={{ marginLeft: 10, color: BLACK, fontWeight: 700, fontSize: 18, opacity: hoveredStudio === "art" ? 0.6 : 0, transform: hoveredStudio === "art" ? "translateX(0)" : "translateX(-6px)", transition: "all 0.2s" }}>&rarr;</span>
+							</button>
+
+							<a href="/game" onClick={(e) => { e.stopPropagation(); track("studio_click", { project: "melange" }); }}
+								onMouseEnter={() => setHoveredStudio("melange")} onMouseLeave={() => setHoveredStudio(null)}
+								style={{ display: "flex", alignItems: "center", padding: "15px 16px", borderRadius: 10, cursor: "pointer", marginBottom: 6, textDecoration: "none", background: hoveredStudio === "melange" ? PASTELS[0] + "33" : "transparent", border: "2px solid " + (hoveredStudio === "melange" ? PASTELS[0] : BLACK + "15"), transform: hoveredStudio === "melange" ? "translateX(6px)" : "none", transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)" }}>
+								<span style={{ width: 28, height: 28, borderRadius: 6, background: PASTELS[0], color: BLACK, fontFamily: DISP, fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", marginRight: 14, flexShrink: 0 }}>02</span>
+								<span style={{ fontFamily: DISP, fontSize: 18, fontWeight: 700, color: BLACK }}>m&eacute;lange</span>
+								<span style={{ flex: 1, borderBottom: "1.5px dotted " + BLACK + "20", margin: "0 14px", marginBottom: -2 }} />
+								<span style={{ fontFamily: DISP, fontSize: 12, color: BLACK, opacity: 0.55, fontWeight: 500 }}>color mixing game</span>
+								<span style={{ marginLeft: 10, color: BLACK, fontWeight: 700, fontSize: 18, opacity: hoveredStudio === "melange" ? 0.6 : 0, transform: hoveredStudio === "melange" ? "translateX(0)" : "translateX(-6px)", transition: "all 0.2s" }}>&rarr;</span>
+							</a>
+
+							<div>
+								<button onClick={(e) => { e.stopPropagation(); setGoodiesOpen(!goodiesOpen); track("studio_click", { project: "goodies" }); }}
+									onMouseEnter={() => setHoveredStudio("goodies")} onMouseLeave={() => setHoveredStudio(null)}
+									style={{ width: "100%", textAlign: "left", display: "flex", alignItems: "center", padding: "15px 16px", borderRadius: 10, cursor: "pointer", marginBottom: goodiesOpen ? 4 : 6, background: (hoveredStudio === "goodies" || goodiesOpen) ? PASTELS[1] + "33" : "transparent", border: "2px solid " + ((hoveredStudio === "goodies" || goodiesOpen) ? PASTELS[1] : BLACK + "15"), transform: hoveredStudio === "goodies" ? "translateX(6px)" : "none", transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)" }}>
+									<span style={{ width: 28, height: 28, borderRadius: 6, background: PASTELS[1], color: BLACK, fontFamily: DISP, fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", marginRight: 14, flexShrink: 0 }}>03</span>
+									<span style={{ fontFamily: DISP, fontSize: 18, fontWeight: 700, color: BLACK }}>goodies</span>
+									<span style={{ flex: 1, borderBottom: "1.5px dotted " + BLACK + "20", margin: "0 14px", marginBottom: -2 }} />
+									<span style={{ fontFamily: DISP, fontSize: 12, color: BLACK, opacity: 0.55, fontWeight: 500 }}>freebies &amp; digital swags</span>
+									<span style={{ marginLeft: 10, color: BLACK, fontWeight: 700, fontSize: 16, opacity: 0.5, transform: goodiesOpen ? "rotate(90deg)" : "rotate(0deg)", transition: "transform 0.25s ease" }}>&rsaquo;</span>
+								</button>
+								{goodiesOpen && (
+									<div style={{ overflow: "hidden", animation: "subSlide 0.3s ease" }}>
+										<a href="/phonetics" onClick={(e) => { e.stopPropagation(); track("studio_click", { project: "phonetique" }); }}
+											onMouseEnter={() => setHoveredStudio("phon")} onMouseLeave={() => setHoveredStudio(null)}
+											style={{ display: "flex", alignItems: "center", padding: "11px 16px 11px 58px", borderRadius: 8, cursor: "pointer", marginBottom: 4, textDecoration: "none", background: hoveredStudio === "phon" ? PASTELS[1] + "22" : "transparent", border: "1.5px solid " + (hoveredStudio === "phon" ? PASTELS[1] : "transparent"), transform: hoveredStudio === "phon" ? "translateX(4px)" : "none", transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)" }}>
+											<span style={{ fontFamily: DISP, fontSize: 14, fontWeight: 600, color: BLACK }}>phon&eacute;tique</span>
+											<span style={{ flex: 1, borderBottom: "1px dotted " + BLACK + "15", margin: "0 12px", marginBottom: -2 }} />
+											<span style={{ fontFamily: DISP, fontSize: 11, color: BLACK, opacity: 0.45, fontWeight: 500 }}>phonetics review</span>
+											<span style={{ marginLeft: 8, color: BLACK, fontWeight: 700, fontSize: 14, opacity: hoveredStudio === "phon" ? 0.5 : 0, transform: hoveredStudio === "phon" ? "translateX(0)" : "translateX(-4px)", transition: "all 0.2s" }}>&rarr;</span>
+										</a>
+										<div style={{ padding: "4px 16px 4px 58px", fontFamily: DISP, fontSize: 11, color: BLACK, opacity: 0.3, fontStyle: "italic", fontWeight: 500 }}>more coming soon</div>
 									</div>
 								)}
 							</div>
 						</div>
-
-						<div style={{ flex: 1 }} />
-						<div style={{ paddingBottom: 14 }} />
-
-						<EasterEggNote
-							egg={easterEgg}
-							position={easterEggPos}
-						/>
 					</div>
-				);
-			}
+				)}
 
-			/* ─────────────────────────────────────────────
-   Page: About
-   ───────────────────────────────────────────── */
-
-			function PageAbout({ onImageClick }) {
-				return (
-					<div
-						className="tw-page-about"
-						style={{ padding: "20px 24px", minHeight: 200 }}
-					>
-						<PageHeader title="About me" />
-						<img
-							src="src/assets/amy.jpg"
-							alt="Amy Nguyen portrait photo"
-							loading="lazy"
-							width={130}
-							className="tw-about-photo"
-							style={{
-								width: 130,
-								float: "right",
-								marginLeft: 14,
-								marginBottom: 10,
-								border: "1.5px solid " + COLORS.dark,
-								filter: "sepia(5%) contrast(95%)",
-								transform: "rotate(1.5deg)",
-								boxShadow: "none",
-								cursor: "pointer",
-							}}
-							onClick={() => {
-								onImageClick("src/assets/amy.jpg");
-								track("art_lightbox_open", {
-									image: "Amy Photo",
-									medium: "Photo",
-								});
-							}}
-						/>
-						<div
-							style={{
-								fontSize: 13,
-								color: COLORS.ink,
-								marginTop: 6,
-								lineHeight: "20px",
-								letterSpacing: "0.03em",
-								fontWeight: 600,
-							}}
-						>
-							<p style={{ marginBottom: 8 }}>
-								I entered Stanford with a background in writing
-								and literature, but chose to pursue Computer
-								Science because I wanted to become more
-								intellectually well-rounded.
-							</p>
-							<p style={{ marginBottom: 8 }}>
-								With no prior technical experience, I started
-								from scratch: multivariable calculus,
-								first-order logic, my first lines of code.
-								Computer Science gave me a second language for
-								thinking: decompose, debug, build.
-							</p>
-							<p style={{ marginBottom: 8 }}>
-								Building at the seam of engineering and design,
-								I take pride in my work and continually strive
-								to refine my craft. Drawn to patterns, I have a
-								gut feeling for how things align, when they
-								work, and where they break.
-							</p>
-							<p style={{ marginBottom: 8 }}>
-								I believe the best ideas live between
-								disciplines. A jack of all trades; the trade is
-								knowing which one to pull and when.
-							</p>
-							<div style={{ clear: "both" }} />
-						</div>
-					</div>
-				);
-			}
-
-			/* ─────────────────────────────────────────────
-   Page: Art
-   ───────────────────────────────────────────── */
-
-			function ArtCard({
-				img,
-				index,
-				isHovered,
-				isDimmed,
-				onHover,
-				onLeave,
-				onClick,
-			}) {
-				return (
-					<div
-						onMouseEnter={onHover}
-						onMouseLeave={onLeave}
-						onClick={onClick}
-						className="cursor-pointer"
-						style={{
-							background: COLORS.paper,
-							border: "1.5px solid " + COLORS.dark,
-							borderRadius: 1,
-							overflow: "hidden",
-							boxShadow: isHovered
-								? "2px 3px 8px rgba(58,48,32,0.12)"
-								: "none",
-							transform: isHovered
-								? "translateY(-4px) rotate(-0.5deg)"
-								: "none",
-							transition: "all 0.25s ease",
-							opacity: isDimmed ? 0.3 : 1,
-						}}
-					>
-						<div
-							style={{
-								aspectRatio: "1",
-								overflow: "hidden",
-								borderBottom: "1px solid " + COLORS.dark,
-							}}
-						>
-							<img
-								src={img.src}
-								alt={img.alt}
-								loading="lazy"
-								width={300}
-								height={300}
-								style={{
-									width: "100%",
-									height: "100%",
-									objectFit: "cover",
-									display: "block",
-									filter: "sepia(5%) contrast(96%)",
-								}}
-								onError={(e) => {
-									e.target.style.display = "none";
-								}}
-							/>
-						</div>
-						<div style={{ padding: "6px 8px" }}>
-							<div
-								style={{
-									fontSize: 9,
-									color: COLORS.ink,
-									letterSpacing: "0.03em",
-									fontWeight: 600,
-									opacity: 0.5,
-								}}
-							>
-								{img.medium}
+				{/* CONTACT */}
+				{section === "contact" && (
+					<div className="ps" style={{ position: "absolute", inset: 0, overflow: "auto" }}>
+						<div style={{ maxWidth: 560, margin: "0 auto", padding: "20px 28px 32px", animation: "contentIn 0.35s ease" }}>
+							<div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
+								<div style={{ width: 6, height: 34, background: NAV_COLOR, borderRadius: 3 }} />
+								<h2 style={{ fontFamily: DISP, fontSize: 34, fontWeight: 700, color: BLACK, margin: 0 }}>Contact</h2>
+							</div>
+							<div style={{ fontFamily: DISP, fontSize: 15, color: BLACK, lineHeight: "26px", opacity: 0.88, fontWeight: 500 }}>
+								<p style={{ marginBottom: 16 }}>If you want to discuss design, tech, culture &mdash; or debate whether Comic Sans is ever acceptable, <a href="https://www.linkedin.com/in/nguyen-amy" target="_blank" rel="noopener noreferrer" onClick={(e) => { e.stopPropagation(); track("outbound_click", { link_url: "linkedin" }); }} style={{ color: BLACK, fontWeight: 700, textDecoration: "none", background: PASTELS[2], padding: "2px 5px", borderRadius: 3 }}>message me on LinkedIn</a>.</p>
+								<p style={{ marginBottom: 0 }}>You can also keep up with what I'm reading on <a href="https://goodreads.com/amynlha" target="_blank" rel="noopener noreferrer" onClick={(e) => { e.stopPropagation(); track("outbound_click", { link_url: "goodreads" }); }} style={{ color: BLACK, fontWeight: 700, textDecoration: "none", background: PASTELS[0], padding: "2px 5px", borderRadius: 3 }}>Goodreads</a>.</p>
 							</div>
 						</div>
 					</div>
-				);
-			}
+				)}
+			</div>
 
-			function PageArt({
-				lightboxImg,
-				onImageClick,
-				hoveredCard,
-				onHoverCard,
-			}) {
-				return (
-					<div
-						className="tw-page-art"
-						style={{ padding: "20px 24px", minHeight: 200 }}
-					>
-						<PageHeader title="Art">
-							<div
-								style={{
-									fontSize: 13,
-									color: COLORS.ink,
-									marginTop: 6,
-									lineHeight: "20px",
-									letterSpacing: "0.03em",
-									fontWeight: 600,
-								}}
-							>
-								A collection of works and studies across oil,
-								watercolor, acrylic, and graphite.
-							</div>
-						</PageHeader>
-						<div
-							className="tw-art-grid"
-							style={{
-								display: "grid",
-								gridTemplateColumns: "repeat(3, 1fr)",
-								gap: 10,
-								marginTop: 20,
-							}}
-						>
-							{ART_IMAGES.map((img, i) => (
-								<ArtCard
-									key={i}
-									img={img}
-									index={i}
-									isHovered={hoveredCard === i}
-									isDimmed={
-										lightboxImg && lightboxImg !== img.src
-									}
-									onHover={() => onHoverCard(i)}
-									onLeave={() => onHoverCard(null)}
-									onClick={(e) => {
-										e.stopPropagation();
-										onImageClick(img.src);
-										track("art_lightbox_open", {
-											image: img.title,
-											medium: img.medium,
-										});
-									}}
-								/>
-							))}
-						</div>
-					</div>
-				);
-			}
+			<div style={{ padding: "10px 24px 16px", display: "flex", justifyContent: "center", flexShrink: 0, zIndex: 10 }}>
+				<span style={{ fontFamily: DISP, fontSize: 11, color: BLACK, opacity: 0.5, letterSpacing: "0.08em", fontWeight: 500 }}>Amy Nguyen &copy; 2026</span>
+			</div>
+		</div>
+	);
+}
 
-			/* ─────────────────────────────────────────────
-   Page: Studio (Table of Contents)
-   ───────────────────────────────────────────── */
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
 
-			function PageStudio() {
-				const projects = [
-					{ num: 1, title: "art", desc: "occasional paintings", href: "/art" },
-					{ num: 2, title: "mélange", desc: "color mixing game", href: "/game" },
-					{ num: 3, title: "phonétique", desc: "phonetics review for language learning!", href: "/phonetics" },
-				];
-
-				const dotLeader = (title, desc) => {
-					const maxDots = 16;
-					const used = title.length + desc.length;
-					const dots = Math.max(2, maxDots - used);
-					return " " + ".".repeat(dots) + " ";
-				};
-
-				return (
-					<div style={{ padding: "12px 16px 16px" }}>
-						<h2 style={{
-							fontFamily: MONO,
-							fontSize: "1.35rem",
-							fontWeight: 700,
-							color: COLORS.dark,
-							lineHeight: 1.5,
-							marginBottom: 2,
-						}}>Studio.</h2>
-						<p style={{ fontFamily: MONO, fontSize: 13, fontWeight: 600, color: COLORS.muted, letterSpacing: "0.03em", lineHeight: "19px", margin: "4px 0 14px" }}>I like making stuff</p>
-						<div style={{
-							width: 40,
-							height: 2,
-							background: COLORS.accent,
-							marginBottom: 18,
-							borderRadius: 1,
-						}} role="presentation" />
-						<nav aria-label="Studio projects" style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-							{projects.map((p) => (
-								<a
-									key={p.num}
-									href={p.href}
-									style={{
-										display: "block",
-										textDecoration: "none",
-										color: COLORS.dark,
-										fontFamily: MONO,
-										fontSize: "1rem",
-										lineHeight: 1.5,
-										letterSpacing: "0.02em",
-										cursor: "pointer",
-										transition: "color 0.15s ease",
-										padding: "10px 0",
-										minHeight: 44,
-										outline: "none",
-										borderRadius: 4,
-									}}
-									onMouseEnter={(e) => e.currentTarget.style.color = COLORS.accent}
-									onMouseLeave={(e) => e.currentTarget.style.color = COLORS.dark}
-									onFocus={(e) => { e.currentTarget.style.outline = "2px solid " + COLORS.accent; e.currentTarget.style.outlineOffset = "2px"; }}
-									onBlur={(e) => { e.currentTarget.style.outline = "none"; }}
-									onClick={() => track("studio_click", { project: p.title })}
-								>
-									<span style={{ color: COLORS.muted, marginRight: 8 }}>{p.num}.</span>
-									<span style={{ fontWeight: 600 }}>{p.title}</span>
-									<span style={{ color: COLORS.muted, whiteSpace: "pre" }}>{dotLeader(p.title, p.desc)}</span>
-									<span style={{ color: COLORS.muted, fontStyle: "italic" }}>{p.desc}</span>
-								</a>
-							))}
-						</nav>
-						<p style={{
-							fontFamily: MONO,
-							fontSize: "0.75rem",
-							color: COLORS.muted,
-							marginTop: 24,
-							fontStyle: "italic",
-							lineHeight: 1.5,
-							letterSpacing: "0.05em",
-						}}>more chapters coming soon.</p>
-					</div>
-				);
-			}
-
-			/* ─────────────────────────────────────────────
-   Page: Contact
-   ───────────────────────────────────────────── */
-
-			function PageContact() {
-				const BLOCKED = ['fuck','fuk','fck','fuc','shit','sht','ass','arse','damn','bitch','btch','dick','dik','cock','cok','pussy','puss','cunt','cnt','fag','fgt','nigger','nigga','niga','retard','tard','slut','whore','hoe','penis','peen','vagina','bastard','wank','twat','bollock','piss','pee','poo','poop','tit','boob','nazi','hitler','rape','molest','pedo','paedo','perv','kill','die','stfu','gtfo','wtf','lmao','lmfao','porn','sex','sexy','69','420','kkk','homo','anal','dildo','fetish','orgasm','erect','scrotum','testicl','nudes','thot','simp','incel','cum','jizz','semen','cooch','schlong','dong','ballsack','butthole','blowjob','handjob'];
-				const isProfane = (s) => {
-					if (!s) return false;
-					const lower = s.toLowerCase().replace(/[^a-z]/g, '');
-					return BLOCKED.some(w => lower.includes(w));
-				};
-
-				const isMob = window.innerWidth <= 480;
-				const [name, setName] = React.useState('');
-				const [email, setEmail] = React.useState('');
-				const [message, setMessage] = React.useState('');
-				const [status, setStatus] = React.useState('idle'); // idle, sending, sent, error
-				const [errorMsg, setErrorMsg] = React.useState('');
-
-				const hasSent = React.useMemo(() => {
-					try { return localStorage.getItem('amynguyen_msg_sent') === 'true'; } catch { return false; }
-				}, []);
-
-				const linkStyle = {
-					color: COLORS.accent,
-					textDecoration: "underline",
-					textUnderlineOffset: 3,
-				};
-
-				const inputStyle = {
-					width: '100%',
-					padding: '8px 10px',
-					borderRadius: 6,
-					border: '1.5px solid ' + COLORS.muted + '55',
-					background: 'rgba(255,255,255,0.5)',
-					fontSize: 12,
-					fontFamily: MONO,
-					fontWeight: 600,
-					color: COLORS.ink,
-					outline: 'none',
-					letterSpacing: '0.03em',
-					boxSizing: 'border-box',
-				};
-
-				const handleSubmit = (e) => {
-					e.preventDefault();
-					if (!name.trim() || !email.trim() || !message.trim()) {
-						setErrorMsg('all fields are required');
-						return;
-					}
-					if (isProfane(name) || isProfane(message)) {
-						setErrorMsg('keep it clean!');
-						return;
-					}
-					// Basic email check
-					if (!/\S+@\S+\.\S+/.test(email.trim())) {
-						setErrorMsg('enter a valid email');
-						return;
-					}
-					setStatus('sending');
-					setErrorMsg('');
-					db.ref('messages').push({
-						name: name.trim(),
-						email: email.trim(),
-						message: message.trim(),
-						ts: Date.now(),
-					}).then(() => {
-						setStatus('sent');
-						try { localStorage.setItem('amynguyen_msg_sent', 'true'); } catch {}
-						track('contact_form_submit', { name: name.trim() });
-					}).catch(() => {
-						setStatus('error');
-						setErrorMsg('something went wrong, try again');
-					});
-				};
-
-				return (
-					<div
-						className="tw-page-contact"
-						style={{
-							padding: "20px 24px 16px",
-							minHeight: "100%",
-							display: "flex",
-							flexDirection: "column",
-						}}
-					>
-						<div>
-							<PageHeader title="Get in touch" />
-							{status === 'sent' || hasSent ? (
-								<div style={{
-									fontSize: 13, color: COLORS.accent, fontWeight: 700,
-									letterSpacing: '0.03em', lineHeight: '20px',
-									marginBottom: 16,
-								}}>
-									note sent — thanks for reaching out!
-								</div>
-							) : (
-								<form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 10 }}>
-									<div style={{ display: 'flex', gap: isMob ? 6 : 8, flexDirection: isMob ? 'column' : 'row' }}>
-										<input
-											value={name}
-											onChange={(e) => setName(e.target.value)}
-											placeholder="name"
-											maxLength={50}
-											style={{ ...inputStyle, flex: isMob ? 'unset' : '0 0 35%' }}
-										/>
-										<input
-											value={email}
-											onChange={(e) => setEmail(e.target.value)}
-											placeholder="email"
-											maxLength={100}
-											type="email"
-											style={{ ...inputStyle, flex: 1 }}
-										/>
-									</div>
-									<textarea
-										value={message}
-										onChange={(e) => setMessage(e.target.value)}
-										placeholder="your message"
-										maxLength={200}
-										rows={2}
-										style={{ ...inputStyle, resize: 'none', lineHeight: '18px' }}
-									/>
-									{errorMsg && (
-										<div style={{ fontSize: 11, color: '#c0392b', fontWeight: 700, letterSpacing: '0.03em' }}>
-											{errorMsg}
-										</div>
-									)}
-									<button
-										type="submit"
-										disabled={status === 'sending'}
-										style={{
-											padding: '8px 16px',
-											borderRadius: 8,
-											border: 'none',
-											background: COLORS.accent,
-											color: '#fff',
-											fontSize: 12,
-											fontFamily: MONO,
-											fontWeight: 700,
-											letterSpacing: '0.05em',
-											cursor: status === 'sending' ? 'wait' : 'pointer',
-											opacity: status === 'sending' ? 0.6 : 1,
-											alignSelf: 'flex-start',
-										}}
-									>
-										{status === 'sending' ? 'sending...' : 'send note'}
-									</button>
-								</form>
-							)}
-							<div
-								style={{
-									fontSize: 11,
-									color: COLORS.muted,
-									lineHeight: "18px",
-									letterSpacing: "0.03em",
-									fontWeight: 600,
-								}}
-							>
-								<p style={{ marginBottom: 0 }}>
-									Find me on{" "}
-									<a
-										href="https://goodreads.com/amynlha"
-										target="_blank"
-										rel="noopener noreferrer"
-										onClick={() =>
-											track("outbound_click", {
-												link_url: "goodreads",
-												link_text: "Goodreads",
-											})
-										}
-										style={linkStyle}
-									>
-										Goodreads
-									</a>
-									{" · "}
-									<a
-										href="https://www.linkedin.com/in/nguyen-amy"
-										target="_blank"
-										rel="noopener noreferrer"
-										onClick={() =>
-											track("outbound_click", {
-												link_url: "linkedin",
-												link_text: "LinkedIn",
-											})
-										}
-										style={linkStyle}
-									>
-										LinkedIn
-									</a>
-									{" · "}
-									<a
-										href="https://substack.com/@amyle"
-										target="_blank"
-										rel="noopener noreferrer"
-										onClick={() =>
-											track("outbound_click", {
-												link_url: "substack",
-												link_text: "Substack",
-											})
-										}
-										style={linkStyle}
-									>
-										Substack
-									</a>
-								</p>
-							</div>
-						</div>
-						<div style={{ flex: 1 }} />
-						<div style={{ paddingBottom: 14 }} />
-					</div>
-				);
-			}
-
-			/* ─────────────────────────────────────────────
-   App (Composition Root)
-   ───────────────────────────────────────────── */
-
-			function App() {
-				const urlTab = new URLSearchParams(window.location.search).get("tab");
-				const [activeTab, setActiveTab] = React.useState(urlTab || null);
-				const [lightboxImg, setLightboxImg] = React.useState(null);
-				const [hoveredCard, setHoveredCard] = React.useState(null);
-				const [zoomed, setZoomed] = React.useState(!!urlTab && window.innerWidth <= 768);
-				const [zoomClosing, setZoomClosing] = React.useState(false);
-				const handleZoomClose = () => {
-					setZoomClosing(true);
-					setTimeout(() => {
-						setZoomClosing(false);
-						setZoomed(false);
-						setActiveTab(null);
-					}, 280);
-				};
-				const isMobileZoom = window.innerWidth <= 768;
-
-				const showCursor = useBlinkingCursor();
-				const doodles = useFloatingDoodles();
-				const { typed, easterEgg, easterEggPos, triggerEasterEgg } =
-					useTypewriterInput();
-
-				React.useEffect(() => {
-					track("page_view", {
-						page_title: "home",
-						page_location: "/home",
-					});
-				}, []);
-
-				return (
-					<div
-						className="w-full flex flex-col items-center"
-						style={{
-							background: "#FFFFFF",
-							height: "100vh",
-							fontFamily: MONO,
-							position: "relative",
-							overflow: "hidden",
-						}}
-					>
-						<DoodleBackground doodles={doodles} />
-
-						<Lightbox
-							src={lightboxImg}
-							onClose={() => setLightboxImg(null)}
-						/>
-
-						<div
-							className="w-full flex-1 flex flex-col items-center px-4 tw-outer tw-main-wrapper"
-							style={{
-								maxWidth: 900,
-								position: "relative",
-								zIndex: 2,
-								height: "100vh",
-								overflow: "hidden",
-								display: "flex",
-								flexDirection: "column",
-								justifyContent: "center",
-							}}
-						>
-							<div
-								className="tw-content-col"
-								style={{
-									width: "100%",
-									position: "relative",
-									display: "flex",
-									flexDirection: "column",
-									alignItems: "center",
-									justifyContent: "center",
-									overflow: "visible",
-								}}
-							>
-								<div
-									className="tw-typewriter-wrap"
-									style={{
-										position: "relative",
-										width: "75%",
-										margin: "0 auto",
-									}}
-								>
-									<img
-										src="./typewriter-final.png"
-										alt="Typewriter"
-										fetchpriority="high"
-										style={{
-											width: "100%",
-											display: "block",
-											pointerEvents: "none",
-											position: "relative",
-											zIndex: 9,
-										}}
-									/>
-
-									<KeyboardOverlay
-										onTap={(char) =>
-											triggerEasterEgg(char, "tap")
-										}
-									/>
-
-									<EarTabs
-										activeTab={activeTab}
-										onTabChange={(tab) => {
-											setActiveTab(tab);
-											if (isMobileZoom) setZoomed(!!tab);
-										}}
-									/>
-
-									{/* Paper content area */}
-									<div
-										className="tw-paper-overlay"
-										style={(isMobileZoom && zoomed) ? {
-											position: "fixed",
-											top: 0,
-											left: 0,
-											right: 0,
-											bottom: 0,
-											overflow: "hidden",
-											display: "flex",
-											flexDirection: "column",
-											fontFamily: MONO,
-											zIndex: 9999,
-											background: "#f5f0e8",
-											padding: "0 20px",
-											transition: "opacity 0.28s ease, transform 0.28s ease",
-											opacity: zoomClosing ? 0 : 1,
-											transform: zoomClosing ? "translateY(12px)" : "translateY(0)",
-										} : {
-											position: "absolute",
-											top: "1%",
-											left: "25%",
-											right: "19%",
-											bottom: "63%",
-											minHeight: 0,
-											overflow: "hidden",
-											display: "flex",
-											flexDirection: "column",
-											fontFamily: MONO,
-											zIndex: 10,
-										}}
-									>
-										{isMobileZoom && zoomed && (
-											<button
-												onClick={handleZoomClose}
-												aria-label="Close overlay"
-												style={{
-													position: "absolute",
-													top: 16,
-													right: 16,
-													zIndex: 10000,
-													cursor: "pointer",
-													fontSize: 20,
-													fontWeight: 700,
-													color: COLORS.dark,
-													lineHeight: 1,
-													padding: "12px 14px",
-													minWidth: 44,
-													minHeight: 44,
-													background: "none",
-													border: "none",
-													fontFamily: MONO,
-													display: "flex",
-													alignItems: "center",
-													justifyContent: "center",
-												}}
-											>&times;</button>
-										)}
-										<div
-											className="paper-scroll"
-											style={{
-												flex: 1,
-												overflowY: "auto",
-												overflowX: "hidden",
-												position: "relative",
-											}}
-										>
-											{!activeTab && (
-												<PageHome
-													typed={typed}
-													showCursor={showCursor}
-													easterEgg={easterEgg}
-													easterEggPos={easterEggPos}
-												/>
-											)}
-											{activeTab === "studio" && (
-												<PageStudio />
-											)}
-											{activeTab === "about" && (
-												<PageAbout
-													onImageClick={
-														setLightboxImg
-													}
-												/>
-											)}
-											{activeTab === "contact" && (
-												<PageContact />
-											)}
-										</div>
-									</div>
-
-									<div
-										className="tw-footer"
-										style={{
-											textAlign: "center",
-											paddingBottom: 2,
-											paddingTop: 4,
-											flexShrink: 0,
-										}}
-									>
-										<p
-											style={{
-												fontSize: 10,
-												color: COLORS.muted,
-												letterSpacing: "0.15em",
-												fontFamily: MONO,
-											}}
-										>
-											Amy Nguyen &copy; 2026
-										</p>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				);
-			}
-
-			const root = ReactDOM.createRoot(document.getElementById("root"));
-			root.render(<App />);
 		</script>
 	</body>
 </html>
