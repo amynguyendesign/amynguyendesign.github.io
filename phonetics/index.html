@@ -208,7 +208,6 @@
                   {p.sp.map((s,j)=>(<span key={j} style={{fontSize:11,fontWeight:600,background:L.color+"30",color:B,borderRadius:4,padding:"2px 7px"}}>{s}</span>))}
                 </div>
                 <div style={{display:"flex",flexWrap:"wrap",gap:"4px 12px",alignItems:"baseline"}}>
-                  <span style={{fontSize:10,fontWeight:600,opacity:0.4,marginRight:2,whiteSpace:"nowrap"}}>🔊 tap to hear</span>
                   {p.ex.map((w,j)=>{const h=hl(w,p.sp);return(
                     <button key={j} onClick={()=>speak(w,L.sp)} title={"🔊 "+w}
                       style={{background:"none",border:"none",padding:"2px 0",fontSize:14,fontWeight:600,color:B,display:"inline-flex",alignItems:"baseline",gap:0}}>
