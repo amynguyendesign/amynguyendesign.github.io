@@ -423,9 +423,9 @@ function App() {
 										<a href="/phonetics" onClick={(e) => { e.stopPropagation(); track("studio_click", { project: "phonetique" }); }}
 											onMouseEnter={() => setHoveredStudio("phon")} onMouseLeave={() => setHoveredStudio(null)}
 											style={{ display: "flex", alignItems: "center", padding: "11px 16px 11px 58px", borderRadius: 8, cursor: "pointer", marginBottom: 4, textDecoration: "none", background: hoveredStudio === "phon" ? PASTELS[1] + "22" : "transparent", border: "1.5px solid " + (hoveredStudio === "phon" ? PASTELS[1] : "transparent"), transform: hoveredStudio === "phon" ? "translateX(4px)" : "none", transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)" }}>
-											<span style={{ fontFamily: DISP, fontSize: 14, fontWeight: 600, color: BLACK }}>phon&eacute;tique</span>
+											<span style={{ fontFamily: DISP, fontSize: 14, fontWeight: 600, color: BLACK }}>phonetics review</span>
 											<span style={{ flex: 1, borderBottom: "1px dotted " + BLACK + "15", margin: "0 12px", marginBottom: -2 }} />
-											<span style={{ fontFamily: DISP, fontSize: 11, color: BLACK, opacity: 0.45, fontWeight: 500 }}>phonetics review</span>
+											<span style={{ fontFamily: DISP, fontSize: 11, color: BLACK, opacity: 0.45, fontWeight: 500 }}>for language learning</span>
 											<span style={{ marginLeft: 8, color: BLACK, fontWeight: 700, fontSize: 14, opacity: hoveredStudio === "phon" ? 0.5 : 0, transform: hoveredStudio === "phon" ? "translateX(0)" : "translateX(-4px)", transition: "all 0.2s" }}>&rarr;</span>
 										</a>
 										<div style={{ padding: "4px 16px 4px 58px", fontFamily: DISP, fontSize: 11, color: BLACK, opacity: 0.3, fontStyle: "italic", fontWeight: 500 }}>more coming soon</div>
