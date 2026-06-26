@@ -26,6 +26,12 @@
   const {useState}=React;
   const B="#0A0A0A",P=["#F2D7D9","#D3CEDF","#9CB4CC","#748DA6"];
 
+  const Spk=({c})=>(<svg width="11" height="11" viewBox="0 0 24 24" fill="none" style={{flexShrink:0,opacity:0.55}}>
+    <path d="M4 9v6h4l5 4V5L8 9H4z" fill={c}/>
+    <path d="M16 8.5a4 4 0 0 1 0 7" stroke={c} strokeWidth="2" strokeLinecap="round"/>
+  </svg>);
+
+
   const FR = [
     {ipa:"i",cat:"vowel",sp:["i", "y"],ex:["\u00eele", "ami", "pyjama"]},
     {ipa:"a",cat:"vowel",sp:["a", "\u00e0"],ex:["arbre", "\u00e0", "ami"]},
@@ -210,11 +216,11 @@
                 <div style={{display:"flex",flexWrap:"wrap",gap:"4px 12px",alignItems:"baseline"}}>
                   {p.ex.map((w,j)=>{const h=hl(w,p.sp);return(
                     <button key={j} onClick={()=>speak(w,L.sp)} title={"🔊 "+w}
-                      style={{background:"none",border:"none",padding:"2px 0",fontSize:14,fontWeight:600,color:B,display:"inline-flex",alignItems:"baseline",gap:0}}>
+                      style={{background:"none",border:"none",padding:"2px 0",fontSize:14,fontWeight:600,color:B,display:"inline-flex",alignItems:"center",gap:3}}>
                       <span>{h.b}</span>
                       <span style={{color:L.color==="#F2D7D9"?"#c4707a":B,fontWeight:800,background:L.color+"50",borderRadius:2,padding:"0 1px",textDecoration:"underline",textDecorationColor:L.color=="#F2D7D9"?"#c4707a":P[3],textUnderlineOffset:3}}>{h.m}</span>
                       <span>{h.a}</span>
-                      
+                      <Spk c={B} />
                     </button>
                   );})}
                 </div>
