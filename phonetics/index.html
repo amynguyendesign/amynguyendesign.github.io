@@ -1,337 +1,282 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Phonétique — Amy Nguyen</title>
-  <meta name="description" content="The 36 sounds of French, anchored to English and Vietnamese words. Tap to listen." />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Phonetics Review — Amy Nguyen</title>
+  <meta name="description" content="Phonetics review for language learning. French, English, and Vietnamese phonemes with IPA, spellings, and audio." />
   <link rel="icon" href="/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DHB2BNWHZG"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-DHB2BNWHZG");</script>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
   <style>
-    html,body{margin:0;padding:0;background:#FDFAF6;color:#2A2418;font-family:"Courier New",Courier,monospace;-webkit-font-smoothing:antialiased;}
-    *{box-sizing:border-box;}
-    button{font-family:inherit;}
-    @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;}}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html,body{background:#fff;color:#0A0A0A;font-family:"Space Grotesk","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+    button{font-family:inherit;cursor:pointer;}
+    .phon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+    @media(max-width:520px){.phon-grid{grid-template-columns:1fr;}}
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
   </style>
 </head>
 <body>
   <div id="root"></div>
   <script type="text/babel">
-    const { useState } = React;
-    const MONO = '"Courier New", Courier, monospace';
-    const C = { ink:"#2A2418", accent:"#A0785A", dark:"#3A3020", muted:"#8A7A60", paper:"#FDFAF6", card:"#FFFDF9", border:"#E8DEC9", chip:"#F1E7D2", hi:"#B4530E" };
+  const { useState } = React;
+  const DISP = '"Space Grotesk", "Helvetica Neue", Arial, sans-serif';
+  const BLACK = "#0A0A0A";
+  const P = ["#F2D7D9","#D3CEDF","#9CB4CC","#748DA6"];
 
-    const PHONEMES = [
-    { ipa: 'i', cat: 'voyelle', say: 'i',
-      fr: { spellings: ['i','y'], examples: ['île','pie','ami','pyjama'] },
-      en: { examples: [{w:'see',hl:'ee'},{w:'machine',hl:'i'},{w:'happy',hl:'y'}] },
-      vi: { examples: [{w:'đi',hl:'i'},{w:'phim',hl:'i'},{w:'mít',hl:'í'}] } },
-    { ipa: 'a', cat: 'voyelle', say: 'a',
-      fr: { spellings: ['a','à','â'], examples: ['arbre','à','Pâques'] },
-      en: { examples: [{w:'cat',hl:'a'},{w:'spa',hl:'a'},{w:'father',hl:'a'}] },
-      vi: { examples: [{w:'ba',hl:'a'},{w:'cha',hl:'a'},{w:'nhà',hl:'a'}] } },
-    { ipa: 'e', cat: 'voyelle', say: 'et',
-      fr: { spellings: ['é','er','ez'], examples: ['thé','fermer','nez'] },
-      en: { examples: [{w:'day',hl:'ay'},{w:'café',hl:'é'},{w:'they',hl:'ey'}] },
-      vi: { examples: [{w:'lê',hl:'ê'},{w:'bê',hl:'ê'},{w:'đêm',hl:'ê'}] } },
-    { ipa: 'ɛ', cat: 'voyelle', say: 'est',
-      fr: { spellings: ['è','ê','et','ai','ei'], examples: ['mère','tête','lait','neige'] },
-      en: { examples: [{w:'bed',hl:'e'},{w:'met',hl:'e'},{w:'fair',hl:'ai'}] },
-      vi: { examples: [{w:'em',hl:'e'},{w:'mẹ',hl:'e'},{w:'kẻ',hl:'e'}] } },
-    { ipa: 'ə', cat: 'voyelle', say: 'e',
-      fr: { spellings: ['e'], examples: ['cheval','me','cheveux'] },
-      en: { examples: [{w:'about',hl:'a'},{w:'sofa',hl:'a'},{w:'taken',hl:'e'}] },
-      vi: { examples: [{w:'cơ',hl:'ơ'},{w:'tơ',hl:'ơ'},{w:'lơ',hl:'ơ'}] } },
-    { ipa: 'ø', cat: 'voyelle', say: 'eu',
-      fr: { spellings: ['eu'], examples: ['heureux','joyeux','peu'] },
-      en: { examples: [{w:'her',hl:'er'},{w:'fur',hl:'ur'}], note: 'No exact English sound. Say "uh" with tightly rounded lips.' },
-      vi: { examples: [{w:'phơ',hl:'ơ'}], note: 'No exact Vietnamese sound. Round your lips on "ơ".' } },
-    { ipa: 'œ', cat: 'voyelle', say: 'œu',
-      fr: { spellings: ['œu','eu'], examples: ['cœur','sœur','fleur','neuf'] },
-      en: { examples: [{w:'fur',hl:'ur'},{w:'her',hl:'er'}], note: 'No exact English sound. Open "uh", lips rounded.' },
-      vi: { examples: [{w:'cơ',hl:'ơ'}], note: 'No exact Vietnamese sound. ≈ open "ơ".' } },
-    { ipa: 'o', cat: 'voyelle', say: 'au',
-      fr: { spellings: ['o','ô','au','eau'], examples: ['vélo','hôpital','jaune','château'] },
-      en: { examples: [{w:'boat',hl:'oa'},{w:'go',hl:'o'},{w:'snow',hl:'ow'}] },
-      vi: { examples: [{w:'cô',hl:'ô'},{w:'tô',hl:'ô'},{w:'hôm',hl:'ô'}] } },
-    { ipa: 'ɔ', cat: 'voyelle', say: 'o',
-      fr: { spellings: ['o','au'], examples: ['école','comme','Paul'] },
-      en: { examples: [{w:'dog',hl:'o'},{w:'thought',hl:'ou'},{w:'law',hl:'aw'}] },
-      vi: { examples: [{w:'co',hl:'o'},{w:'to',hl:'o'},{w:'con',hl:'o'}] } },
-    { ipa: 'u', cat: 'voyelle', say: 'ou',
-      fr: { spellings: ['ou'], examples: ['vous','loup','souris'] },
-      en: { examples: [{w:'food',hl:'oo'},{w:'moon',hl:'oo'},{w:'blue',hl:'ue'}] },
-      vi: { examples: [{w:'cu',hl:'u'},{w:'thu',hl:'u'},{w:'mưa',hl:'ư'}] } },
-    { ipa: 'y', cat: 'voyelle', say: 'u',
-      fr: { spellings: ['u','û'], examples: ['tu','cube','sur','mûre'] },
-      en: { examples: [], note: 'No English sound. Say "ee" with tightly rounded lips.' },
-      vi: { examples: [], note: 'No Vietnamese sound. Say "i" with rounded lips.' } },
-    { ipa: 'ɑ̃', cat: 'nasale', say: 'an',
-      fr: { spellings: ['an','am','en','em'], examples: ['maman','dans','cent','temps'] },
-      en: { examples: [{w:'aunt',hl:'au'}], note: 'No English nasal vowel. British "aunt", through the nose.' },
-      vi: { examples: [{w:'ăng',hl:'ăng'}], note: '≈ "ăng" but nasal, drop the hard g.' } },
-    { ipa: 'ɔ̃', cat: 'nasale', say: 'on',
-      fr: { spellings: ['on','om'], examples: ['bon','mon','nombre'] },
-      en: { examples: [{w:'song',hl:'on'}], note: '≈ "song" but nasal, drop the g.' },
-      vi: { examples: [{w:'ông',hl:'ông'}], note: '≈ "ông" but nasal, drop the g.' } },
-    { ipa: 'ɛ̃', cat: 'nasale', say: 'in',
-      fr: { spellings: ['in','im','ein','ain'], examples: ['vin','pain','plein','main'] },
-      en: { examples: [{w:'sang',hl:'an'}], note: '≈ "sang" but nasal, drop the g.' },
-      vi: { examples: [{w:'anh',hl:'anh'}], note: '≈ "anh" nasalised.' } },
-    { ipa: 'œ̃', cat: 'nasale', say: 'un',
-      fr: { spellings: ['un','um'], examples: ['un','brun','parfum'] },
-      en: { examples: [{w:'sung',hl:'un'}], note: '≈ "sung" but nasal, drop the g.' },
-      vi: { examples: [{w:'âng',hl:'âng'}], note: '≈ nasalised "âng".' } },
-    { ipa: 'w', cat: 'semi-voyelle', say: 'oui',
-      fr: { spellings: ['oi','oî','ou','w'], examples: ['oui','moi','roi','jouer'] },
-      en: { examples: [{w:'we',hl:'w'},{w:'win',hl:'w'},{w:'water',hl:'w'}] },
-      vi: { examples: [{w:'hoa',hl:'oa'},{w:'quà',hl:'u'},{w:'toán',hl:'oa'}] } },
-    { ipa: 'j', cat: 'semi-voyelle', say: 'ille',
-      fr: { spellings: ['y','ill','ail','eil','euil','ouil'], examples: ['crayon','fille','soleil','paille'] },
-      en: { examples: [{w:'yes',hl:'y'},{w:'you',hl:'y'},{w:'yellow',hl:'y'}] },
-      vi: { examples: [{w:'yêu',hl:'y'},{w:'gia',hl:'gi'},{w:'ya',hl:'y'}] } },
-    { ipa: 'ɥ', cat: 'semi-voyelle', say: 'ui',
-      fr: { spellings: ['ui'], examples: ['lui','bruit','nuit'] },
-      en: { examples: [], note: 'No English sound. Say "w" but with lips set for "ee".' },
-      vi: { examples: [{w:'huy',hl:'uy'},{w:'tuy',hl:'uy'}], note: '≈ "uy" in "huy".' } },
-    { ipa: 'p', cat: 'consonne', say: 'pé',
-      fr: { spellings: ['p','pp'], examples: ['papa','pour','apprendre'] },
-      en: { examples: [{w:'pen',hl:'p'},{w:'spy',hl:'p'},{w:'map',hl:'p'}] },
-      vi: { examples: [{w:'pin',hl:'p'},{w:'sấp',hl:'p'}] } },
-    { ipa: 'b', cat: 'consonne', say: 'be',
-      fr: { spellings: ['b'], examples: ['robe','bien','beaucoup'] },
-      en: { examples: [{w:'bed',hl:'b'},{w:'baby',hl:'b'}] },
-      vi: { examples: [{w:'ba',hl:'b'},{w:'bé',hl:'b'},{w:'bố',hl:'b'}] } },
-    { ipa: 't', cat: 'consonne', say: 'te',
-      fr: { spellings: ['t','tt'], examples: ['tard','toi','botte'] },
-      en: { examples: [{w:'top',hl:'t'},{w:'stop',hl:'t'}] },
-      vi: { examples: [{w:'ta',hl:'t'},{w:'tô',hl:'t'},{w:'tay',hl:'t'}] } },
-    { ipa: 'd', cat: 'consonne', say: 'de',
-      fr: { spellings: ['d','dd'], examples: ['doigt','dans','addition'] },
-      en: { examples: [{w:'dog',hl:'d'},{w:'day',hl:'d'}] },
-      vi: { examples: [{w:'đi',hl:'đ'},{w:'đỏ',hl:'đ'},{w:'đá',hl:'đ'}] } },
-    { ipa: 'k', cat: 'consonne', say: 'que',
-      fr: { spellings: ['c','cc','qu','q','k','ch'], examples: ['car','quand','kiwi','chorale'] },
-      en: { examples: [{w:'cat',hl:'c'},{w:'kite',hl:'k'},{w:'sky',hl:'k'}] },
-      vi: { examples: [{w:'ca',hl:'c'},{w:'kê',hl:'k'},{w:'quà',hl:'qu'}] } },
-    { ipa: 'g', cat: 'consonne', say: 'gue',
-      fr: { spellings: ['g','gu'], examples: ['gare','grand','bague'] },
-      en: { examples: [{w:'go',hl:'g'},{w:'big',hl:'g'}] },
-      vi: { examples: [{w:'ga',hl:'g'},{w:'gô',hl:'g'},{w:'gà',hl:'g'}] } },
-    { ipa: 'f', cat: 'consonne', say: 'fe',
-      fr: { spellings: ['f','ff','ph'], examples: ['fée','coffre','éléphant'] },
-      en: { examples: [{w:'fish',hl:'f'},{w:'phone',hl:'ph'}] },
-      vi: { examples: [{w:'phở',hl:'ph'},{w:'phim',hl:'ph'},{w:'fan',hl:'f'}] } },
-    { ipa: 'v', cat: 'consonne', say: 've',
-      fr: { spellings: ['v','w'], examples: ['voiture','livre','wagon'] },
-      en: { examples: [{w:'van',hl:'v'},{w:'very',hl:'v'}] },
-      vi: { examples: [{w:'và',hl:'v'},{w:'vui',hl:'v'},{w:'vô',hl:'v'}] } },
-    { ipa: 's', cat: 'consonne', say: 'se',
-      fr: { spellings: ['s','ss','c','ç','sc'], examples: ['savon','citron','leçon','scie'] },
-      en: { examples: [{w:'sun',hl:'s'},{w:'city',hl:'c'},{w:'mess',hl:'ss'}] },
-      vi: { examples: [{w:'xa',hl:'x'},{w:'xin',hl:'x'},{w:'sữa',hl:'s'}] } },
-    { ipa: 'z', cat: 'consonne', say: 'ze',
-      fr: { spellings: ['z','s'], examples: ['zèbre','maison','cousin'] },
-      en: { examples: [{w:'zoo',hl:'z'},{w:'rose',hl:'s'}] },
-      vi: { examples: [{w:'da',hl:'d'},{w:'giá',hl:'gi'}], note: 'Northern Vietnamese "d"/"gi" = z-sound.' } },
-    { ipa: 'ʃ', cat: 'consonne', say: 'che',
-      fr: { spellings: ['ch','sh'], examples: ['chien','chez','short'] },
-      en: { examples: [{w:'ship',hl:'sh'},{w:'sure',hl:'s'},{w:'nation',hl:'ti'}] },
-      vi: { examples: [{w:'sông',hl:'s'},{w:'sữa',hl:'s'}], note: '≈ Vietnamese "s" (retroflex sh).' } },
-    { ipa: 'ʒ', cat: 'consonne', say: 'je',
-      fr: { spellings: ['j','g(e)','g(i)'], examples: ['jour','pigeon','girafe'] },
-      en: { examples: [{w:'measure',hl:'s'},{w:'vision',hl:'s'},{w:'beige',hl:'g'}] },
-      vi: { examples: [{w:'gì',hl:'gi'}], note: 'No exact match. ≈ soft buzzed "gi".' } },
-    { ipa: 'l', cat: 'consonne', say: 'le',
-      fr: { spellings: ['l','ll'], examples: ['lapin','lune','ballon'] },
-      en: { examples: [{w:'love',hl:'l'},{w:'light',hl:'l'}] },
-      vi: { examples: [{w:'la',hl:'l'},{w:'lê',hl:'l'},{w:'lá',hl:'l'}] } },
-    { ipa: 'ʁ', cat: 'consonne', say: 're',
-      fr: { spellings: ['r','rr'], examples: ['rose','mer','arrière','beurre'] },
-      en: { examples: [], note: 'No English sound. Soft gargle at the back of the throat (not rolled).' },
-      vi: { examples: [], note: 'No Vietnamese sound. Guttural French R, not the Vietnamese r.' } },
-    { ipa: 'm', cat: 'consonne', say: 'me',
-      fr: { spellings: ['m','mm'], examples: ['chemin','même','pomme'] },
-      en: { examples: [{w:'man',hl:'m'},{w:'mom',hl:'m'}] },
-      vi: { examples: [{w:'má',hl:'m'},{w:'mẹ',hl:'m'},{w:'mưa',hl:'m'}] } },
-    { ipa: 'n', cat: 'consonne', say: 'ne',
-      fr: { spellings: ['n','nn'], examples: ['banane','non','année'] },
-      en: { examples: [{w:'no',hl:'n'},{w:'sun',hl:'n'}] },
-      vi: { examples: [{w:'nó',hl:'n'},{w:'na',hl:'n'},{w:'năm',hl:'n'}] } },
-    { ipa: 'ɲ', cat: 'consonne', say: 'gne',
-      fr: { spellings: ['gn','ni'], examples: ['montagne','champignon','panier'] },
-      en: { examples: [{w:'canyon',hl:'ny'},{w:'onion',hl:'ni'}] },
-      vi: { examples: [{w:'nhà',hl:'nh'},{w:'nhỏ',hl:'nh'},{w:'nhanh',hl:'nh'}], note: 'Vietnamese "nh" = exact match!' } },
-    { ipa: 'ŋ', cat: 'consonne', say: 'ngue',
-      fr: { spellings: ['ing'], examples: ['parking','camping'] },
-      en: { examples: [{w:'sing',hl:'ng'},{w:'song',hl:'ng'},{w:'king',hl:'ng'}] },
-      vi: { examples: [{w:'ngà',hl:'ng'},{w:'công',hl:'ng'},{w:'ngon',hl:'ng'}], note: 'Vietnamese "ng" = exact match!' } },
+  const FRENCH = [
+    {ipa:"i",cat:"vowel",spellings:["i", "y"],examples:["\u00eele", "ami", "pyjama"]},
+    {ipa:"a",cat:"vowel",spellings:["a", "\u00e0", "\u00e2"],examples:["arbre", "\u00e0", "P\u00e2ques"]},
+    {ipa:"e",cat:"vowel",spellings:["\u00e9", "er", "ez"],examples:["th\u00e9", "fermer", "nez"]},
+    {ipa:"ɛ",cat:"vowel",spellings:["\u00e8", "\u00ea", "ai", "ei"],examples:["m\u00e8re", "t\u00eate", "lait", "neige"]},
+    {ipa:"ə",cat:"vowel",spellings:["e"],examples:["cheval", "me", "cheveux"]},
+    {ipa:"ø",cat:"vowel",spellings:["eu"],examples:["heureux", "joyeux", "peu"]},
+    {ipa:"œ",cat:"vowel",spellings:["\u0153u", "eu"],examples:["c\u0153ur", "s\u0153ur", "fleur"]},
+    {ipa:"o",cat:"vowel",spellings:["o", "\u00f4", "au", "eau"],examples:["v\u00e9lo", "h\u00f4pital", "ch\u00e2teau"]},
+    {ipa:"ɔ",cat:"vowel",spellings:["o", "au"],examples:["\u00e9cole", "comme", "Paul"]},
+    {ipa:"u",cat:"vowel",spellings:["ou"],examples:["vous", "loup", "souris"]},
+    {ipa:"y",cat:"vowel",spellings:["u", "\u00fb"],examples:["tu", "cube", "sur", "m\u00fbre"]},
+    {ipa:"ɑ̃",cat:"nasal",spellings:["an", "am", "en", "em"],examples:["maman", "dans", "cent", "temps"]},
+    {ipa:"ɔ̃",cat:"nasal",spellings:["on", "om"],examples:["bon", "mon", "nombre"]},
+    {ipa:"ɛ̃",cat:"nasal",spellings:["in", "im", "ein", "ain"],examples:["vin", "pain", "plein", "main"]},
+    {ipa:"j",cat:"semi-vowel",spellings:["i", "y", "il", "ill"],examples:["yeux", "fille", "travail"]},
+    {ipa:"w",cat:"semi-vowel",spellings:["ou", "w"],examples:["oui", "Louis", "week-end"]},
+    {ipa:"ɥ",cat:"semi-vowel",spellings:["u"],examples:["lui", "nuit", "pluie"]},
+    {ipa:"p",cat:"consonant",spellings:["p", "pp"],examples:["papa", "pomme", "soupe"]},
+    {ipa:"b",cat:"consonant",spellings:["b", "bb"],examples:["b\u00e9b\u00e9", "robe", "abbaye"]},
+    {ipa:"t",cat:"consonant",spellings:["t", "tt", "th"],examples:["table", "petit", "th\u00e9"]},
+    {ipa:"d",cat:"consonant",spellings:["d", "dd"],examples:["dos", "dire", "addition"]},
+    {ipa:"k",cat:"consonant",spellings:["c", "k", "qu", "q"],examples:["caf\u00e9", "kilo", "quatre"]},
+    {ipa:"g",cat:"consonant",spellings:["g", "gu"],examples:["gare", "guerre", "bague"]},
+    {ipa:"f",cat:"consonant",spellings:["f", "ff", "ph"],examples:["fort", "effort", "photo"]},
+    {ipa:"v",cat:"consonant",spellings:["v"],examples:["vent", "verre", "avion"]},
+    {ipa:"s",cat:"consonant",spellings:["s", "ss", "c", "\u00e7"],examples:["soleil", "poisson", "ce", "\u00e7a"]},
+    {ipa:"z",cat:"consonant",spellings:["z", "s"],examples:["zoo", "maison", "rose"]},
+    {ipa:"ʃ",cat:"consonant",spellings:["ch", "sh"],examples:["chien", "chez", "short"]},
+    {ipa:"ʒ",cat:"consonant",spellings:["j", "g(e)", "g(i)"],examples:["jour", "pigeon", "girafe"]},
+    {ipa:"l",cat:"consonant",spellings:["l", "ll"],examples:["lapin", "lune", "ballon"]},
+    {ipa:"ʁ",cat:"consonant",spellings:["r", "rr"],examples:["rose", "mer", "arri\u00e8re"]},
+    {ipa:"m",cat:"consonant",spellings:["m", "mm"],examples:["chemin", "m\u00eame", "pomme"]},
+    {ipa:"n",cat:"consonant",spellings:["n", "nn"],examples:["banane", "non", "ann\u00e9e"]},
+    {ipa:"ɲ",cat:"consonant",spellings:["gn", "ni"],examples:["montagne", "champignon"]},
+    {ipa:"ŋ",cat:"consonant",spellings:["ing"],examples:["parking", "camping"]},
+    {ipa:"ɥ",cat:"semi-vowel",spellings:["u (before vowel)"],examples:["huit", "puis", "suis"]}
   ];
 
-    const TABS = [['fr','🇫🇷 Français'], ['en','🇬🇧 English'], ['vi','🇻🇳 Tiếng Việt']];
+  const ENGLISH = [
+    {ipa:"iː",cat:"vowel",spellings:["ee", "ea", "ie", "e"],examples:["see", "tree", "beach", "these"]},
+    {ipa:"ɪ",cat:"vowel",spellings:["i", "y", "e"],examples:["sit", "gym", "pretty", "build"]},
+    {ipa:"e",cat:"vowel",spellings:["e", "ea", "a"],examples:["bed", "head", "said", "many"]},
+    {ipa:"æ",cat:"vowel",spellings:["a"],examples:["cat", "bat", "man", "hand"]},
+    {ipa:"ɑː",cat:"vowel",spellings:["ar", "a", "al"],examples:["car", "father", "palm", "calm"]},
+    {ipa:"ɒ",cat:"vowel",spellings:["o", "a", "au"],examples:["hot", "dog", "want", "because"]},
+    {ipa:"ɔː",cat:"vowel",spellings:["or", "aw", "au", "al"],examples:["saw", "law", "caught", "walk"]},
+    {ipa:"ʊ",cat:"vowel",spellings:["oo", "u", "ou"],examples:["book", "put", "could", "foot"]},
+    {ipa:"uː",cat:"vowel",spellings:["oo", "ue", "ew", "u"],examples:["food", "blue", "grew", "rude"]},
+    {ipa:"ʌ",cat:"vowel",spellings:["u", "o", "ou"],examples:["but", "cup", "sun", "love", "enough"]},
+    {ipa:"ɜː",cat:"vowel",spellings:["er", "ir", "ur", "or"],examples:["bird", "her", "burn", "word"]},
+    {ipa:"ə",cat:"vowel",spellings:["a", "e", "o", "u"],examples:["about", "taken", "sofa", "circus"]},
+    {ipa:"eɪ",cat:"diphthong",spellings:["ay", "ai", "a-e", "ei"],examples:["day", "rain", "make", "eight"]},
+    {ipa:"aɪ",cat:"diphthong",spellings:["i-e", "igh", "y", "ie"],examples:["time", "high", "fly", "pie"]},
+    {ipa:"ɔɪ",cat:"diphthong",spellings:["oy", "oi"],examples:["boy", "coin", "joy", "voice"]},
+    {ipa:"aʊ",cat:"diphthong",spellings:["ow", "ou"],examples:["now", "house", "cow", "loud"]},
+    {ipa:"oʊ",cat:"diphthong",spellings:["o", "oa", "ow", "o-e"],examples:["go", "boat", "snow", "home"]},
+    {ipa:"ɪə",cat:"diphthong",spellings:["ear", "eer", "ere"],examples:["near", "beer", "here", "fear"]},
+    {ipa:"eə",cat:"diphthong",spellings:["air", "are", "ear"],examples:["care", "hair", "wear", "there"]},
+    {ipa:"ʊə",cat:"diphthong",spellings:["ure", "oor", "our"],examples:["tour", "poor", "sure", "cure"]},
+    {ipa:"p",cat:"consonant",spellings:["p", "pp"],examples:["pen", "happy", "stop", "cap"]},
+    {ipa:"b",cat:"consonant",spellings:["b", "bb"],examples:["bad", "baby", "cab", "rabbit"]},
+    {ipa:"t",cat:"consonant",spellings:["t", "tt", "-ed"],examples:["ten", "butter", "walked"]},
+    {ipa:"d",cat:"consonant",spellings:["d", "dd", "-ed"],examples:["dog", "add", "played"]},
+    {ipa:"k",cat:"consonant",spellings:["c", "k", "ck", "ch"],examples:["cat", "key", "back", "school"]},
+    {ipa:"g",cat:"consonant",spellings:["g", "gg", "gh"],examples:["go", "egg", "ghost", "girl"]},
+    {ipa:"f",cat:"consonant",spellings:["f", "ff", "ph", "gh"],examples:["fun", "off", "phone", "laugh"]},
+    {ipa:"v",cat:"consonant",spellings:["v", "ve"],examples:["van", "love", "give", "very"]},
+    {ipa:"θ",cat:"consonant",spellings:["th"],examples:["think", "bath", "three", "month"]},
+    {ipa:"ð",cat:"consonant",spellings:["th"],examples:["this", "that", "mother", "breathe"]},
+    {ipa:"s",cat:"consonant",spellings:["s", "ss", "c", "sc"],examples:["sun", "miss", "city", "scene"]},
+    {ipa:"z",cat:"consonant",spellings:["z", "zz", "s", "se"],examples:["zoo", "jazz", "has", "nose"]},
+    {ipa:"ʃ",cat:"consonant",spellings:["sh", "ti", "ci", "ss"],examples:["ship", "nation", "special"]},
+    {ipa:"ʒ",cat:"consonant",spellings:["s", "si", "g"],examples:["measure", "vision", "beige"]},
+    {ipa:"h",cat:"consonant",spellings:["h", "wh"],examples:["hat", "who", "hello", "behind"]},
+    {ipa:"tʃ",cat:"consonant",spellings:["ch", "tch", "t"],examples:["chair", "match", "nature"]},
+    {ipa:"dʒ",cat:"consonant",spellings:["j", "g", "dg"],examples:["job", "age", "bridge", "gem"]},
+    {ipa:"m",cat:"consonant",spellings:["m", "mm", "mb"],examples:["man", "summer", "climb"]},
+    {ipa:"n",cat:"consonant",spellings:["n", "nn", "kn", "gn"],examples:["no", "dinner", "knee", "sign"]},
+    {ipa:"ŋ",cat:"consonant",spellings:["ng", "n(k)"],examples:["sing", "song", "think", "bank"]},
+    {ipa:"l",cat:"consonant",spellings:["l", "ll"],examples:["love", "bell", "light", "feel"]},
+    {ipa:"r",cat:"consonant",spellings:["r", "rr", "wr"],examples:["red", "sorry", "write", "run"]},
+    {ipa:"w",cat:"consonant",spellings:["w", "wh", "u"],examples:["we", "what", "queen", "one"]},
+    {ipa:"j",cat:"consonant",spellings:["y", "u", "ew"],examples:["yes", "use", "new", "music"]}
+  ];
 
-    const STRINGS = {
-    fr: {
-      title: "Phonétique — Les 36 sons",
-      sub: "Chaque onglet relie le son français à un mot de cette langue.",
-      banner: "🔊 Touche un /son/ pour le phonème · touche un mot pour l'écouter",
-      footer: "36 sons · repères français / anglais / vietnamien",
-    },
-    en: {
-      title: "Phonetics — The 36 sounds",
-      sub: "Each tab anchors the French sound to a word in that language.",
-      banner: "🔊 Tap a /sound/ for the French phoneme · tap a word to hear it",
-      footer: "36 sounds · French / English / Vietnamese anchors",
-    },
-    vi: {
-      title: "Ngữ âm — 36 âm tiếng Pháp",
-      sub: "Mỗi tab gắn âm tiếng Pháp với một từ trong ngôn ngữ đó.",
-      banner: "🔊 Chạm vào /âm/ để nghe âm tiếng Pháp · chạm vào từ để nghe",
-      footer: "36 âm · ví dụ tiếng Pháp / Anh / Việt",
-    },
-  };
+  const VIETNAMESE = [
+    {ipa:"a",cat:"vowel",spellings:["a"],examples:["ba", "cha", "nh\u00e0", "m\u00e1y"]},
+    {ipa:"ă",cat:"vowel",spellings:["\u0103"],examples:["\u0103n", "m\u0103ng", "b\u0103ng", "l\u0103n"]},
+    {ipa:"â",cat:"vowel",spellings:["\u00e2"],examples:["\u00e2n", "c\u00e2n", "l\u1ea7n", "t\u00e2m"]},
+    {ipa:"e",cat:"vowel",spellings:["e"],examples:["em", "k\u1ebb", "che", "m\u1eb9"]},
+    {ipa:"ê",cat:"vowel",spellings:["\u00ea"],examples:["b\u00ea", "l\u00ea", "\u0111\u00eam", "s\u00ean"]},
+    {ipa:"i",cat:"vowel",spellings:["i", "y"],examples:["\u0111i", "chia", "k\u1ef9", "l\u00fd"]},
+    {ipa:"o",cat:"vowel",spellings:["o"],examples:["to", "con", "bom", "lon"]},
+    {ipa:"ô",cat:"vowel",spellings:["\u00f4"],examples:["c\u00f4", "t\u00f4", "h\u00f4m", "b\u00f4ng"]},
+    {ipa:"ơ",cat:"vowel",spellings:["\u01a1"],examples:["c\u01a1", "t\u01a1", "m\u01a1", "th\u01a1"]},
+    {ipa:"u",cat:"vowel",spellings:["u"],examples:["thu", "mua", "c\u0169", "d\u00f9"]},
+    {ipa:"ư",cat:"vowel",spellings:["\u01b0"],examples:["t\u1eeb", "s\u1eefa", "c\u01b0a", "l\u1eeba"]},
+    {ipa:"b",cat:"consonant",spellings:["b"],examples:["ba", "b\u00e9", "b\u00e0n", "b\u00fan"]},
+    {ipa:"k",cat:"consonant",spellings:["c", "k", "q"],examples:["con", "k\u1ebb", "qu\u00ea", "c\u1ee7a"]},
+    {ipa:"tɕ",cat:"consonant",spellings:["ch"],examples:["ch\u00f3", "cha", "ch\u1ea1y", "ch\u00edn"]},
+    {ipa:"z",cat:"consonant",spellings:["d"],examples:["da", "d\u00ec", "d\u1ec5", "d\u01b0\u1edbi"]},
+    {ipa:"ɗ",cat:"consonant",spellings:["\u0111"],examples:["\u0111i", "\u0111\u00f3", "\u0111\u00e0n", "\u0111\u1eb9p"]},
+    {ipa:"ɣ",cat:"consonant",spellings:["g", "gh"],examples:["g\u00e0", "gh\u1ebf", "gi\u00f3", "ghi"]},
+    {ipa:"h",cat:"consonant",spellings:["h"],examples:["hoa", "h\u00e1t", "hi\u1ec3u", "h\u1eb9n"]},
+    {ipa:"x",cat:"consonant",spellings:["kh"],examples:["kh\u00f4ng", "kh\u1ecfe", "kho", "kh\u00e1"]},
+    {ipa:"l",cat:"consonant",spellings:["l"],examples:["l\u00e1", "l\u00ea", "l\u00faa", "l\u1eddi"]},
+    {ipa:"m",cat:"consonant",spellings:["m"],examples:["m\u00e1", "m\u1eb9", "m\u01b0a", "m\u00f9a"]},
+    {ipa:"n",cat:"consonant",spellings:["n"],examples:["n\u00f3", "na", "n\u0103m", "n\u00e0y"]},
+    {ipa:"ŋ",cat:"consonant",spellings:["ng", "ngh"],examples:["ngon", "ng\u00e0y", "ngh\u1ec9", "nghe"]},
+    {ipa:"ɲ",cat:"consonant",spellings:["nh"],examples:["nh\u00e0", "nh\u1ecf", "nh\u1ea5t", "nhanh"]},
+    {ipa:"f",cat:"consonant",spellings:["ph"],examples:["ph\u1edf", "phim", "ph\u1ed1", "ph\u1ea3i"]},
+    {ipa:"ɹ",cat:"consonant",spellings:["r"],examples:["rau", "r\u1ed3i", "r\u1ebb", "ra"]},
+    {ipa:"ʂ",cat:"consonant",spellings:["s"],examples:["s\u00f4ng", "s\u1eefa", "s\u00e1ng", "sao"]},
+    {ipa:"t",cat:"consonant",spellings:["t"],examples:["t\u00f4i", "ta", "tay", "t\u00ean"]},
+    {ipa:"tʰ",cat:"consonant",spellings:["th"],examples:["th\u00ec", "th\u1ebf", "thu\u1eadn", "th\u1ea7y"]},
+    {ipa:"ʈ",cat:"consonant",spellings:["tr"],examples:["tr\u1eddi", "tr\u1ebb", "trong", "tr\u0103ng"]},
+    {ipa:"v",cat:"consonant",spellings:["v"],examples:["v\u1ec1", "v\u00e0", "vui", "v\u00e0ng"]},
+    {ipa:"s",cat:"consonant",spellings:["x"],examples:["xin", "xe", "xanh", "x\u00f4i"]},
+    {ipa:"a",cat:"tone",spellings:["ngang (level)"],examples:["ma", "ba", "ta", "la"]},
+    {ipa:"à",cat:"tone",spellings:["huy\u1ec1n (falling)"],examples:["m\u00e0", "b\u00e0", "l\u00e0", "v\u00e0"]},
+    {ipa:"á",cat:"tone",spellings:["s\u1eafc (rising)"],examples:["m\u00e1", "b\u00e1", "l\u00e1", "c\u00e1"]},
+    {ipa:"ả",cat:"tone",spellings:["h\u1ecfi (dipping)"],examples:["m\u1ea3", "b\u1ea3", "l\u1ea3", "c\u1ea3"]},
+    {ipa:"ã",cat:"tone",spellings:["ng\u00e3 (broken)"],examples:["m\u00e3", "b\u00e3", "l\u0169", "ng\u0169"]},
+    {ipa:"ạ",cat:"tone",spellings:["n\u1eb7ng (heavy)"],examples:["m\u1ea1", "b\u1ea1", "l\u1ea1", "n\u1ea1"]}
+  ];
 
-    function pickVoice(pref){
-      const voices = window.speechSynthesis.getVoices() || [];
-      const cands = voices.filter(v => v.lang && v.lang.toLowerCase().replace('_','-').startsWith(pref));
-      if(!cands.length) return null;
-      if(pref === 'fr'){
-        return cands.find(v => /amélie|amelie|thomas|audrey|aurélie|aurelie|marie|virginie|google fran/i.test(v.name))
-            || cands.find(v => v.lang.toLowerCase().replace('_','-') === 'fr-fr')
-            || cands[0];
-      }
-      return cands.find(v => v.default) || cands[0];
-    }
-    function doSpeak(text, lang){
-      const synth = window.speechSynthesis;
+  const LANGS = [
+    { id: "fr", flag: "🇫🇷", label: "French", data: FRENCH, color: P[0],
+      cats: ["all","vowel","nasal","semi-vowel","consonant"],
+      count: FRENCH.length + " phonemes", speak: "fr-FR" },
+    { id: "en", flag: "🇬🇧", label: "English", data: ENGLISH, color: P[2],
+      cats: ["all","vowel","diphthong","consonant"],
+      count: ENGLISH.length + " phonemes", speak: "en-US" },
+    { id: "vi", flag: "🇻🇳", label: "Vietnamese", data: VIETNAMESE, color: P[3],
+      cats: ["all","vowel","consonant","tone"],
+      count: VIETNAMESE.length + " phonemes", speak: "vi-VN" },
+  ];
+
+  function pickVoice(pref) {
+    const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() || [] : [];
+    const cands = voices.filter(v => v.lang && v.lang.toLowerCase().replace("_","-").startsWith(pref));
+    if (!cands.length) return null;
+    return cands.find(v => v.default) || cands[0];
+  }
+  function speak(text, lang) {
+    if (!window.speechSynthesis || !text) return;
+    const synth = window.speechSynthesis; synth.cancel();
+    const fire = () => {
       const u = new SpeechSynthesisUtterance(text);
-      u.lang = lang || 'fr-FR';
-      const v = pickVoice((lang||'fr').slice(0,2).toLowerCase());
-      if(v) u.voice = v;
-      u.rate = 0.85;
+      u.lang = lang || "en-US"; u.rate = 0.85;
+      const v = pickVoice(lang ? lang.slice(0,2).toLowerCase() : "en");
+      if (v) u.voice = v;
       synth.speak(u);
-    }
-    function phonSpeak(text, lang){
-      if(!window.speechSynthesis || !text) return;
-      const synth = window.speechSynthesis;
-      synth.cancel();
-      const voices = synth.getVoices() || [];
-      if(voices.length){ setTimeout(()=>doSpeak(text, lang), 50); return; }
-      // voices not loaded yet — wait for them so we don't fall back to an English voice
-      let done = false;
-      const fire = ()=>{ if(done) return; done = true; doSpeak(text, lang); };
-      synth.addEventListener('voiceschanged', fire, { once:true });
-      setTimeout(fire, 600);
-    }
+    };
+    const voices = synth.getVoices() || [];
+    if (voices.length) { setTimeout(fire, 50); return; }
+    let done = false;
+    const go = () => { if (done) return; done = true; fire(); };
+    synth.addEventListener("voiceschanged", go, { once: true });
+    setTimeout(go, 600);
+  }
 
-    function hi(text, start, len){
-      return (<span>{text.slice(0,start)}<span style={{color:C.hi,fontWeight:700,textDecoration:"underline",textUnderlineOffset:"2px"}}>{text.slice(start,start+len)}</span>{text.slice(start+len)}</span>);
-    }
-    function hlAuto(word, spellings){
-      const lw = word.toLowerCase();
-      const sorted = [...spellings].sort((a,b)=>b.length-a.length);
-      for(const sp of sorted){
-        const clean = sp.toLowerCase().replace(/[()]/g,'');
-        const k = lw.indexOf(clean);
-        if(k>=0) return hi(word,k,clean.length);
-      }
-      return <span>{word}</span>;
-    }
-    function hlSub(word, hl){
-      if(!hl) return <span>{word}</span>;
-      const k = word.toLowerCase().indexOf(hl.toLowerCase());
-      if(k<0) return <span>{word}</span>;
-      return hi(word,k,hl.length);
-    }
+  function App() {
+    const [langId, setLangId] = useState("fr");
+    const [filter, setFilter] = useState("all");
+    const lang = LANGS.find(l => l.id === langId);
+    const phonemes = filter === "all" ? lang.data : lang.data.filter(p => p.cat === filter);
 
-    function App(){
-      const [tab,setTab] = useState('fr');
-      const [filter,setFilter] = useState('Toutes');
-      const t = STRINGS[tab];
-      const cats = ['Toutes','voyelle','nasale','semi-voyelle','consonne'];
-      const list = filter==='Toutes' ? PHONEMES : PHONEMES.filter(p=>p.cat===filter);
-      const wordLang = tab==='en' ? 'en-US' : tab==='vi' ? 'vi-VN' : 'fr-FR';
+    return (
+      <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px 20px 60px" }}>
+        <a href="/" style={{ display: "inline-block", color: BLACK, opacity: 0.4, textDecoration: "none", fontSize: 13, fontWeight: 600, marginBottom: 16, borderBottom: "2px solid " + P[2] + "80", paddingBottom: 1 }}
+          onMouseEnter={e => e.currentTarget.style.opacity = "0.8"}
+          onMouseLeave={e => e.currentTarget.style.opacity = "0.4"}>
+          &larr; amynguyen.studio
+        </a>
 
-      const renderExamples = (p) => {
-        if(tab==='fr'){
-          return p.fr.examples.map((ex,j)=>(
-            <button key={j} onClick={()=>phonSpeak(ex,'fr-FR')} style={btnWord}>{hlAuto(ex,p.fr.spellings)}</button>
-          ));
-        }
-        const d = tab==='en' ? p.en : p.vi;
-        return (<>
-          {d.examples.map((e,j)=>(
-            <button key={j} onClick={()=>phonSpeak(e.w,wordLang)} style={btnWord}>{hlSub(e.w,e.hl)}</button>
+        <h1 style={{ fontSize: "clamp(28px, 5vw, 40px)", fontWeight: 700, color: BLACK, lineHeight: 1.1, margin: "0 0 4px", letterSpacing: "-0.02em" }}>
+          Phonetics Review
+        </h1>
+        <div style={{ width: 40, height: 3, background: P[3], borderRadius: 2, marginBottom: 8 }} />
+        <p style={{ fontSize: 14, fontWeight: 500, color: BLACK, opacity: 0.55, marginBottom: 20 }}>for language learning</p>
+
+        {/* Language tabs */}
+        <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+          {LANGS.map(l => (
+            <button key={l.id} onClick={() => { setLangId(l.id); setFilter("all"); }}
+              style={{ flex: 1, padding: "10px 6px", borderRadius: 10, fontSize: 13, fontWeight: 700, border: langId === l.id ? "2.5px solid " + BLACK : "2px solid " + BLACK + "20", background: langId === l.id ? l.color : "#fff", color: BLACK, transition: "all 0.2s" }}>
+              {l.flag} {l.label}
+              <div style={{ fontSize: 10, fontWeight: 500, opacity: 0.5, marginTop: 2 }}>{l.count}</div>
+            </button>
           ))}
-          {d.note && <span style={{width:"100%",fontSize:"12px",fontWeight:600,fontStyle:"italic",letterSpacing:"0.02em",lineHeight:"18px",color:C.muted,marginTop:4}}>{d.note}</span>}
-        </>);
-      };
+        </div>
 
-      const btnWord = {fontFamily:MONO,fontSize:"14.5px",fontWeight:600,letterSpacing:"0.03em",lineHeight:"22px",color:C.ink,background:"none",border:"none",padding:0,cursor:"pointer"};
+        {/* Audio hint */}
+        <div style={{ background: lang.color + "30", border: "2px solid " + lang.color, borderRadius: 10, padding: "10px 14px", textAlign: "center", fontSize: 13, fontWeight: 600, color: BLACK, marginBottom: 16 }}>
+          🔊 Tap a <span style={{ fontWeight: 700 }}>/sound/</span> or a <span style={{ fontWeight: 700 }}>word</span> to hear it
+        </div>
 
-      return (
-        <div style={{maxWidth:780,margin:"0 auto",padding:"20px 16px 60px"}}>
-          <a href="../" style={{display:"inline-block",color:C.muted,textDecoration:"none",fontSize:"13px",marginBottom:14}}
-             onMouseEnter={e=>e.currentTarget.style.color=C.accent}
-             onMouseLeave={e=>e.currentTarget.style.color=C.muted}>&larr; back to amynguyen.studio</a>
+        {/* Category filter pills */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 18 }}>
+          {lang.cats.map(c => (
+            <button key={c} onClick={() => setFilter(c)}
+              style={{ padding: "5px 14px", borderRadius: 999, fontSize: 12, fontWeight: 700, border: filter === c ? "2px solid " + BLACK : "1.5px solid " + BLACK + "25", background: filter === c ? BLACK : "#fff", color: filter === c ? "#fff" : BLACK, transition: "all 0.15s" }}>
+              {c}
+            </button>
+          ))}
+        </div>
 
-          <h1 style={{fontFamily:MONO,fontSize:"1.35rem",fontWeight:700,color:C.dark,lineHeight:1.5,margin:"0 0 2px"}}>{t.title.split("—")[0].trim()}<span style={{color:C.accent}}>.</span></h1>
-          <div style={{width:40,height:2,background:C.accent,borderRadius:1,marginBottom:12}} />
-          <p style={{fontSize:"13px",fontWeight:600,letterSpacing:"0.03em",lineHeight:"20px",color:C.ink,margin:"0 0 16px"}}>{t.sub}</p>
-
-          {/* Language tabs */}
-          <div style={{display:"flex",gap:8,marginBottom:12}}>
-            {TABS.map(([k,label])=>(
-              <button key={k} onClick={()=>setTab(k)} style={{
-                flex:1,padding:"9px 6px",borderRadius:10,fontSize:"13px",fontWeight:700,cursor:"pointer",
-                fontFamily:MONO,transition:"all .15s",
-                border:"1.5px solid "+(tab===k?C.accent:C.border),
-                background:tab===k?C.accent:C.card,
-                color:tab===k?C.paper:C.dark}}>{label}</button>
-            ))}
-          </div>
-
-          {/* Audible banner */}
-          <div style={{background:C.chip,border:"1px solid "+C.border,borderRadius:10,padding:"10px 12px",textAlign:"center",fontSize:"13px",fontWeight:600,letterSpacing:"0.03em",lineHeight:"19px",color:C.dark,marginBottom:16}}>{t.banner}</div>
-
-          {/* Category filter */}
-          <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:18}}>
-            {cats.map(c=>(
-              <button key={c} onClick={()=>setFilter(c)} style={{
-                padding:"5px 12px",borderRadius:999,fontSize:"12px",fontWeight:700,cursor:"pointer",fontFamily:MONO,transition:"all .15s",
-                border:"1px solid "+(filter===c?C.dark:C.border),
-                background:filter===c?C.dark:C.card,
-                color:filter===c?C.paper:C.muted}}>{c}</button>
-            ))}
-          </div>
-
-          {/* Cards */}
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(208px,1fr))",gap:12}}>
-            {list.map((p,i)=>(
-              <div key={i} style={{border:"1px solid "+C.border,borderRadius:12,padding:14,background:C.card}}>
-                <button onClick={()=>phonSpeak(p.say,'fr-FR')} style={{background:"none",border:"none",padding:0,cursor:"pointer",marginBottom:6,display:"block"}}>
-                  <span style={{fontSize:"22px",fontWeight:700,color:C.accent,fontFamily:MONO}}>/{p.ipa}/</span>
+        {/* Phoneme cards */}
+        <div className="phon-grid">
+          {phonemes.map((p, i) => (
+            <div key={i} style={{ border: "2px solid " + BLACK, borderRadius: 10, overflow: "hidden", background: "#fff" }}>
+              <div style={{ height: 5, background: lang.color }} />
+              <div style={{ padding: "12px 14px" }}>
+                {/* IPA symbol — tappable */}
+                <button onClick={() => speak(p.examples[0] || p.ipa, lang.speak)}
+                  style={{ background: "none", border: "none", padding: 0, marginBottom: 6, display: "block" }}>
+                  <span style={{ fontSize: 24, fontWeight: 700, color: BLACK }}>/{p.ipa}/</span>
                 </button>
-                <div style={{display:"flex",flexWrap:"wrap",gap:4,marginBottom:6}}>
-                  {p.fr.spellings.map((s,j)=>(
-                    <span key={j} style={{fontSize:"11px",fontWeight:600,letterSpacing:"0.02em",background:C.chip,color:C.dark,borderRadius:4,padding:"2px 7px",fontFamily:MONO}}>{s}</span>
+                {/* Spellings */}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 8 }}>
+                  {p.spellings.map((s, j) => (
+                    <span key={j} style={{ fontSize: 11, fontWeight: 600, background: lang.color + "30", color: BLACK, borderRadius: 4, padding: "2px 7px" }}>{s}</span>
                   ))}
                 </div>
-                <div style={{display:"flex",flexWrap:"wrap",gap:"5px 14px",alignItems:"baseline"}}>
-                  {renderExamples(p)}
+                {/* Example words — tappable */}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 12px" }}>
+                  {p.examples.map((ex, j) => (
+                    <button key={j} onClick={() => speak(ex, lang.speak)}
+                      style={{ background: "none", border: "none", padding: 0, fontSize: 14, fontWeight: 600, color: BLACK }}>
+                      {ex}
+                    </button>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
-
-          <p style={{textAlign:"center",fontSize:"12px",color:C.muted,marginTop:22}}>{t.footer}</p>
+            </div>
+          ))}
         </div>
-      );
-    }
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+        <div style={{ textAlign: "center", marginTop: 24, fontSize: 12, fontWeight: 500, color: BLACK, opacity: 0.35 }}>
+          {lang.flag} {lang.data.length} phonemes &middot; amynguyen.studio
+        </div>
+      </div>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById("root")).render(<App />);
   </script>
 </body>
 </html>
