@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Phonetics Review — Amy Nguyen</title>
-  <meta name="description" content="Phonetics review for language learning. French, English, and Vietnamese phonemes with IPA, spellings, and real audio recordings." />
+  <meta name="description" content="Phonetics review for language learning. French, English, and Vietnamese — tap any word to hear it." />
   <link rel="icon" href="/favicon.ico" />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-DHB2BNWHZG"></script>
@@ -14,247 +14,215 @@
   <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
-    html,body{background:#fff;color:#0A0A0A;font-family:"Space Grotesk","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+    html,body{background:#fff;color:#0A0A0A;font-family:"Space Grotesk","Helvetica Neue",Arial,sans-serif;}
     button{font-family:inherit;cursor:pointer;}
-    .phon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
-    @media(max-width:520px){.phon-grid{grid-template-columns:1fr;}}
-    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+    .pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+    @media(max-width:520px){.pg{grid-template-columns:1fr;}}
   </style>
 </head>
 <body>
   <div id="root"></div>
   <script type="text/babel">
-  const { useState, useRef } = React;
-  const DISP = '"Space Grotesk", "Helvetica Neue", Arial, sans-serif';
-  const BLACK = "#0A0A0A";
-  const P = ["#F2D7D9","#D3CEDF","#9CB4CC","#748DA6"];
+  const {useState}=React;
+  const B="#0A0A0A",P=["#F2D7D9","#D3CEDF","#9CB4CC","#748DA6"];
 
-  const FRENCH = [
-    {ipa:"i",cat:"vowel",spellings:["i", "y"],examples:["\u00eele", "ami", "pyjama"],aud:"i",say:""},
-    {ipa:"a",cat:"vowel",spellings:["a", "\u00e0"],examples:["arbre", "\u00e0", "ami"],aud:"a",say:""},
-    {ipa:"\u0251",cat:"vowel",spellings:["\u00e2", "a"],examples:["p\u00e2te", "bas", "las"],aud:"alpha",say:""},
-    {ipa:"e",cat:"vowel",spellings:["\u00e9", "er", "ez"],examples:["th\u00e9", "fermer", "nez"],aud:"e",say:""},
-    {ipa:"\u025b",cat:"vowel",spellings:["\u00e8", "\u00ea", "ai", "ei"],examples:["m\u00e8re", "t\u00eate", "lait"],aud:"eps",say:""},
-    {ipa:"\u0259",cat:"vowel",spellings:["e"],examples:["cheval", "me", "cheveux"],aud:"schwa",say:""},
-    {ipa:"\u00f8",cat:"vowel",spellings:["eu"],examples:["heureux", "joyeux", "peu"],aud:"o_slash",say:""},
-    {ipa:"\u0153",cat:"vowel",spellings:["\u0153u", "eu"],examples:["c\u0153ur", "s\u0153ur", "fleur"],aud:"oe",say:""},
-    {ipa:"o",cat:"vowel",spellings:["o", "\u00f4", "au", "eau"],examples:["v\u00e9lo", "h\u00f4pital", "ch\u00e2teau"],aud:"o",say:""},
-    {ipa:"\u0254",cat:"vowel",spellings:["o", "au"],examples:["\u00e9cole", "comme", "Paul"],aud:"openmid_o",say:""},
-    {ipa:"u",cat:"vowel",spellings:["ou"],examples:["vous", "loup", "souris"],aud:"u",say:""},
-    {ipa:"y",cat:"vowel",spellings:["u", "\u00fb"],examples:["tu", "cube", "sur", "m\u00fbre"],aud:"y",say:""},
-    {ipa:"\u0251\u0303",cat:"nasal",spellings:["an", "am", "en", "em"],examples:["maman", "dans", "cent"],aud:"",say:"an"},
-    {ipa:"\u0254\u0303",cat:"nasal",spellings:["on", "om"],examples:["bon", "mon", "nombre"],aud:"",say:"on"},
-    {ipa:"\u025b\u0303",cat:"nasal",spellings:["in", "im", "ein", "ain"],examples:["vin", "pain", "plein"],aud:"",say:"vin"},
-    {ipa:"j",cat:"semi-vowel",spellings:["i", "y", "il", "ill"],examples:["yeux", "fille", "travail"],aud:"j",say:""},
-    {ipa:"w",cat:"semi-vowel",spellings:["ou", "w"],examples:["oui", "Louis", "week-end"],aud:"w",say:""},
-    {ipa:"\u0265",cat:"semi-vowel",spellings:["u"],examples:["lui", "nuit", "pluie"],aud:"",say:"lui"},
-    {ipa:"p",cat:"consonant",spellings:["p", "pp"],examples:["papa", "pomme", "soupe"],aud:"p",say:""},
-    {ipa:"b",cat:"consonant",spellings:["b", "bb"],examples:["b\u00e9b\u00e9", "robe"],aud:"b",say:""},
-    {ipa:"t",cat:"consonant",spellings:["t", "tt", "th"],examples:["table", "petit", "th\u00e9"],aud:"t",say:""},
-    {ipa:"d",cat:"consonant",spellings:["d", "dd"],examples:["dos", "dire"],aud:"d",say:""},
-    {ipa:"k",cat:"consonant",spellings:["c", "k", "qu"],examples:["caf\u00e9", "kilo", "quatre"],aud:"k",say:""},
-    {ipa:"g",cat:"consonant",spellings:["g", "gu"],examples:["gare", "guerre", "bague"],aud:"g",say:""},
-    {ipa:"f",cat:"consonant",spellings:["f", "ff", "ph"],examples:["fort", "photo"],aud:"f",say:""},
-    {ipa:"v",cat:"consonant",spellings:["v"],examples:["vent", "avion"],aud:"v",say:""},
-    {ipa:"s",cat:"consonant",spellings:["s", "ss", "c", "\u00e7"],examples:["soleil", "\u00e7a"],aud:"s",say:""},
-    {ipa:"z",cat:"consonant",spellings:["z", "s"],examples:["zoo", "rose"],aud:"z",say:""},
-    {ipa:"\u0283",cat:"consonant",spellings:["ch"],examples:["chien", "chat"],aud:"esh",say:""},
-    {ipa:"\u0292",cat:"consonant",spellings:["j", "g(e)"],examples:["jour", "girafe"],aud:"ezh",say:""},
-    {ipa:"l",cat:"consonant",spellings:["l", "ll"],examples:["lapin", "ballon"],aud:"l",say:""},
-    {ipa:"\u0281",cat:"consonant",spellings:["r", "rr"],examples:["rose", "mer"],aud:"R_uvular",say:""},
-    {ipa:"m",cat:"consonant",spellings:["m", "mm"],examples:["m\u00eame", "pomme"],aud:"m",say:""},
-    {ipa:"n",cat:"consonant",spellings:["n", "nn"],examples:["non", "ann\u00e9e"],aud:"n",say:""},
-    {ipa:"\u0272",cat:"consonant",spellings:["gn"],examples:["montagne"],aud:"nj",say:""},
-    {ipa:"\u014b",cat:"consonant",spellings:["ng"],examples:["parking", "camping"],aud:"eng",say:""}
+  const FR = [
+    {ipa:"i",cat:"vowel",sp:["i", "y"],ex:["\u00eele", "ami", "pyjama"]},
+    {ipa:"a",cat:"vowel",sp:["a", "\u00e0"],ex:["arbre", "\u00e0", "ami"]},
+    {ipa:"\u0251",cat:"vowel",sp:["\u00e2", "a"],ex:["p\u00e2te", "bas", "las"]},
+    {ipa:"e",cat:"vowel",sp:["\u00e9", "er", "ez"],ex:["th\u00e9", "fermer", "nez"]},
+    {ipa:"\u025b",cat:"vowel",sp:["\u00e8", "\u00ea", "ai", "ei"],ex:["m\u00e8re", "t\u00eate", "lait"]},
+    {ipa:"\u0259",cat:"vowel",sp:["e"],ex:["cheval", "me", "cheveux"]},
+    {ipa:"\u00f8",cat:"vowel",sp:["eu"],ex:["heureux", "joyeux", "peu"]},
+    {ipa:"\u0153",cat:"vowel",sp:["\u0153u", "eu"],ex:["c\u0153ur", "s\u0153ur", "fleur"]},
+    {ipa:"o",cat:"vowel",sp:["o", "\u00f4", "au", "eau"],ex:["v\u00e9lo", "h\u00f4pital", "ch\u00e2teau"]},
+    {ipa:"\u0254",cat:"vowel",sp:["o", "au"],ex:["\u00e9cole", "comme", "Paul"]},
+    {ipa:"u",cat:"vowel",sp:["ou"],ex:["vous", "loup", "souris"]},
+    {ipa:"y",cat:"vowel",sp:["u", "\u00fb"],ex:["tu", "cube", "sur", "m\u00fbre"]},
+    {ipa:"\u0251\u0303",cat:"nasal",sp:["an", "am", "en", "em"],ex:["maman", "dans", "cent"]},
+    {ipa:"\u0254\u0303",cat:"nasal",sp:["on", "om"],ex:["bon", "mon", "nombre"]},
+    {ipa:"\u025b\u0303",cat:"nasal",sp:["in", "im", "ein", "ain"],ex:["vin", "pain", "plein"]},
+    {ipa:"j",cat:"semi-vowel",sp:["i", "y", "il", "ill"],ex:["yeux", "fille", "travail"]},
+    {ipa:"w",cat:"semi-vowel",sp:["ou", "w"],ex:["oui", "Louis", "week-end"]},
+    {ipa:"\u0265",cat:"semi-vowel",sp:["u"],ex:["lui", "nuit", "pluie"]},
+    {ipa:"p",cat:"consonant",sp:["p", "pp"],ex:["papa", "pomme", "soupe"]},
+    {ipa:"b",cat:"consonant",sp:["b", "bb"],ex:["b\u00e9b\u00e9", "robe"]},
+    {ipa:"t",cat:"consonant",sp:["t", "tt", "th"],ex:["table", "petit", "th\u00e9"]},
+    {ipa:"d",cat:"consonant",sp:["d", "dd"],ex:["dos", "dire"]},
+    {ipa:"k",cat:"consonant",sp:["c", "k", "qu"],ex:["caf\u00e9", "kilo", "quatre"]},
+    {ipa:"g",cat:"consonant",sp:["g", "gu"],ex:["gare", "guerre", "bague"]},
+    {ipa:"f",cat:"consonant",sp:["f", "ff", "ph"],ex:["fort", "photo"]},
+    {ipa:"v",cat:"consonant",sp:["v"],ex:["vent", "avion"]},
+    {ipa:"s",cat:"consonant",sp:["s", "ss", "c", "\u00e7"],ex:["soleil", "\u00e7a"]},
+    {ipa:"z",cat:"consonant",sp:["z", "s"],ex:["zoo", "rose"]},
+    {ipa:"\u0283",cat:"consonant",sp:["ch"],ex:["chien", "chat"]},
+    {ipa:"\u0292",cat:"consonant",sp:["j", "ge", "gi"],ex:["jour", "girafe"]},
+    {ipa:"l",cat:"consonant",sp:["l", "ll"],ex:["lapin", "ballon"]},
+    {ipa:"\u0281",cat:"consonant",sp:["r", "rr"],ex:["rose", "mer"]},
+    {ipa:"m",cat:"consonant",sp:["m", "mm"],ex:["m\u00eame", "pomme"]},
+    {ipa:"n",cat:"consonant",sp:["n", "nn"],ex:["non", "ann\u00e9e"]},
+    {ipa:"\u0272",cat:"consonant",sp:["gn"],ex:["montagne"]},
+    {ipa:"\u014b",cat:"consonant",sp:["ng"],ex:["parking", "camping"]}
+  ];
+  const EN = [
+    {ipa:"i\u02d0",cat:"vowel",sp:["ee", "ea", "ie"],ex:["see", "beach", "field"]},
+    {ipa:"\u026a",cat:"vowel",sp:["i", "y"],ex:["sit", "gym", "build"]},
+    {ipa:"e",cat:"vowel",sp:["e", "ea"],ex:["bed", "head", "said"]},
+    {ipa:"\u00e6",cat:"vowel",sp:["a"],ex:["cat", "bat", "hand"]},
+    {ipa:"\u0251\u02d0",cat:"vowel",sp:["ar", "a"],ex:["car", "father", "palm"]},
+    {ipa:"\u0252",cat:"vowel",sp:["o", "a"],ex:["hot", "dog", "want"]},
+    {ipa:"\u0254\u02d0",cat:"vowel",sp:["or", "aw", "au"],ex:["saw", "law", "caught"]},
+    {ipa:"\u028a",cat:"vowel",sp:["oo", "u"],ex:["book", "put", "foot"]},
+    {ipa:"u\u02d0",cat:"vowel",sp:["oo", "ue", "ew"],ex:["food", "blue", "grew"]},
+    {ipa:"\u028c",cat:"vowel",sp:["u", "o"],ex:["but", "cup", "love"]},
+    {ipa:"\u025c\u02d0",cat:"vowel",sp:["er", "ir", "ur"],ex:["bird", "her", "burn"]},
+    {ipa:"\u0259",cat:"vowel",sp:["a", "e", "o"],ex:["about", "sofa", "taken"]},
+    {ipa:"e\u026a",cat:"diphthong",sp:["ay", "ai", "a"],ex:["day", "rain", "make"]},
+    {ipa:"a\u026a",cat:"diphthong",sp:["i", "igh", "y"],ex:["time", "high", "fly"]},
+    {ipa:"\u0254\u026a",cat:"diphthong",sp:["oy", "oi"],ex:["boy", "coin", "joy"]},
+    {ipa:"a\u028a",cat:"diphthong",sp:["ow", "ou"],ex:["now", "house", "cow"]},
+    {ipa:"o\u028a",cat:"diphthong",sp:["o", "oa", "ow"],ex:["go", "boat", "snow"]},
+    {ipa:"\u026a\u0259",cat:"diphthong",sp:["ear", "eer"],ex:["near", "beer", "here"]},
+    {ipa:"e\u0259",cat:"diphthong",sp:["air", "are"],ex:["care", "hair", "there"]},
+    {ipa:"\u028a\u0259",cat:"diphthong",sp:["ure", "oor"],ex:["tour", "poor", "sure"]},
+    {ipa:"p",cat:"consonant",sp:["p", "pp"],ex:["pen", "happy", "stop"]},
+    {ipa:"b",cat:"consonant",sp:["b", "bb"],ex:["bad", "baby", "cab"]},
+    {ipa:"t",cat:"consonant",sp:["t", "tt"],ex:["ten", "butter", "sit"]},
+    {ipa:"d",cat:"consonant",sp:["d", "dd"],ex:["dog", "add", "red"]},
+    {ipa:"k",cat:"consonant",sp:["c", "k", "ck"],ex:["cat", "key", "back"]},
+    {ipa:"g",cat:"consonant",sp:["g", "gg"],ex:["go", "egg", "girl"]},
+    {ipa:"f",cat:"consonant",sp:["f", "ff", "ph"],ex:["fun", "off", "phone"]},
+    {ipa:"v",cat:"consonant",sp:["v", "ve"],ex:["van", "love", "give"]},
+    {ipa:"\u03b8",cat:"consonant",sp:["th"],ex:["think", "bath", "three"]},
+    {ipa:"\u00f0",cat:"consonant",sp:["th"],ex:["this", "mother", "the"]},
+    {ipa:"s",cat:"consonant",sp:["s", "ss", "c"],ex:["sun", "miss", "city"]},
+    {ipa:"z",cat:"consonant",sp:["z", "s"],ex:["zoo", "has", "nose"]},
+    {ipa:"\u0283",cat:"consonant",sp:["sh", "ti", "ci"],ex:["ship", "nation", "special"]},
+    {ipa:"\u0292",cat:"consonant",sp:["si", "ge"],ex:["measure", "beige"]},
+    {ipa:"h",cat:"consonant",sp:["h"],ex:["hat", "hello"]},
+    {ipa:"t\u0283",cat:"consonant",sp:["ch", "tch"],ex:["chair", "match"]},
+    {ipa:"d\u0292",cat:"consonant",sp:["j", "g", "dge"],ex:["job", "age", "bridge"]},
+    {ipa:"m",cat:"consonant",sp:["m", "mm", "mb"],ex:["man", "summer", "climb"]},
+    {ipa:"n",cat:"consonant",sp:["n", "nn", "kn"],ex:["no", "dinner", "knee"]},
+    {ipa:"\u014b",cat:"consonant",sp:["ng", "n"],ex:["sing", "song", "think"]},
+    {ipa:"l",cat:"consonant",sp:["l", "ll"],ex:["love", "bell", "feel"]},
+    {ipa:"r",cat:"consonant",sp:["r", "rr", "wr"],ex:["red", "sorry", "write"]},
+    {ipa:"w",cat:"consonant",sp:["w", "wh"],ex:["we", "what", "queen"]},
+    {ipa:"j",cat:"consonant",sp:["y", "u"],ex:["yes", "use", "new"]}
+  ];
+  const VI = [
+    {ipa:"a\u02d0",cat:"vowel",sp:["a"],ex:["ba", "cha", "nh\u00e0"]},
+    {ipa:"a",cat:"vowel",sp:["\u0103"],ex:["\u0103n", "m\u0103ng", "b\u0103ng"]},
+    {ipa:"\u0259",cat:"vowel",sp:["\u00e2"],ex:["\u00e2n", "c\u00e2n", "l\u1ea7n"]},
+    {ipa:"\u025b",cat:"vowel",sp:["e"],ex:["em", "k\u1ebb", "m\u1eb9"]},
+    {ipa:"e",cat:"vowel",sp:["\u00ea"],ex:["b\u00ea", "l\u00ea", "\u0111\u00eam"]},
+    {ipa:"i",cat:"vowel",sp:["i", "y"],ex:["\u0111i", "k\u1ef9", "l\u00fd"]},
+    {ipa:"\u0254",cat:"vowel",sp:["o"],ex:["to", "con", "lon"]},
+    {ipa:"o",cat:"vowel",sp:["\u00f4"],ex:["c\u00f4", "t\u00f4", "h\u00f4m"]},
+    {ipa:"\u0259\u02d0",cat:"vowel",sp:["\u01a1"],ex:["c\u01a1", "t\u01a1", "th\u01a1"]},
+    {ipa:"u",cat:"vowel",sp:["u"],ex:["thu", "c\u0169", "d\u00f9"]},
+    {ipa:"\u026f",cat:"vowel",sp:["\u01b0"],ex:["t\u1eeb", "s\u1eefa", "l\u1eeba"]},
+    {ipa:"\u0253",cat:"consonant",sp:["b"],ex:["ba", "b\u00e9", "b\u00e0n"]},
+    {ipa:"k",cat:"consonant",sp:["c", "k", "q"],ex:["con", "k\u1ebb", "qu\u00ea"]},
+    {ipa:"t\u0255",cat:"consonant",sp:["ch"],ex:["ch\u00f3", "cha", "ch\u00edn"]},
+    {ipa:"z",cat:"consonant",sp:["d"],ex:["da", "d\u00ec", "d\u1ec5"]},
+    {ipa:"\u0257",cat:"consonant",sp:["\u0111"],ex:["\u0111i", "\u0111\u00f3", "\u0111\u1eb9p"]},
+    {ipa:"\u0263",cat:"consonant",sp:["g", "gh"],ex:["g\u00e0", "gh\u1ebf", "gi\u00f3"]},
+    {ipa:"h",cat:"consonant",sp:["h"],ex:["hoa", "h\u00e1t", "h\u1eb9n"]},
+    {ipa:"x",cat:"consonant",sp:["kh"],ex:["kh\u00f4ng", "kh\u1ecfe", "kh\u00e1"]},
+    {ipa:"l",cat:"consonant",sp:["l"],ex:["l\u00e1", "l\u00ea", "l\u1eddi"]},
+    {ipa:"m",cat:"consonant",sp:["m"],ex:["m\u00e1", "m\u1eb9", "m\u01b0a"]},
+    {ipa:"n",cat:"consonant",sp:["n"],ex:["n\u00f3", "na", "n\u00e0y"]},
+    {ipa:"\u014b",cat:"consonant",sp:["ng", "ngh"],ex:["ngon", "ng\u00e0y", "nghe"]},
+    {ipa:"\u0272",cat:"consonant",sp:["nh"],ex:["nh\u00e0", "nh\u1ecf", "nhanh"]},
+    {ipa:"f",cat:"consonant",sp:["ph"],ex:["ph\u1edf", "phim", "ph\u1ea3i"]},
+    {ipa:"\u0279",cat:"consonant",sp:["r"],ex:["rau", "r\u1ed3i", "ra"]},
+    {ipa:"\u0282",cat:"consonant",sp:["s"],ex:["s\u00f4ng", "s\u1eefa", "sao"]},
+    {ipa:"t",cat:"consonant",sp:["t"],ex:["t\u00f4i", "ta", "t\u00ean"]},
+    {ipa:"t\u02b0",cat:"consonant",sp:["th"],ex:["th\u00ec", "th\u1ebf", "th\u1ea7y"]},
+    {ipa:"\u0288",cat:"consonant",sp:["tr"],ex:["tr\u1eddi", "tr\u1ebb", "tr\u0103ng"]},
+    {ipa:"v",cat:"consonant",sp:["v"],ex:["v\u1ec1", "v\u00e0", "vui"]},
+    {ipa:"s",cat:"consonant",sp:["x"],ex:["xin", "xe", "x\u00f4i"]},
+    {ipa:"a\u02e7",cat:"tone",sp:["ngang (level)"],ex:["ma", "ba", "ta"]},
+    {ipa:"a\u02e8\u02e9",cat:"tone",sp:["huy\u1ec1n (falling)"],ex:["m\u00e0", "b\u00e0", "l\u00e0"]},
+    {ipa:"a\u02e7\u02e5",cat:"tone",sp:["s\u1eafc (rising)"],ex:["m\u00e1", "b\u00e1", "c\u00e1"]},
+    {ipa:"a\u02e7\u02e9\u02e7",cat:"tone",sp:["h\u1ecfi (dipping)"],ex:["m\u1ea3", "b\u1ea3", "c\u1ea3"]},
+    {ipa:"a\u02e7\u02e5\u02c0",cat:"tone",sp:["ng\u00e3 (broken)"],ex:["m\u00e3", "b\u00e3", "ng\u00e3"]},
+    {ipa:"a\u02e7\u02e8\u02c0",cat:"tone",sp:["n\u1eb7ng (heavy)"],ex:["m\u1ea1", "b\u1ea1", "n\u1ea1"]}
   ];
 
-  const ENGLISH = [
-    {ipa:"i\u02d0",cat:"vowel",spellings:["ee", "ea"],examples:["see", "beach", "these"],aud:"i",say:""},
-    {ipa:"\u026a",cat:"vowel",spellings:["i", "y"],examples:["sit", "gym", "build"],aud:"small_i",say:""},
-    {ipa:"e",cat:"vowel",spellings:["e", "ea"],examples:["bed", "head", "said"],aud:"eps",say:""},
-    {ipa:"\u00e6",cat:"vowel",spellings:["a"],examples:["cat", "bat", "hand"],aud:"ae",say:""},
-    {ipa:"\u0251\u02d0",cat:"vowel",spellings:["ar", "a"],examples:["car", "father", "palm"],aud:"alpha",say:""},
-    {ipa:"\u0252",cat:"vowel",spellings:["o", "a"],examples:["hot", "dog", "want"],aud:"openo_rnd",say:""},
-    {ipa:"\u0254\u02d0",cat:"vowel",spellings:["or", "aw", "au"],examples:["saw", "law", "walk"],aud:"openmid_o",say:""},
-    {ipa:"\u028a",cat:"vowel",spellings:["oo", "u"],examples:["book", "put", "foot"],aud:"upsilon",say:""},
-    {ipa:"u\u02d0",cat:"vowel",spellings:["oo", "ue", "ew"],examples:["food", "blue", "grew"],aud:"u",say:""},
-    {ipa:"\u028c",cat:"vowel",spellings:["u", "o"],examples:["but", "cup", "love"],aud:"wedge",say:""},
-    {ipa:"\u025c\u02d0",cat:"vowel",spellings:["er", "ir", "ur"],examples:["bird", "her", "burn"],aud:"openmid_central",say:""},
-    {ipa:"\u0259",cat:"vowel",spellings:["a", "e", "o"],examples:["about", "sofa", "taken"],aud:"schwa",say:""},
-    {ipa:"e\u026a",cat:"diphthong",spellings:["ay", "ai", "a-e"],examples:["day", "rain", "make"],aud:"diph_ei",say:""},
-    {ipa:"a\u026a",cat:"diphthong",spellings:["i-e", "igh", "y"],examples:["time", "high", "fly"],aud:"diph_ai",say:""},
-    {ipa:"\u0254\u026a",cat:"diphthong",spellings:["oy", "oi"],examples:["boy", "coin", "joy"],aud:"diph_oi",say:""},
-    {ipa:"a\u028a",cat:"diphthong",spellings:["ow", "ou"],examples:["now", "house", "cow"],aud:"diph_au",say:""},
-    {ipa:"o\u028a",cat:"diphthong",spellings:["o", "oa", "ow"],examples:["go", "boat", "snow"],aud:"diph_ou",say:""},
-    {ipa:"\u026a\u0259",cat:"diphthong",spellings:["ear", "eer"],examples:["near", "beer", "here"],aud:"diph_i\u0259",say:""},
-    {ipa:"e\u0259",cat:"diphthong",spellings:["air", "are"],examples:["care", "hair", "there"],aud:"diph_e\u0259",say:""},
-    {ipa:"\u028a\u0259",cat:"diphthong",spellings:["ure", "oor"],examples:["tour", "poor", "sure"],aud:"diph_u\u0259",say:""},
-    {ipa:"p",cat:"consonant",spellings:["p", "pp"],examples:["pen", "happy", "stop"],aud:"p",say:""},
-    {ipa:"b",cat:"consonant",spellings:["b", "bb"],examples:["bad", "baby", "cab"],aud:"b",say:""},
-    {ipa:"t",cat:"consonant",spellings:["t", "tt"],examples:["ten", "butter", "sit"],aud:"t",say:""},
-    {ipa:"d",cat:"consonant",spellings:["d", "dd"],examples:["dog", "add", "red"],aud:"d",say:""},
-    {ipa:"k",cat:"consonant",spellings:["c", "k", "ck"],examples:["cat", "key", "back"],aud:"k",say:""},
-    {ipa:"g",cat:"consonant",spellings:["g", "gg"],examples:["go", "egg", "girl"],aud:"g",say:""},
-    {ipa:"f",cat:"consonant",spellings:["f", "ff", "ph"],examples:["fun", "phone"],aud:"f",say:""},
-    {ipa:"v",cat:"consonant",spellings:["v", "ve"],examples:["van", "love"],aud:"v",say:""},
-    {ipa:"\u03b8",cat:"consonant",spellings:["th"],examples:["think", "bath", "three"],aud:"theta",say:""},
-    {ipa:"\u00f0",cat:"consonant",spellings:["th"],examples:["this", "mother", "the"],aud:"eth",say:""},
-    {ipa:"s",cat:"consonant",spellings:["s", "ss", "c"],examples:["sun", "miss", "city"],aud:"s",say:""},
-    {ipa:"z",cat:"consonant",spellings:["z", "s"],examples:["zoo", "has", "nose"],aud:"z",say:""},
-    {ipa:"\u0283",cat:"consonant",spellings:["sh", "ti"],examples:["ship", "nation"],aud:"esh",say:""},
-    {ipa:"\u0292",cat:"consonant",spellings:["si", "g"],examples:["measure", "vision"],aud:"ezh",say:""},
-    {ipa:"h",cat:"consonant",spellings:["h"],examples:["hat", "hello"],aud:"h",say:""},
-    {ipa:"t\u0283",cat:"consonant",spellings:["ch", "tch"],examples:["chair", "match"],aud:"tesh",say:""},
-    {ipa:"d\u0292",cat:"consonant",spellings:["j", "g", "dge"],examples:["job", "age", "bridge"],aud:"dezh",say:""},
-    {ipa:"m",cat:"consonant",spellings:["m", "mm"],examples:["man", "summer"],aud:"m",say:""},
-    {ipa:"n",cat:"consonant",spellings:["n", "nn"],examples:["no", "dinner"],aud:"n",say:""},
-    {ipa:"\u014b",cat:"consonant",spellings:["ng"],examples:["sing", "song", "think"],aud:"eng",say:""},
-    {ipa:"l",cat:"consonant",spellings:["l", "ll"],examples:["love", "bell", "feel"],aud:"l",say:""},
-    {ipa:"r",cat:"consonant",spellings:["r", "rr"],examples:["red", "sorry", "run"],aud:"r_appr",say:""},
-    {ipa:"w",cat:"consonant",spellings:["w", "wh"],examples:["we", "what", "queen"],aud:"w",say:""},
-    {ipa:"j",cat:"consonant",spellings:["y", "u"],examples:["yes", "use", "new"],aud:"j",say:""}
+  const LL=[
+    {id:"fr",flag:"🇫🇷",label:"French",data:FR,color:P[0],cats:["all","vowel","nasal","semi-vowel","consonant"],sp:"fr-FR"},
+    {id:"en",flag:"🇬🇧",label:"English",data:EN,color:P[2],cats:["all","vowel","diphthong","consonant"],sp:"en-US"},
+    {id:"vi",flag:"🇻🇳",label:"Vietnamese",data:VI,color:P[3],cats:["all","vowel","consonant","tone"],sp:"vi-VN"},
   ];
 
-  const VIETNAMESE = [
-    {ipa:"a\u02d0",cat:"vowel",spellings:["a"],examples:["ba", "cha", "nh\u00e0"],aud:"a",say:""},
-    {ipa:"a",cat:"vowel",spellings:["\u0103"],examples:["\u0103n", "m\u0103ng", "b\u0103ng"],aud:"a",say:""},
-    {ipa:"\u0259",cat:"vowel",spellings:["\u00e2"],examples:["\u00e2n", "c\u00e2n", "l\u1ea7n"],aud:"schwa",say:""},
-    {ipa:"\u025b",cat:"vowel",spellings:["e"],examples:["em", "k\u1ebb", "m\u1eb9"],aud:"eps",say:""},
-    {ipa:"e",cat:"vowel",spellings:["\u00ea"],examples:["b\u00ea", "l\u00ea", "\u0111\u00eam"],aud:"e",say:""},
-    {ipa:"i",cat:"vowel",spellings:["i", "y"],examples:["\u0111i", "k\u1ef9", "l\u00fd"],aud:"i",say:""},
-    {ipa:"\u0254",cat:"vowel",spellings:["o"],examples:["to", "con", "lon"],aud:"openmid_o",say:""},
-    {ipa:"o",cat:"vowel",spellings:["\u00f4"],examples:["c\u00f4", "t\u00f4", "h\u00f4m"],aud:"o",say:""},
-    {ipa:"\u0259\u02d0",cat:"vowel",spellings:["\u01a1"],examples:["c\u01a1", "t\u01a1", "th\u01a1"],aud:"schwa",say:""},
-    {ipa:"u",cat:"vowel",spellings:["u"],examples:["thu", "c\u0169", "d\u00f9"],aud:"u",say:""},
-    {ipa:"\u026f",cat:"vowel",spellings:["\u01b0"],examples:["t\u1eeb", "s\u1eefa", "l\u1eeba"],aud:"turned_m",say:""},
-    {ipa:"\u0253",cat:"consonant",spellings:["b"],examples:["ba", "b\u00e9", "b\u00e0n"],aud:"b",say:""},
-    {ipa:"k",cat:"consonant",spellings:["c", "k", "q"],examples:["con", "k\u1ebb", "qu\u00ea"],aud:"k",say:""},
-    {ipa:"t\u0255",cat:"consonant",spellings:["ch"],examples:["ch\u00f3", "cha", "ch\u00edn"],aud:"tcurl",say:""},
-    {ipa:"z",cat:"consonant",spellings:["d"],examples:["da", "d\u00ec", "d\u1ec5"],aud:"z",say:""},
-    {ipa:"\u0257",cat:"consonant",spellings:["\u0111"],examples:["\u0111i", "\u0111\u00f3", "\u0111\u1eb9p"],aud:"implosive_d",say:""},
-    {ipa:"\u0263",cat:"consonant",spellings:["g", "gh"],examples:["g\u00e0", "gh\u1ebf", "gi\u00f3"],aud:"gamma",say:""},
-    {ipa:"h",cat:"consonant",spellings:["h"],examples:["hoa", "h\u00e1t", "h\u1eb9n"],aud:"h",say:""},
-    {ipa:"x",cat:"consonant",spellings:["kh"],examples:["kh\u00f4ng", "kh\u1ecfe", "kh\u00e1"],aud:"x",say:""},
-    {ipa:"l",cat:"consonant",spellings:["l"],examples:["l\u00e1", "l\u00ea", "l\u1eddi"],aud:"l",say:""},
-    {ipa:"m",cat:"consonant",spellings:["m"],examples:["m\u00e1", "m\u1eb9", "m\u01b0a"],aud:"m",say:""},
-    {ipa:"n",cat:"consonant",spellings:["n"],examples:["n\u00f3", "na", "n\u00e0y"],aud:"n",say:""},
-    {ipa:"\u014b",cat:"consonant",spellings:["ng", "ngh"],examples:["ngon", "ng\u00e0y", "nghe"],aud:"eng",say:""},
-    {ipa:"\u0272",cat:"consonant",spellings:["nh"],examples:["nh\u00e0", "nh\u1ecf", "nhanh"],aud:"nj",say:""},
-    {ipa:"f",cat:"consonant",spellings:["ph"],examples:["ph\u1edf", "phim", "ph\u1ea3i"],aud:"f",say:""},
-    {ipa:"\u0279",cat:"consonant",spellings:["r"],examples:["rau", "r\u1ed3i", "ra"],aud:"r_appr",say:""},
-    {ipa:"\u0282",cat:"consonant",spellings:["s"],examples:["s\u00f4ng", "s\u1eefa", "sao"],aud:"retroflex_s",say:""},
-    {ipa:"t",cat:"consonant",spellings:["t"],examples:["t\u00f4i", "ta", "t\u00ean"],aud:"t",say:""},
-    {ipa:"t\u02b0",cat:"consonant",spellings:["th"],examples:["th\u00ec", "th\u1ebf", "th\u1ea7y"],aud:"",say:"th\u00e0"},
-    {ipa:"\u0288",cat:"consonant",spellings:["tr"],examples:["tr\u1eddi", "tr\u1ebb", "tr\u0103ng"],aud:"retroflex_t",say:""},
-    {ipa:"v",cat:"consonant",spellings:["v"],examples:["v\u1ec1", "v\u00e0", "vui"],aud:"v",say:""},
-    {ipa:"s",cat:"consonant",spellings:["x"],examples:["xin", "xe", "x\u00f4i"],aud:"s",say:""},
-    {ipa:"a\u02e7",cat:"tone",spellings:["ngang (level)"],examples:["ma", "ba", "ta"],aud:"",say:"ma"},
-    {ipa:"a\u02e8\u02e9",cat:"tone",spellings:["huy\u1ec1n (falling)"],examples:["m\u00e0", "b\u00e0", "l\u00e0"],aud:"",say:"m\u00e0"},
-    {ipa:"a\u02e7\u02e5",cat:"tone",spellings:["s\u1eafc (rising)"],examples:["m\u00e1", "b\u00e1", "c\u00e1"],aud:"",say:"m\u00e1"},
-    {ipa:"a\u02e7\u02e9\u02e7",cat:"tone",spellings:["h\u1ecfi (dipping)"],examples:["m\u1ea3", "b\u1ea3", "c\u1ea3"],aud:"",say:"m\u1ea3"},
-    {ipa:"a\u02e7\u02e5\u02c0",cat:"tone",spellings:["ng\u00e3 (broken)"],examples:["m\u00e3", "b\u00e3", "ng\u00e3"],aud:"",say:"m\u00e3"},
-    {ipa:"a\u02e7\u02e8\u02c0",cat:"tone",spellings:["n\u1eb7ng (heavy)"],examples:["m\u1ea1", "b\u1ea1", "n\u1ea1"],aud:"",say:"m\u1ea1"}
-  ];
+  function speak(t,lang){if(!window.speechSynthesis||!t)return;const sy=window.speechSynthesis;sy.cancel();const f=()=>{const u=new SpeechSynthesisUtterance(t);u.lang=lang;u.rate=0.8;const vs=sy.getVoices()||[];const c=vs.filter(v=>v.lang&&v.lang.toLowerCase().replace("_","-").startsWith(lang.slice(0,2)));if(c.length)u.voice=c.find(v=>v.default)||c[0];sy.speak(u);};const vs=sy.getVoices()||[];if(vs.length){setTimeout(f,40);return;}let d=false;const g=()=>{if(d)return;d=true;f();};sy.addEventListener("voiceschanged",g,{once:true});setTimeout(g,600);}
 
-  const LANGS = [
-    { id:"fr", flag:"🇫🇷", label:"French", data:FRENCH, color:P[0], cats:["all","vowel","nasal","semi-vowel","consonant"], speak:"fr-FR" },
-    { id:"en", flag:"🇬🇧", label:"English", data:ENGLISH, color:P[2], cats:["all","vowel","diphthong","consonant"], speak:"en-US" },
-    { id:"vi", flag:"🇻🇳", label:"Vietnamese", data:VIETNAMESE, color:P[3], cats:["all","vowel","consonant","tone"], speak:"vi-VN" },
-  ];
-
-  function pickVoice(pref){
-    const voices = window.speechSynthesis ? window.speechSynthesis.getVoices()||[] : [];
-    const cands = voices.filter(v=>v.lang && v.lang.toLowerCase().replace("_","-").startsWith(pref));
-    if(!cands.length) return null;
-    return cands.find(v=>v.default)||cands[0];
-  }
-  function speak(text, lang){
-    if(!window.speechSynthesis || !text) return;
-    const synth=window.speechSynthesis; synth.cancel();
-    const fire=()=>{ const u=new SpeechSynthesisUtterance(text); u.lang=lang||"en-US"; u.rate=0.8;
-      const v=pickVoice(lang?lang.slice(0,2).toLowerCase():"en"); if(v) u.voice=v; synth.speak(u); };
-    const voices=synth.getVoices()||[];
-    if(voices.length){ setTimeout(fire,40); return; }
-    let done=false; const go=()=>{ if(done)return; done=true; fire(); };
-    synth.addEventListener("voiceschanged", go, {once:true}); setTimeout(go,600);
+  function hl(word,sps){
+    const lw=word.toLowerCase();
+    const sorted=[...sps].sort((a,b)=>b.length-a.length);
+    for(const s of sorted){const c=s.toLowerCase().replace(/[()]/g,"");const k=lw.indexOf(c);if(k>=0)return{b:word.slice(0,k),m:word.slice(k,k+c.length),a:word.slice(k+c.length)};}
+    return{b:word,m:"",a:""};
   }
 
   function App(){
-    const [langId,setLangId]=useState("fr");
-    const [filter,setFilter]=useState("all");
-    const [playing,setPlaying]=useState(null);
-    const audioRef = useRef(null);
-    const lang=LANGS.find(l=>l.id===langId);
-    const phonemes=filter==="all"?lang.data:lang.data.filter(p=>p.cat===filter);
-
-    // play the SOUND: real recording if available, else native-language syllable TTS
-    const playSound=(p,key)=>{
-      if(window.speechSynthesis) window.speechSynthesis.cancel();
-      if(p.aud){
-        if(!audioRef.current) audioRef.current = new Audio();
-        const a=audioRef.current; a.pause(); a.src="audio/"+p.aud+".mp3"; a.currentTime=0;
-        a.play().then(()=>{ setPlaying(key); a.onended=()=>setPlaying(null); })
-         .catch(()=>{ if(p.say) speak(p.say, lang.speak); });
-      } else if(p.say){ speak(p.say, lang.speak); }
-      else { speak(p.examples[0], lang.speak); }
-    };
+    const [lid,setLid]=useState("fr"),[fil,setFil]=useState("all");
+    const L=LL.find(l=>l.id===lid);
+    const ps=fil==="all"?L.data:L.data.filter(p=>p.cat===fil);
 
     return (
       <div style={{maxWidth:800,margin:"0 auto",padding:"24px 20px 60px"}}>
-        <a href="/" style={{display:"inline-block",color:BLACK,opacity:0.4,textDecoration:"none",fontSize:13,fontWeight:600,marginBottom:16,borderBottom:"2px solid "+P[2]+"80",paddingBottom:1}}
-          onMouseEnter={e=>e.currentTarget.style.opacity="0.8"} onMouseLeave={e=>e.currentTarget.style.opacity="0.4"}>&larr; amynguyen.studio</a>
-
-        <h1 style={{fontSize:"clamp(28px, 5vw, 40px)",fontWeight:700,color:BLACK,lineHeight:1.1,margin:"0 0 4px",letterSpacing:"-0.02em"}}>Phonetics Review</h1>
+        <a href="/" style={{display:"inline-block",color:B,opacity:0.4,textDecoration:"none",fontSize:13,fontWeight:600,marginBottom:16,borderBottom:"2px solid "+P[2]+"80",paddingBottom:1}}>&larr; amynguyen.studio</a>
+        <h1 style={{fontSize:"clamp(28px,5vw,40px)",fontWeight:700,color:B,lineHeight:1.1,margin:"0 0 4px",letterSpacing:"-0.02em"}}>Phonetics Review</h1>
         <div style={{width:40,height:3,background:P[3],borderRadius:2,marginBottom:8}} />
-        <p style={{fontSize:14,fontWeight:500,color:BLACK,opacity:0.55,marginBottom:20}}>for language learning</p>
+        <p style={{fontSize:14,fontWeight:500,color:B,opacity:0.55,marginBottom:20}}>for language learning</p>
 
         <div style={{display:"flex",gap:8,marginBottom:16}}>
-          {LANGS.map(l=>(
-            <button key={l.id} onClick={()=>{setLangId(l.id);setFilter("all");}}
-              style={{flex:1,padding:"10px 6px",borderRadius:10,fontSize:13,fontWeight:700,border:langId===l.id?"2.5px solid "+BLACK:"2px solid "+BLACK+"20",background:langId===l.id?l.color:"#fff",color:BLACK,transition:"all 0.2s"}}>
+          {LL.map(l=>(
+            <button key={l.id} onClick={()=>{setLid(l.id);setFil("all");}}
+              style={{flex:1,padding:"10px 6px",borderRadius:10,fontSize:13,fontWeight:700,border:lid===l.id?"2.5px solid "+B:"2px solid "+B+"20",background:lid===l.id?l.color:"#fff",color:B,transition:"all 0.2s"}}>
               {l.flag} {l.label}
               <div style={{fontSize:10,fontWeight:500,opacity:0.5,marginTop:2}}>{l.data.length} phonemes</div>
             </button>
           ))}
         </div>
 
-        <div style={{background:lang.color+"30",border:"2px solid "+lang.color,borderRadius:10,padding:"10px 14px",textAlign:"center",fontSize:13,fontWeight:600,color:BLACK,marginBottom:16}}>
-          🔊 Tap a <span style={{fontWeight:700}}>/sound/</span> to hear the real recording · tap a <span style={{fontWeight:700}}>word</span> to hear it
+        <div style={{background:L.color+"30",border:"2px solid "+L.color,borderRadius:10,padding:"10px 14px",textAlign:"center",fontSize:13,fontWeight:600,color:B,marginBottom:16}}>
+          🔊 tap any <span style={{textDecoration:"underline",textDecorationColor:L.color,textUnderlineOffset:3}}>word</span> to hear it pronounced · highlighted letters show the sound
         </div>
 
         <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:18}}>
-          {lang.cats.map(c=>(
-            <button key={c} onClick={()=>setFilter(c)}
-              style={{padding:"5px 14px",borderRadius:999,fontSize:12,fontWeight:700,border:filter===c?"2px solid "+BLACK:"1.5px solid "+BLACK+"25",background:filter===c?BLACK:"#fff",color:filter===c?"#fff":BLACK,transition:"all 0.15s"}}>{c}</button>
+          {L.cats.map(c=>(
+            <button key={c} onClick={()=>setFil(c)} style={{padding:"5px 14px",borderRadius:999,fontSize:12,fontWeight:700,border:fil===c?"2px solid "+B:"1.5px solid "+B+"25",background:fil===c?B:"#fff",color:fil===c?"#fff":B,transition:"all 0.15s"}}>{c}</button>
           ))}
         </div>
 
-        <div className="phon-grid">
-          {phonemes.map((p,i)=>{
-            const key=langId+"-"+i;
-            return (
-            <div key={i} style={{border:"2px solid "+BLACK,borderRadius:10,overflow:"hidden",background:"#fff"}}>
-              <div style={{height:5,background:lang.color}} />
+        <div className="pg">
+          {ps.map((p,i)=>(
+            <div key={i} style={{border:"2px solid "+B,borderRadius:10,overflow:"hidden",background:"#fff"}}>
+              <div style={{height:5,background:L.color}} />
               <div style={{padding:"12px 14px"}}>
-                <button onClick={()=>playSound(p,key)} title="Hear the sound"
-                  style={{background:playing===key?lang.color+"40":"none",border:"none",borderRadius:8,padding:"2px 6px",margin:"-2px -6px 6px",display:"flex",alignItems:"center",gap:6,transition:"background 0.15s"}}>
-                  <span style={{fontSize:24,fontWeight:700,color:BLACK}}>/{p.ipa}/</span>
-                  <span style={{fontSize:13,opacity:0.45}}>🔊</span>
-                </button>
+                <div style={{fontSize:24,fontWeight:700,color:B,marginBottom:6}}>/{p.ipa}/</div>
                 <div style={{display:"flex",flexWrap:"wrap",gap:4,marginBottom:8}}>
-                  {p.spellings.map((s,j)=>(<span key={j} style={{fontSize:11,fontWeight:600,background:lang.color+"30",color:BLACK,borderRadius:4,padding:"2px 7px"}}>{s}</span>))}
+                  {p.sp.map((s,j)=>(<span key={j} style={{fontSize:11,fontWeight:600,background:L.color+"30",color:B,borderRadius:4,padding:"2px 7px"}}>{s}</span>))}
                 </div>
-                <div style={{display:"flex",flexWrap:"wrap",gap:"4px 12px"}}>
-                  {p.examples.map((ex,j)=>(
-                    <button key={j} onClick={()=>speak(ex, lang.speak)} style={{background:"none",border:"none",padding:0,fontSize:14,fontWeight:600,color:BLACK,textDecoration:"underline",textDecorationColor:lang.color,textUnderlineOffset:3}}>{ex}</button>
-                  ))}
+                <div style={{display:"flex",flexWrap:"wrap",gap:"4px 12px",alignItems:"baseline"}}>
+                  {p.ex.map((w,j)=>{const h=hl(w,p.sp);return(
+                    <button key={j} onClick={()=>speak(w,L.sp)} title={"🔊 "+w}
+                      style={{background:"none",border:"none",padding:"2px 0",fontSize:14,fontWeight:600,color:B,display:"inline-flex",alignItems:"baseline",gap:0}}>
+                      <span>{h.b}</span>
+                      <span style={{color:L.color==="#F2D7D9"?"#c4707a":B,fontWeight:800,background:L.color+"50",borderRadius:2,padding:"0 1px",textDecoration:"underline",textDecorationColor:L.color=="#F2D7D9"?"#c4707a":P[3],textUnderlineOffset:3}}>{h.m}</span>
+                      <span>{h.a}</span>
+                      {j===0&&<span style={{fontSize:11,opacity:0.4,marginLeft:4}}>🔊</span>}
+                    </button>
+                  );})}
                 </div>
               </div>
             </div>
-          );})}
+          ))}
         </div>
-
-        <div style={{textAlign:"center",marginTop:24,fontSize:12,fontWeight:500,color:BLACK,opacity:0.35}}>{lang.flag} {lang.data.length} phonemes · real IPA recordings · amynguyen.studio</div>
+        <div style={{textAlign:"center",marginTop:24,fontSize:12,fontWeight:500,color:B,opacity:0.35}}>{L.flag} {L.data.length} phonemes · amynguyen.studio</div>
       </div>
     );
   }
