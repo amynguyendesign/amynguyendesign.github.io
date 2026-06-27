@@ -79,7 +79,10 @@
 			@media (prefers-reduced-motion: reduce) {
 				*, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 			}
-		</style>
+		
+@keyframes twinkle{0%,100%{opacity:0.2;transform:scale(0.7);}50%{opacity:0.9;transform:scale(1);}}
+@keyframes stitchDraw{from{stroke-dashoffset:400;}to{stroke-dashoffset:0;}}
+</style>
 	</head>
 	<body>
 		<div id="root"></div>
@@ -113,8 +116,115 @@ const ART_IMAGES = [
 const NAV_ITEMS = ["home", "about", "studio", "contact"];
 const VALID_SECTIONS = ["home", "about", "art", "studio", "contact"];
 
+// ---- aliases + tokens for scroll-narrative pages (About/Studio/Contact) ----
+const P = PASTELS;
+const W = WHITE;
+const B = BLACK;
+const D = DISP;
+const INK = "#16183A";
+const ACC = "#748DA6";
+const MONO = '"Courier New", Courier, monospace';
+const SERIF = 'Georgia, "Times New Roman", serif';
+
+
 function track(name, params) {
 	if (typeof gtag === "function") gtag("event", name, params || {});
+}
+
+
+function useObs(ref){var [v,sv]=React.useState({});React.useEffect(function(){var o=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)sv(function(p){var n=Object.assign({},p);n[e.target.dataset.s]=true;return n;});});},{threshold:0.35,root:ref.current});var els=ref.current?ref.current.querySelectorAll('.sx'):[];els.forEach(function(s){o.observe(s);});return function(){o.disconnect();};},[]);return v;}
+function secS(bg){return{height:"100%",width:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"36px 28px",scrollSnapAlign:"start",flexShrink:0,background:bg,position:"relative",overflow:"hidden"};}
+function fd(v,id,dl){return{opacity:v[id]?1:0,transform:v[id]?"translateY(0)":"translateY(26px)",transition:"opacity 0.7s cubic-bezier(0.16,1,0.3,1) "+(dl||0)+"s, transform 0.7s cubic-bezier(0.16,1,0.3,1) "+(dl||0)+"s"};}
+function arrowDown(v,id){return React.createElement('div',{style:Object.assign({},fd(v,id,0.4),{position:"absolute",bottom:16,fontSize:20,fontWeight:700,color:B,opacity:0.35})},"↓");}
+function AboutPage(){
+  var ref=React.useRef(null),v=useObs(ref);
+  return (
+    <div ref={ref} style={{width:"100%",height:"100%",overflow:"auto",scrollSnapType:"y mandatory"}}>
+      <div className="sx" data-s="h" style={secS(W)}>
+        <div style={{position:"absolute",top:"24%",left:"27%",width:8,height:8,background:P[2],borderRadius:"50%",animation:"twinkle 2s ease-in-out infinite"}} />
+        <div style={{position:"absolute",top:"20%",right:"31%",width:6,height:6,background:P[1],borderRadius:"50%",animation:"twinkle 2.4s ease-in-out 0.5s infinite"}} />
+        <div style={fd(v,"h",0)}><div style={{fontSize:"clamp(36px,7vw,64px)",fontWeight:700,color:B,letterSpacing:"-0.03em",lineHeight:1}}>about me<span style={{color:ACC}}>.</span></div></div>
+        {arrowDown(v,"h")}
+      </div>
+      <div className="sx" data-s="o" style={secS(P[0]+'35')}>
+        <div style={{maxWidth:520,width:"100%"}}>
+          <h2 style={Object.assign({},fd(v,"o",0),{fontSize:"clamp(24px,4.6vw,38px)",fontWeight:700,color:B,lineHeight:1.12,margin:"0 0 16px"})}>A change of plan.</h2>
+          <p style={Object.assign({},fd(v,"o",0.15),{fontSize:"clamp(13px,2vw,16px)",fontWeight:500,color:INK,opacity:0.8,lineHeight:1.6,margin:0,maxWidth:430})}>I entered Stanford with a background in writing and literature, but chose Computer Science because I wanted an intellectual challenge I hadn't yet mastered.</p>
+        </div>
+      </div>
+      <div className="sx" data-s="t" style={secS(P[1]+'45')}>
+        <div style={{maxWidth:520,width:"100%"}}>
+          <h2 style={Object.assign({},fd(v,"t",0),{fontSize:"clamp(24px,4.6vw,38px)",fontWeight:700,color:B,lineHeight:1.12,margin:"0 0 6px"})}>Then I learned to build.</h2>
+          <p style={Object.assign({},fd(v,"t",0.15),{fontSize:"clamp(13px,2vw,16px)",fontWeight:500,color:INK,opacity:0.72,lineHeight:1.55,margin:"0 0 22px",maxWidth:430})}>From scratch: multivariable calculus, first-order logic, my first lines of code. CS gave me a second language for thinking.</p>
+          <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>{[['decompose',P[2],3],['debug',P[3],'50%'],['build',P[0],0]].map(function(s,i){return React.createElement('div',{key:i,style:Object.assign({},fd(v,"t",0.3+i*0.12),{flex:"1 1 100px",minWidth:88,border:"2px solid "+B,borderRadius:10,padding:"13px 11px",background:W})},React.createElement('div',{style:{width:17,height:17,borderRadius:s[2],background:s[1],marginBottom:9,transform:i===2?"rotate(45deg)":"none"}}),React.createElement('div',{style:{fontFamily:MONO,fontSize:12.5,fontWeight:700,color:B}},s[0]));})}</div>
+        </div>
+      </div>
+      <div className="sx" data-s="s" style={secS(W)}>
+        <div style={{maxWidth:560,width:"100%",textAlign:"center"}}>
+          <h2 style={Object.assign({},fd(v,"s",0),{fontSize:"clamp(21px,4vw,32px)",fontWeight:700,color:B,lineHeight:1.2,margin:"0 0 20px"})}>Designer who codes,<br />engineer who pushes pixels.</h2>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginBottom:20}}>
+            <div style={Object.assign({},fd(v,"s",0.15),{flex:1,textAlign:"right",fontFamily:MONO,fontSize:"clamp(12px,2.5vw,16px)",fontWeight:700,color:ACC,paddingRight:16})}>engineering</div>
+            <svg width="20" height="100" viewBox="0 0 20 100" style={{flexShrink:0}}><line x1="10" y1="4" x2="10" y2="96" stroke={ACC} strokeWidth="2.5" strokeDasharray="8 7" strokeLinecap="round" style={{strokeDashoffset:400,animation:v["s"]?"stitchDraw 1.2s ease 0.3s forwards":"none"}} /></svg>
+            <div style={Object.assign({},fd(v,"s",0.15),{flex:1,textAlign:"left",fontFamily:SERIF,fontSize:"clamp(13px,2.5vw,17px)",fontStyle:"italic",color:ACC,paddingLeft:16})}>design</div>
+          </div>
+          <p style={Object.assign({},fd(v,"s",0.5),{fontSize:"clamp(13px,2vw,16px)",fontWeight:500,color:INK,opacity:0.72,lineHeight:1.55,margin:"0 auto",maxWidth:420})}>Drawn to patterns, I have a gut feeling for how things align, when they work, and where they break.</p>
+        </div>
+      </div>
+      <div className="sx" data-s="c" style={secS(P[1]+'30')}>
+        <div style={{maxWidth:560,width:"100%",textAlign:"center"}}>
+          <div style={Object.assign({},fd(v,"c",0),{display:"flex",justifyContent:"center",gap:8,marginBottom:16})}><div style={{width:8,height:8,borderRadius:"50%",background:P[0]}} /><div style={{width:8,height:8,borderRadius:"50%",background:P[2]}} /><div style={{width:8,height:8,borderRadius:"50%",background:ACC}} /></div>
+          <div style={Object.assign({},fd(v,"c",0.12),{fontSize:"clamp(14px,2.4vw,18px)",fontWeight:500,color:INK,marginBottom:6})}>The through line in everything I do is</div>
+          <div style={Object.assign({},fd(v,"c",0.2),{fontSize:"clamp(42px,9vw,74px)",fontWeight:700,color:B,letterSpacing:"-0.03em",lineHeight:1,marginBottom:16})}><span style={{background:ACC,color:W,padding:"0 14px",borderRadius:8}}>craft</span></div>
+          <p style={Object.assign({},fd(v,"c",0.35),{fontFamily:MONO,fontSize:"clamp(12px,2.1vw,16px)",fontWeight:600,color:INK,lineHeight:1.7,margin:"0 auto",maxWidth:360})}>Understand how something is made.<br />Go deep. Do honest work. <span style={{color:ACC}}>Repeat.</span></p>
+        </div>
+      </div>
+      <div className="sx" data-s="z" style={secS(W)}>
+        <div style={fd(v,"z",0)}><img src="src/assets/amy.jpg" alt="Amy" style={{width:"clamp(120px,28vw,170px)",borderRadius:10,border:"3px solid "+B,transform:"rotate(-2deg)",boxShadow:"8px 8px 0 "+P[1]}} /></div>
+      </div>
+    </div>
+  );
+}
+function StudioPage(props){
+  var onArt=props&&props.onArt;
+  var ref=React.useRef(null),v=useObs(ref);
+  var item=function(id,num,title,desc,cta,href,c){return (
+    <div className="sx" data-s={id} style={secS(c)}>
+      <div style={{maxWidth:520,width:"100%"}}>
+        <div style={fd(v,id,0)}><span style={{fontSize:"clamp(56px,11vw,92px)",fontWeight:700,color:ACC,opacity:0.22,lineHeight:1,display:"block"}}>{num}</span></div>
+        <div style={fd(v,id,0.15)}><div style={{fontSize:"clamp(30px,5.5vw,50px)",fontWeight:700,color:B,lineHeight:1.05,marginTop:-6}} dangerouslySetInnerHTML={{__html:title}} /></div>
+        <p style={Object.assign({},fd(v,id,0.3),{fontSize:"clamp(13px,2vw,17px)",fontWeight:500,color:B,opacity:0.6,lineHeight:1.55,marginTop:12,maxWidth:380})}>{desc}</p>
+        <div style={Object.assign({},fd(v,id,0.45),{marginTop:22})}><a href={href} onClick={function(e){e.preventDefault();if(href&&href.charAt(0)==='/'){window.location.href=href;}else if(onArt){onArt();}}} style={{fontFamily:D,fontSize:14,fontWeight:700,color:B,textDecoration:"none",border:"2px solid "+B,borderRadius:8,padding:"10px 22px",display:"inline-block"}}>{cta} →</a></div>
+      </div>
+    </div>
+  );}
+  return (
+    <div ref={ref} style={{width:"100%",height:"100%",overflow:"auto",scrollSnapType:"y mandatory"}}>
+      <div className="sx" data-s="sh" style={secS(W)}>
+        <div style={fd(v,"sh",0)}><div style={{fontSize:"clamp(38px,7.5vw,66px)",fontWeight:700,color:B,letterSpacing:"-0.03em",lineHeight:1}}>Studio<span style={{color:ACC}}>.</span></div></div>
+        <div style={Object.assign({},fd(v,"sh",0.2),{marginTop:10,fontSize:"clamp(13px,2.4vw,18px)",fontWeight:500,color:B,opacity:0.5,fontStyle:"italic"})}>I like making stuff</div>
+        {arrowDown(v,"sh")}
+      </div>
+      {item("a1","01","art","Occasional paintings and studies across oil, watercolor, acrylic, and graphite.","view","#",P[0]+'40')}
+      {item("a2","02","m&eacute;lange","A game to help build color intuition.","play","/game",P[1]+'50')}
+      {item("a3","03","phonetics review","An interactive tool to review phonetics for better language learning.","review","/phonetics",P[2]+'40')}
+      <div className="sx" data-s="se" style={Object.assign({},secS(W),{minHeight:"100%"})}>
+        <div style={fd(v,"se",0)}><div style={{display:"flex",gap:5,justifyContent:"center",marginBottom:10}}>{P.map(function(c,i){return React.createElement('div',{key:i,style:{width:12,height:12,borderRadius:i%2?"50%":3,background:c}});})}</div><div style={{fontSize:13,fontWeight:600,color:B,opacity:0.4,textAlign:"center"}}>more coming soon</div></div>
+      </div>
+    </div>
+  );
+}
+function ContactPage(){
+  return (
+    <div style={{width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"36px 28px"}}>
+      <div style={{maxWidth:480}}>
+        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18}}><div style={{width:6,height:32,background:ACC,borderRadius:3}} /><h2 style={{fontFamily:D,fontSize:"clamp(28px,5vw,40px)",fontWeight:700,color:B,margin:0}}>say hello<span style={{color:ACC}}>.</span></h2></div>
+        <div style={{fontFamily:D,fontSize:"clamp(14px,2.1vw,16px)",fontWeight:500,color:B,opacity:0.85,lineHeight:1.6}}>
+          <p style={{marginBottom:14}}>If you want to discuss design, tech, culture — or debate whether Comic Sans is ever acceptable, <a href="https://www.linkedin.com/in/nguyen-amy" target="_blank" rel="noopener" style={{color:B,fontWeight:700,textDecoration:"none",background:P[2],padding:"2px 5px",borderRadius:3}}>message me on LinkedIn</a>.</p>
+          <p style={{margin:0}}>Or see what I'm reading on <a href="https://goodreads.com/amynlha" target="_blank" rel="noopener" style={{color:B,fontWeight:700,textDecoration:"none",background:P[0],padding:"2px 5px",borderRadius:3}}>Goodreads</a>.</p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function App() {
@@ -317,26 +427,7 @@ function App() {
 				)}
 
 				{/* ABOUT */}
-				{section === "about" && (
-					<div className="ps" style={{ position: "absolute", inset: 0, overflow: "auto" }}>
-						<div className="an-section" style={{ maxWidth: 620, margin: "0 auto", padding: "20px 28px 32px", animation: "contentIn 0.35s ease" }}>
-							<div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-								<div style={{ width: 6, height: 34, background: NAV_COLOR, borderRadius: 3 }} />
-								<h2 style={{ fontFamily: DISP, fontSize: 34, fontWeight: 700, color: BLACK, margin: 0 }}>About me</h2>
-							</div>
-							<div className="an-about-row">
-								<img className="an-about-photo" src="src/assets/amy.jpg" alt="Amy" onMouseEnter={() => setAboutHover(true)} onMouseLeave={() => setAboutHover(false)} onClick={(e) => { e.stopPropagation(); setLightbox("src/assets/amy.jpg"); track("about_photo_open", {}); }} style={{ width: 140, float: "right", position: "relative", zIndex: 3, marginLeft: 18, marginBottom: 10, cursor: "pointer", border: "2px solid " + (aboutHover ? PASTELS[2] : BLACK), borderRadius: 5, transform: aboutHover ? "translateY(-4px) rotate(-0.5deg)" : "rotate(1.5deg)", boxShadow: aboutHover ? "4px 4px 0 " + PASTELS[2] : "none", transition: "all 0.25s cubic-bezier(0.34,1.56,0.64,1)" }} />
-								<div style={{ fontFamily: DISP, fontSize: 15, color: BLACK, lineHeight: "26px", opacity: 0.88, fontWeight: 500 }}>
-									<p style={{ marginBottom: 12 }}>I entered Stanford with a background in writing and literature, but chose to pursue Computer Science because I wanted to push myself toward an intellectual challenge I hadn't yet mastered.</p>
-									<p style={{ marginBottom: 12 }}>With no prior technical experience, I started from scratch: multivariable calculus, first-order logic, my first lines of code. Computer Science gave me a second language for thinking: decompose, debug, build.</p>
-									<p style={{ marginBottom: 12 }}>Working between engineering and design, I take pride in my work and continually strive to refine my skills. Drawn to patterns, I have a gut feeling for how things align, when they work, and where they break.</p>
-									<p style={{ marginBottom: 0 }}>The through line across my work and life is <span style={craftHL}>craft</span>. I bring the same curiosity and rigor to everything I touch. Understand how something is made. Go deep. Do honest work. Repeat.</p>
-								</div>
-							</div>
-							<div style={{ clear: "both" }} />
-						</div>
-					</div>
-				)}
+				{section === "about" && <AboutPage />}
 
 				{/* ART */}
 				{section === "art" && (
@@ -370,64 +461,11 @@ function App() {
 				)}
 
 				{/* STUDIO */}
-				{section === "studio" && (
-					<div className="ps" style={{ position: "absolute", inset: 0, overflow: "auto" }}>
-						<div className="an-section" style={{ maxWidth: 560, margin: "0 auto", padding: "20px 28px 32px", animation: "contentIn 0.35s ease" }}>
-							<div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-								<div style={{ width: 6, height: 34, background: NAV_COLOR, borderRadius: 3 }} />
-								<h2 style={{ fontFamily: DISP, fontSize: 34, fontWeight: 700, color: BLACK, margin: 0 }}>Studio</h2>
-							</div>
-							<p style={{ fontFamily: DISP, fontSize: 14, color: BLACK, opacity: 0.5, fontStyle: "italic", marginBottom: 22, marginLeft: 16, fontWeight: 500 }}>I like making stuff</p>
-
-							<button onClick={(e) => { e.stopPropagation(); track("studio_click", { project: "art" }); goTo("art"); }}
-								onMouseEnter={() => setHoveredStudio("art")} onMouseLeave={() => setHoveredStudio(null)}
-								style={{ width: "100%", textAlign: "left", display: "flex", alignItems: "center", padding: "15px 16px", borderRadius: 10, cursor: "pointer", marginBottom: 6, background: hoveredStudio === "art" ? PASTELS[2] + "33" : "transparent", border: "2px solid " + (hoveredStudio === "art" ? PASTELS[2] : BLACK + "15"), transform: hoveredStudio === "art" ? "translateX(6px)" : "none", transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)" }}>
-								<span style={{ width: 28, height: 28, borderRadius: 6, background: PASTELS[2], color: BLACK, fontFamily: DISP, fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", marginRight: 14, flexShrink: 0 }}>01</span>
-								<span style={{ fontFamily: DISP, fontSize: 18, fontWeight: 700, color: BLACK }}>art</span>
-								<span style={{ flex: 1, borderBottom: "1.5px dotted " + BLACK + "20", margin: "0 14px", marginBottom: -2 }} />
-								<span style={{ fontFamily: DISP, fontSize: 12, color: BLACK, opacity: 0.55, fontWeight: 500 }}>occasional paintings</span>
-								<span style={{ marginLeft: 10, color: BLACK, fontWeight: 700, fontSize: 18, opacity: hoveredStudio === "art" ? 0.6 : 0, transform: hoveredStudio === "art" ? "translateX(0)" : "translateX(-6px)", transition: "all 0.2s" }}>&rarr;</span>
-							</button>
-
-							<a href="/game" onClick={(e) => { e.stopPropagation(); track("studio_click", { project: "melange" }); }}
-								onMouseEnter={() => setHoveredStudio("mel")} onMouseLeave={() => setHoveredStudio(null)}
-								style={{ display: "flex", alignItems: "center", padding: "15px 16px", borderRadius: 10, cursor: "pointer", marginBottom: 6, textDecoration: "none", background: hoveredStudio === "mel" ? PASTELS[0] + "33" : "transparent", border: "2px solid " + (hoveredStudio === "mel" ? PASTELS[0] : BLACK + "15"), transform: hoveredStudio === "mel" ? "translateX(6px)" : "none", transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)" }}>
-								<span style={{ width: 28, height: 28, borderRadius: 6, background: PASTELS[0], color: BLACK, fontFamily: DISP, fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", marginRight: 14, flexShrink: 0 }}>02</span>
-								<span style={{ fontFamily: DISP, fontSize: 18, fontWeight: 700, color: BLACK }}>m&eacute;lange</span>
-								<span style={{ flex: 1, borderBottom: "1.5px dotted " + BLACK + "20", margin: "0 14px", marginBottom: -2 }} />
-								<span style={{ fontFamily: DISP, fontSize: 12, color: BLACK, opacity: 0.55, fontWeight: 500 }}>color mixing game</span>
-								<span style={{ marginLeft: 10, color: BLACK, fontWeight: 700, fontSize: 18, opacity: hoveredStudio === "mel" ? 0.6 : 0, transform: hoveredStudio === "mel" ? "translateX(0)" : "translateX(-6px)", transition: "all 0.2s" }}>&rarr;</span>
-							</a>
-
-							<a href="/phonetics" onClick={(e) => { e.stopPropagation(); track("studio_click", { project: "phonetics" }); }}
-								onMouseEnter={() => setHoveredStudio("phon")} onMouseLeave={() => setHoveredStudio(null)}
-								style={{ display: "flex", alignItems: "center", padding: "15px 16px", borderRadius: 10, cursor: "pointer", marginBottom: 6, textDecoration: "none", background: hoveredStudio === "phon" ? PASTELS[1] + "33" : "transparent", border: "2px solid " + (hoveredStudio === "phon" ? PASTELS[1] : BLACK + "15"), transform: hoveredStudio === "phon" ? "translateX(6px)" : "none", transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)" }}>
-								<span style={{ width: 28, height: 28, borderRadius: 6, background: PASTELS[1], color: BLACK, fontFamily: DISP, fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", marginRight: 14, flexShrink: 0 }}>03</span>
-								<span style={{ fontFamily: DISP, fontSize: 18, fontWeight: 700, color: BLACK }}>phonetics review</span>
-								<span style={{ flex: 1, borderBottom: "1.5px dotted " + BLACK + "20", margin: "0 14px", marginBottom: -2 }} />
-								<span style={{ fontFamily: DISP, fontSize: 12, color: BLACK, opacity: 0.55, fontWeight: 500 }}>for language learning</span>
-								<span style={{ marginLeft: 10, color: BLACK, fontWeight: 700, fontSize: 18, opacity: hoveredStudio === "phon" ? 0.6 : 0, transform: hoveredStudio === "phon" ? "translateX(0)" : "translateX(-6px)", transition: "all 0.2s" }}>&rarr;</span>
-							</a>
-						</div>
-					</div>
-				)}
+				{section === "studio" && <StudioPage onArt={() => goTo("art")} />}
 
 
 				{/* CONTACT */}
-				{section === "contact" && (
-					<div className="ps" style={{ position: "absolute", inset: 0, overflow: "auto" }}>
-						<div className="an-section" style={{ maxWidth: 560, margin: "0 auto", padding: "20px 28px 32px", animation: "contentIn 0.35s ease" }}>
-							<div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-								<div style={{ width: 6, height: 34, background: NAV_COLOR, borderRadius: 3 }} />
-								<h2 style={{ fontFamily: DISP, fontSize: 34, fontWeight: 700, color: BLACK, margin: 0 }}>Contact</h2>
-							</div>
-							<div style={{ fontFamily: DISP, fontSize: 15, color: BLACK, lineHeight: "26px", opacity: 0.88, fontWeight: 500 }}>
-								<p style={{ marginBottom: 16 }}>If you want to discuss design, tech, culture &mdash; or debate whether Comic Sans is ever acceptable, <a href="https://www.linkedin.com/in/nguyen-amy" target="_blank" rel="noopener noreferrer" onClick={(e) => { e.stopPropagation(); track("outbound_click", { link_url: "linkedin" }); }} style={{ color: BLACK, fontWeight: 700, textDecoration: "none", background: PASTELS[2], padding: "2px 5px", borderRadius: 3 }}>message me on LinkedIn</a>.</p>
-								<p style={{ marginBottom: 0 }}>You can also keep up with what I'm reading on <a href="https://goodreads.com/amynlha" target="_blank" rel="noopener noreferrer" onClick={(e) => { e.stopPropagation(); track("outbound_click", { link_url: "goodreads" }); }} style={{ color: BLACK, fontWeight: 700, textDecoration: "none", background: PASTELS[0], padding: "2px 5px", borderRadius: 3 }}>Goodreads</a>.</p>
-							</div>
-						</div>
-					</div>
-				)}
+				{section === "contact" && <ContactPage />}
 			</div>
 
 			<div style={{ padding: "10px 24px calc(16px + env(safe-area-inset-bottom))", display: "flex", justifyContent: "center", flexShrink: 0, zIndex: 10 }}>
