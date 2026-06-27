@@ -214,8 +214,8 @@ function StudioPage(props){
         <div style={{position:"absolute",bottom:"22%",right:"10%",width:12,height:12,borderRadius:"50%",background:P[3],animation:"twinkle 2.6s ease-in-out 0.7s infinite",pointerEvents:"none"}} />
         <div style={{position:"absolute",top:"48%",left:"8%",width:18,height:18,borderRadius:"50%",background:P[0],animation:"twinkle 3s ease-in-out 1.1s infinite",pointerEvents:"none"}} />
         <div style={{position:"absolute",top:"36%",right:"9%",width:11,height:11,borderRadius:"50%",background:P[2],animation:"twinkle 2.2s ease-in-out 0.9s infinite",pointerEvents:"none"}} />
-        <div style={fd(v,"sh",0)}><div style={{fontSize:"clamp(38px,7.5vw,66px)",fontWeight:700,color:B,letterSpacing:"-0.03em",lineHeight:1}}>Studio<span style={{color:ACC}}>.</span></div></div>
-        <div style={Object.assign({},fd(v,"sh",0.2),{marginTop:10,fontSize:"clamp(13px,2.4vw,18px)",fontWeight:500,color:B,opacity:0.5,fontStyle:"italic"})}>I like making stuff</div>
+        <div style={fd(v,"sh",0)}><div style={{fontSize:"clamp(36px,7vw,64px)",fontWeight:700,color:B,letterSpacing:"-0.03em",lineHeight:1}}>studio<span style={{color:ACC}}>.</span></div></div>
+        <div style={Object.assign({},fd(v,"sh",0.2),{marginTop:10,fontSize:"clamp(13px,2vw,16px)",fontWeight:500,color:B,opacity:0.5})}>I like making stuff</div>
         {arrowDown(v,"sh")}
       </div>
       {item("a1","01","art","Occasional paintings and studies across oil, watercolor, acrylic, and graphite.","view","#",P[0]+'40')}
@@ -235,8 +235,8 @@ function ContactPage(){
         <div style={{position:"absolute",bottom:"25%",left:"20%",width:16,height:16,borderRadius:"50%",background:P[2],animation:"twinkle 2s ease-in-out 0.7s infinite",pointerEvents:"none"}} />
         <div style={{position:"absolute",bottom:"18%",right:"12%",width:10,height:10,borderRadius:"50%",background:P[3],animation:"twinkle 3s ease-in-out 0.2s infinite",pointerEvents:"none"}} />
       <div style={{maxWidth:480}}>
-        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18}}><div style={{width:6,height:32,background:ACC,borderRadius:3}} /><h2 style={{fontFamily:D,fontSize:"clamp(28px,5vw,40px)",fontWeight:700,color:B,margin:0}}>say hello<span style={{color:ACC}}>.</span></h2></div>
-        <div style={{fontFamily:D,fontSize:"clamp(14px,2.1vw,16px)",fontWeight:500,color:B,opacity:0.85,lineHeight:1.6}}>
+        
+        <div style={{fontSize:"clamp(13px,2vw,16px)",fontWeight:500,color:INK,opacity:0.8,lineHeight:1.6}}>
           <p style={{marginBottom:14}}>If you want to discuss design, tech, culture — or debate whether Comic Sans is ever acceptable, <a href="https://www.linkedin.com/in/nguyen-amy" target="_blank" rel="noopener" style={{color:B,fontWeight:700,textDecoration:"none",background:P[2],padding:"2px 5px",borderRadius:3}}>message me on LinkedIn</a>.</p>
           <p style={{margin:0}}>Or see what I'm reading on <a href="https://goodreads.com/amynlha" target="_blank" rel="noopener" style={{color:B,fontWeight:700,textDecoration:"none",background:P[0],padding:"2px 5px",borderRadius:3}}>Goodreads</a>.</p>
         </div>
@@ -253,6 +253,8 @@ function Horse() {
   const tmo = useRef(null);
   const [, tick] = useState(0);
   const [bub, setBub] = useState(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setVisible(true), 3500); return () => clearTimeout(t); }, []);
   useEffect(() => {
     let raf, t0 = performance.now(), lf = 0;
     const loop = (now) => {
@@ -284,7 +286,7 @@ function Horse() {
   const bg = isClick ? PASTELS[3] : PASTELS[0];
   const fg = isClick ? WHITE : BLACK;
   return (
-    <div style={{ position: "absolute", bottom: "7%", left: s.x + "%", transform: "translate(-50%, " + (-s.bob) + "px)", width: 62, height: 62, zIndex: 6, cursor: "pointer", pointerEvents: "auto" }}
+    <div style={{ position: "absolute", bottom: "7%", left: s.x + "%", transform: "translate(-50%, " + (-s.bob) + "px)", width: 62, height: 62, zIndex: 6, cursor: "pointer", pointerEvents: visible ? "auto" : "none", opacity: visible ? 1 : 0, transition: "opacity 1.2s ease" }}
       onMouseEnter={() => speak("hover")}
       onClick={(e) => { e.stopPropagation(); speak(IS_TOUCH ? "hover" : "click"); }}
       title="pony">
@@ -480,12 +482,12 @@ function App() {
 				{/* HOME */}
 				{section === "home" && (
 					<div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
-					<div style={{ position: "absolute", top: "14%", left: "10%", width: 16, height: 16, borderRadius: "50%", background: PASTELS[0], animation: "twinkle 2.2s ease-in-out infinite, fadeIn 1s ease 0.3s both" }} />
-					<div style={{ position: "absolute", top: "22%", right: "15%", width: 12, height: 12, borderRadius: "50%", background: PASTELS[1], animation: "twinkle 2.8s ease-in-out 0.4s infinite, fadeIn 1s ease 0.5s both" }} />
-					<div style={{ position: "absolute", bottom: "30%", left: "20%", width: 14, height: 14, borderRadius: "50%", background: PASTELS[2], animation: "twinkle 2s ease-in-out 0.8s infinite, fadeIn 1s ease 0.7s both" }} />
-					<div style={{ position: "absolute", bottom: "18%", right: "12%", width: 10, height: 10, borderRadius: "50%", background: PASTELS[3], animation: "twinkle 3s ease-in-out 0.2s infinite, fadeIn 1s ease 0.9s both" }} />
-					<div style={{ position: "absolute", top: "50%", left: "7%", width: 18, height: 18, borderRadius: "50%", background: PASTELS[0], animation: "twinkle 2.6s ease-in-out 1s infinite, fadeIn 1s ease 1.1s both" }} />
-					<div style={{ position: "absolute", top: "38%", right: "8%", width: 11, height: 11, borderRadius: "50%", background: PASTELS[2], animation: "twinkle 2.4s ease-in-out 0.6s infinite, fadeIn 1s ease 1.3s both" }} />
+					<div style={{ position: "absolute", top: "14%", left: "10%", width: 16, height: 16, borderRadius: "50%", background: PASTELS[0], animation: "twinkle 2.2s ease-in-out infinite, fadeIn 1s ease 1.8s both" }} />
+					<div style={{ position: "absolute", top: "22%", right: "15%", width: 12, height: 12, borderRadius: "50%", background: PASTELS[1], animation: "twinkle 2.8s ease-in-out 0.4s infinite, fadeIn 1s ease 2.0s both" }} />
+					<div style={{ position: "absolute", bottom: "30%", left: "20%", width: 14, height: 14, borderRadius: "50%", background: PASTELS[2], animation: "twinkle 2s ease-in-out 0.8s infinite, fadeIn 1s ease 2.2s both" }} />
+					<div style={{ position: "absolute", bottom: "18%", right: "12%", width: 10, height: 10, borderRadius: "50%", background: PASTELS[3], animation: "twinkle 3s ease-in-out 0.2s infinite, fadeIn 1s ease 2.4s both" }} />
+					<div style={{ position: "absolute", top: "50%", left: "7%", width: 18, height: 18, borderRadius: "50%", background: PASTELS[0], animation: "twinkle 2.6s ease-in-out 1s infinite, fadeIn 1s ease 2.6s both" }} />
+					<div style={{ position: "absolute", top: "38%", right: "8%", width: 11, height: 11, borderRadius: "50%", background: PASTELS[2], animation: "twinkle 2.4s ease-in-out 0.6s infinite, fadeIn 1s ease 2.8s both" }} />
 						
 						
 						
