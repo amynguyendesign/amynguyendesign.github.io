@@ -193,7 +193,7 @@ function AboutPage(){
           <div style={Object.assign({},fd(v,"c",0),{display:"flex",justifyContent:"center",gap:8,marginBottom:16})}><div style={{width:8,height:8,borderRadius:"50%",background:P[0]}} /><div style={{width:8,height:8,borderRadius:"50%",background:P[2]}} /><div style={{width:8,height:8,borderRadius:"50%",background:ACC}} /></div>
           <div style={Object.assign({},fd(v,"c",0.12),{fontSize:"clamp(14px,2.4vw,18px)",fontWeight:500,color:INK,marginBottom:6})}>The through line in everything I do is</div>
           <div style={Object.assign({},fd(v,"c",0.2),{fontSize:"clamp(42px,9vw,74px)",fontWeight:700,color:B,letterSpacing:"-0.03em",lineHeight:1,marginBottom:16})}><span style={{background:ACC,color:W,padding:"12px 16px",borderRadius:10,display:"inline-block",animation:v["c"]?"craftPop 0.55s cubic-bezier(0.34,1.56,0.64,1) 0.35s both, craftWiggle 3.5s ease-in-out 1s infinite":"none"}}>craft</span></div>
-          <p style={Object.assign({},fd(v,"c",0.35),{fontFamily:MONO,fontSize:"clamp(12px,2.1vw,16px)",fontWeight:600,color:INK,lineHeight:1.7,margin:"0 auto",maxWidth:360})}>Understand how something is made.<br />Go deep. Do honest work. <span style={{color:ACC}}>Repeat.</span></p>
+          <p style={Object.assign({},fd(v,"c",0.35),{fontSize:"clamp(14px,2.4vw,18px)",fontWeight:500,color:INK,lineHeight:1.7,margin:"0 auto",maxWidth:380})}>Understand how something is made.<br />Go deep. Do honest work. <span style={{color:ACC}}>Repeat.</span></p>
         </div>
       </div>
       <div className="sx" data-s="z" style={secS(W)}>
@@ -228,9 +228,9 @@ function StudioPage(props){
         
         {arrowDown(v,"sh")}
       </div>
-      {item("a1","01","art","Occasional paintings and studies across oil, watercolor, acrylic, and graphite.","view","#",P[0]+'40')}
-      {item("a2","02","m&eacute;lange","A game to help build color intuition.","play","/game",P[1]+'50')}
-      {item("a3","03","phonetics review","An interactive tool to review phonetics for better language learning.","review","/phonetics",P[2]+'40')}
+      {item("a1","01","art","Paintings and studies across oil, watercolor, acrylic, and graphite.","view","#",P[0]+'40')}
+      {item("a2","02","m&eacute;lange","A game for building color intuition.","play","/game",P[1]+'50')}
+      {item("a3","03","phonetics review","Phonetics practice for language learners.","review","/phonetics",P[2]+'40')}
       <div className="sx" data-s="se" style={Object.assign({},secS(W),{minHeight:"100%"})}>
         <div style={fd(v,"se",0)}><div style={{display:"flex",gap:5,justifyContent:"center",marginBottom:10}}>{P.map(function(c,i){return React.createElement('div',{key:i,style:{width:12,height:12,borderRadius:i%2?"50%":3,background:c}});})}</div><div style={{fontSize:13,fontWeight:600,color:B,opacity:0.4,textAlign:"center"}}>more coming soon</div></div>
       </div>
