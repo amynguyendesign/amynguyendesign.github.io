@@ -132,7 +132,6 @@ function App() {
 	const [hoveredArt, setHoveredArt] = useState(null);
 	const [lightbox, setLightbox] = useState(null);
 	const [hoveredStudio, setHoveredStudio] = useState(null);
-	const [goodiesOpen, setGoodiesOpen] = useState(false);
 	const [aboutHover, setAboutHover] = useState(false);
 
 	useEffect(() => {
@@ -391,50 +390,28 @@ function App() {
 							</button>
 
 							<a href="/game" onClick={(e) => { e.stopPropagation(); track("studio_click", { project: "melange" }); }}
-								onMouseEnter={() => setHoveredStudio("melange")} onMouseLeave={() => setHoveredStudio(null)}
-								style={{ display: "flex", alignItems: "center", padding: "15px 16px", borderRadius: 10, cursor: "pointer", marginBottom: 6, textDecoration: "none", background: hoveredStudio === "melange" ? PASTELS[0] + "33" : "transparent", border: "2px solid " + (hoveredStudio === "melange" ? PASTELS[0] : BLACK + "15"), transform: hoveredStudio === "melange" ? "translateX(6px)" : "none", transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)" }}>
+								onMouseEnter={() => setHoveredStudio("mel")} onMouseLeave={() => setHoveredStudio(null)}
+								style={{ display: "flex", alignItems: "center", padding: "15px 16px", borderRadius: 10, cursor: "pointer", marginBottom: 6, textDecoration: "none", background: hoveredStudio === "mel" ? PASTELS[0] + "33" : "transparent", border: "2px solid " + (hoveredStudio === "mel" ? PASTELS[0] : BLACK + "15"), transform: hoveredStudio === "mel" ? "translateX(6px)" : "none", transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)" }}>
 								<span style={{ width: 28, height: 28, borderRadius: 6, background: PASTELS[0], color: BLACK, fontFamily: DISP, fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", marginRight: 14, flexShrink: 0 }}>02</span>
 								<span style={{ fontFamily: DISP, fontSize: 18, fontWeight: 700, color: BLACK }}>m&eacute;lange</span>
 								<span style={{ flex: 1, borderBottom: "1.5px dotted " + BLACK + "20", margin: "0 14px", marginBottom: -2 }} />
 								<span style={{ fontFamily: DISP, fontSize: 12, color: BLACK, opacity: 0.55, fontWeight: 500 }}>color mixing game</span>
-								<span style={{ marginLeft: 10, color: BLACK, fontWeight: 700, fontSize: 18, opacity: hoveredStudio === "melange" ? 0.6 : 0, transform: hoveredStudio === "melange" ? "translateX(0)" : "translateX(-6px)", transition: "all 0.2s" }}>&rarr;</span>
+								<span style={{ marginLeft: 10, color: BLACK, fontWeight: 700, fontSize: 18, opacity: hoveredStudio === "mel" ? 0.6 : 0, transform: hoveredStudio === "mel" ? "translateX(0)" : "translateX(-6px)", transition: "all 0.2s" }}>&rarr;</span>
 							</a>
 
-							<div>
-								<button onClick={(e) => { e.stopPropagation(); setGoodiesOpen(!goodiesOpen); track("studio_click", { project: "goodies" }); }}
-									onMouseEnter={() => setHoveredStudio("goodies")} onMouseLeave={() => setHoveredStudio(null)}
-									style={{ width: "100%", textAlign: "left", display: "flex", alignItems: "center", padding: "15px 16px", borderRadius: 10, cursor: "pointer", marginBottom: goodiesOpen ? 4 : 6, background: (hoveredStudio === "goodies" || goodiesOpen) ? PASTELS[1] + "33" : "transparent", border: "2px solid " + ((hoveredStudio === "goodies" || goodiesOpen) ? PASTELS[1] : BLACK + "15"), transform: hoveredStudio === "goodies" ? "translateX(6px)" : "none", transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)" }}>
-									<span style={{ width: 28, height: 28, borderRadius: 6, background: PASTELS[1], color: BLACK, fontFamily: DISP, fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", marginRight: 14, flexShrink: 0 }}>03</span>
-									<span style={{ fontFamily: DISP, fontSize: 18, fontWeight: 700, color: BLACK }}>goodies</span>
-									<span style={{ flex: 1, borderBottom: "1.5px dotted " + BLACK + "20", margin: "0 14px", marginBottom: -2 }} />
-									<span style={{ fontFamily: DISP, fontSize: 12, color: BLACK, opacity: 0.55, fontWeight: 500 }}>freebies for you! yes, you</span>
-									<span style={{ marginLeft: 10, color: BLACK, fontWeight: 700, fontSize: 16, opacity: 0.5, transform: goodiesOpen ? "rotate(90deg)" : "rotate(0deg)", transition: "transform 0.25s ease" }}>&rsaquo;</span>
-								</button>
-								{goodiesOpen && (
-									<div style={{ overflow: "hidden", animation: "subSlide 0.3s ease" }}>
-										<a href="/workout" onClick={(e) => { e.stopPropagation(); track("studio_click", { project: "gym-sheet" }); }}
-											onMouseEnter={() => setHoveredStudio("gym")} onMouseLeave={() => setHoveredStudio(null)}
-											style={{ display: "flex", alignItems: "center", padding: "11px 16px 11px 58px", borderRadius: 8, cursor: "pointer", marginBottom: 4, textDecoration: "none", background: hoveredStudio === "gym" ? PASTELS[1] + "22" : "transparent", border: "1.5px solid " + (hoveredStudio === "gym" ? PASTELS[1] : "transparent"), transform: hoveredStudio === "gym" ? "translateX(4px)" : "none", transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)" }}>
-											<span style={{ fontFamily: DISP, fontSize: 14, fontWeight: 600, color: BLACK }}>the gym sheet</span>
-											<span style={{ flex: 1, borderBottom: "1px dotted " + BLACK + "15", margin: "0 12px", marginBottom: -2 }} />
-											<span style={{ fontFamily: DISP, fontSize: 11, color: BLACK, opacity: 0.45, fontWeight: 500 }}>printable workout tracker</span>
-											<span style={{ marginLeft: 8, color: BLACK, fontWeight: 700, fontSize: 14, opacity: hoveredStudio === "gym" ? 0.5 : 0, transform: hoveredStudio === "gym" ? "translateX(0)" : "translateX(-4px)", transition: "all 0.2s" }}>&rarr;</span>
-										</a>
-										<a href="/phonetics" onClick={(e) => { e.stopPropagation(); track("studio_click", { project: "phonetique" }); }}
-											onMouseEnter={() => setHoveredStudio("phon")} onMouseLeave={() => setHoveredStudio(null)}
-											style={{ display: "flex", alignItems: "center", padding: "11px 16px 11px 58px", borderRadius: 8, cursor: "pointer", marginBottom: 4, textDecoration: "none", background: hoveredStudio === "phon" ? PASTELS[1] + "22" : "transparent", border: "1.5px solid " + (hoveredStudio === "phon" ? PASTELS[1] : "transparent"), transform: hoveredStudio === "phon" ? "translateX(4px)" : "none", transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)" }}>
-											<span style={{ fontFamily: DISP, fontSize: 14, fontWeight: 600, color: BLACK }}>phonetics review</span>
-											<span style={{ flex: 1, borderBottom: "1px dotted " + BLACK + "15", margin: "0 12px", marginBottom: -2 }} />
-											<span style={{ fontFamily: DISP, fontSize: 11, color: BLACK, opacity: 0.45, fontWeight: 500 }}>for language learning</span>
-											<span style={{ marginLeft: 8, color: BLACK, fontWeight: 700, fontSize: 14, opacity: hoveredStudio === "phon" ? 0.5 : 0, transform: hoveredStudio === "phon" ? "translateX(0)" : "translateX(-4px)", transition: "all 0.2s" }}>&rarr;</span>
-										</a>
-										<div style={{ padding: "4px 16px 4px 58px", fontFamily: DISP, fontSize: 11, color: BLACK, opacity: 0.3, fontStyle: "italic", fontWeight: 500 }}>more coming soon</div>
-									</div>
-								)}
-							</div>
+							<a href="/phonetics" onClick={(e) => { e.stopPropagation(); track("studio_click", { project: "phonetics" }); }}
+								onMouseEnter={() => setHoveredStudio("phon")} onMouseLeave={() => setHoveredStudio(null)}
+								style={{ display: "flex", alignItems: "center", padding: "15px 16px", borderRadius: 10, cursor: "pointer", marginBottom: 6, textDecoration: "none", background: hoveredStudio === "phon" ? PASTELS[1] + "33" : "transparent", border: "2px solid " + (hoveredStudio === "phon" ? PASTELS[1] : BLACK + "15"), transform: hoveredStudio === "phon" ? "translateX(6px)" : "none", transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)" }}>
+								<span style={{ width: 28, height: 28, borderRadius: 6, background: PASTELS[1], color: BLACK, fontFamily: DISP, fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", marginRight: 14, flexShrink: 0 }}>03</span>
+								<span style={{ fontFamily: DISP, fontSize: 18, fontWeight: 700, color: BLACK }}>phonetics review</span>
+								<span style={{ flex: 1, borderBottom: "1.5px dotted " + BLACK + "20", margin: "0 14px", marginBottom: -2 }} />
+								<span style={{ fontFamily: DISP, fontSize: 12, color: BLACK, opacity: 0.55, fontWeight: 500 }}>for language learning</span>
+								<span style={{ marginLeft: 10, color: BLACK, fontWeight: 700, fontSize: 18, opacity: hoveredStudio === "phon" ? 0.6 : 0, transform: hoveredStudio === "phon" ? "translateX(0)" : "translateX(-6px)", transition: "all 0.2s" }}>&rarr;</span>
+							</a>
 						</div>
 					</div>
 				)}
+
 
 				{/* CONTACT */}
 				{section === "contact" && (
