@@ -233,6 +233,8 @@ function ContactPage(){
 function Horse() {
   const FR = ["src/assets/pony-idle.png", "src/assets/pony-walk.png", "src/assets/pony-gather.png"];
   const st = useRef({ x: 12, dir: 1, bob: 0, frame: 0 });
+  const idx = useRef({ hover: 0, click: 0 });
+  const tmo = useRef(null);
   const [, tick] = useState(0);
   const [bub, setBub] = useState(null);
   useEffect(() => {
@@ -250,13 +252,28 @@ function Horse() {
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
   }, []);
-  const HM = ["oh hi! 👋", "you look great today ✨", "how did you know Amy?", "neigh 🐴"];
+  useEffect(() => () => { if (tmo.current) clearTimeout(tmo.current); }, []);
+  const HOVER = ["oh hi! 👋", "you look great today ✨", "how did you know Amy", "did you drink water?"];
+  const CLICK = ["hey!", "excuse me??", "do I look clickable to you?", "ouch!"];
+  const speak = (kind) => {
+    const list = kind === "click" ? CLICK : HOVER;
+    const i = idx.current[kind] % list.length;
+    idx.current[kind] = i + 1;
+    setBub({ t: list[i], k: Date.now(), kind: kind });
+    if (tmo.current) clearTimeout(tmo.current);
+    tmo.current = setTimeout(() => setBub(null), 2200);
+  };
   const s = st.current;
-  const say = (e) => { e.stopPropagation(); setBub({ t: HM[Math.floor(Math.random() * HM.length)], k: Date.now() }); setTimeout(() => setBub(null), 2200); };
+  const isClick = bub && bub.kind === "click";
+  const bg = isClick ? PASTELS[3] : PASTELS[0];
+  const fg = isClick ? WHITE : BLACK;
   return (
-    <div style={{ position: "absolute", bottom: "7%", left: s.x + "%", transform: "translate(-50%, " + (-s.bob) + "px)", width: 62, height: 62, zIndex: 6, cursor: "pointer", pointerEvents: "auto" }} onClick={say} title="pony">
+    <div style={{ position: "absolute", bottom: "7%", left: s.x + "%", transform: "translate(-50%, " + (-s.bob) + "px)", width: 62, height: 62, zIndex: 6, cursor: "pointer", pointerEvents: "auto" }}
+      onMouseEnter={() => speak("hover")}
+      onClick={(e) => { e.stopPropagation(); speak("click"); }}
+      title="pony">
       {bub && (
-        <div key={bub.k} style={{ position: "absolute", bottom: 66, left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap", background: WHITE, border: "2px solid " + BLACK, borderRadius: 12, padding: "6px 12px", fontFamily: DISP, fontSize: 11, fontWeight: 600, color: BLACK, boxShadow: "2px 2px 0 " + BLACK + "14", animation: "bubbleIn 0.35s cubic-bezier(0.16,1,0.3,1)", pointerEvents: "none" }}>{bub.t}
+        <div key={bub.k} style={{ position: "absolute", bottom: 66, left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap", background: bg, border: "2px solid " + BLACK, borderRadius: 12, padding: "6px 12px", fontFamily: DISP, fontSize: 11, fontWeight: 700, color: fg, boxShadow: "2px 2px 0 " + BLACK + "14", animation: "bubbleIn 0.35s cubic-bezier(0.16,1,0.3,1)", pointerEvents: "none" }}>{bub.t}
           <div style={{ position: "absolute", bottom: -8, left: "50%", transform: "translateX(-50%)", width: 0, height: 0, borderLeft: "6px solid transparent", borderRight: "6px solid transparent", borderTop: "8px solid " + BLACK }} />
         </div>
       )}
