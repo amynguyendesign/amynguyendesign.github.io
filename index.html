@@ -144,8 +144,13 @@ function AboutPage(){
   return (
     <div ref={ref} style={{width:"100%",height:"100%",overflow:"auto",scrollSnapType:"y mandatory"}}>
       <div className="sx" data-s="h" style={secS(W)}>
-        <div style={{position:"absolute",top:"24%",left:"27%",width:8,height:8,background:P[2],borderRadius:"50%",animation:"twinkle 2s ease-in-out infinite"}} />
-        <div style={{position:"absolute",top:"20%",right:"31%",width:6,height:6,background:P[1],borderRadius:"50%",animation:"twinkle 2.4s ease-in-out 0.5s infinite"}} />
+        <div style={{position:"absolute",top:"18%",left:"15%",width:16,height:16,borderRadius:"50%",background:P[2],animation:"twinkle 2.2s ease-in-out infinite",pointerEvents:"none"}} />
+        <div style={{position:"absolute",top:"24%",right:"18%",width:12,height:12,borderRadius:"50%",background:P[1],animation:"twinkle 2.8s ease-in-out 0.4s infinite",pointerEvents:"none"}} />
+        <div style={{position:"absolute",bottom:"28%",left:"22%",width:14,height:14,borderRadius:"50%",background:P[0],animation:"twinkle 2s ease-in-out 0.8s infinite",pointerEvents:"none"}} />
+        <div style={{position:"absolute",bottom:"20%",right:"14%",width:10,height:10,borderRadius:"50%",background:P[3],animation:"twinkle 3s ease-in-out 0.2s infinite",pointerEvents:"none"}} />
+        <div style={{position:"absolute",top:"50%",left:"10%",width:18,height:18,borderRadius:"50%",background:P[0],animation:"twinkle 2.6s ease-in-out 1s infinite",pointerEvents:"none"}} />
+        <div style={{position:"absolute",top:"40%",right:"12%",width:11,height:11,borderRadius:"50%",background:P[2],animation:"twinkle 2.4s ease-in-out 0.6s infinite",pointerEvents:"none"}} />
+        
         <div style={fd(v,"h",0)}><div style={{fontSize:"clamp(36px,7vw,64px)",fontWeight:700,color:B,letterSpacing:"-0.03em",lineHeight:1}}>about me<span style={{color:ACC}}>.</span></div></div>
         {arrowDown(v,"h")}
       </div>
@@ -203,6 +208,12 @@ function StudioPage(props){
   return (
     <div ref={ref} style={{width:"100%",height:"100%",overflow:"auto",scrollSnapType:"y mandatory"}}>
       <div className="sx" data-s="sh" style={secS(W)}>
+        <div style={{position:"absolute",top:"16%",left:"12%",width:14,height:14,borderRadius:"50%",background:P[0],animation:"twinkle 2.4s ease-in-out infinite",pointerEvents:"none"}} />
+        <div style={{position:"absolute",top:"22%",right:"16%",width:10,height:10,borderRadius:"50%",background:P[1],animation:"twinkle 2s ease-in-out 0.5s infinite",pointerEvents:"none"}} />
+        <div style={{position:"absolute",bottom:"26%",left:"18%",width:16,height:16,borderRadius:"50%",background:P[2],animation:"twinkle 2.8s ease-in-out 0.3s infinite",pointerEvents:"none"}} />
+        <div style={{position:"absolute",bottom:"22%",right:"10%",width:12,height:12,borderRadius:"50%",background:P[3],animation:"twinkle 2.6s ease-in-out 0.7s infinite",pointerEvents:"none"}} />
+        <div style={{position:"absolute",top:"48%",left:"8%",width:18,height:18,borderRadius:"50%",background:P[0],animation:"twinkle 3s ease-in-out 1.1s infinite",pointerEvents:"none"}} />
+        <div style={{position:"absolute",top:"36%",right:"9%",width:11,height:11,borderRadius:"50%",background:P[2],animation:"twinkle 2.2s ease-in-out 0.9s infinite",pointerEvents:"none"}} />
         <div style={fd(v,"sh",0)}><div style={{fontSize:"clamp(38px,7.5vw,66px)",fontWeight:700,color:B,letterSpacing:"-0.03em",lineHeight:1}}>Studio<span style={{color:ACC}}>.</span></div></div>
         <div style={Object.assign({},fd(v,"sh",0.2),{marginTop:10,fontSize:"clamp(13px,2.4vw,18px)",fontWeight:500,color:B,opacity:0.5,fontStyle:"italic"})}>I like making stuff</div>
         {arrowDown(v,"sh")}
@@ -218,7 +229,11 @@ function StudioPage(props){
 }
 function ContactPage(){
   return (
-    <div style={{width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"36px 28px"}}>
+    <div style={{width:"100%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"36px 28px",position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:"15%",left:"14%",width:14,height:14,borderRadius:"50%",background:P[1],animation:"twinkle 2.2s ease-in-out infinite",pointerEvents:"none"}} />
+        <div style={{position:"absolute",top:"20%",right:"18%",width:12,height:12,borderRadius:"50%",background:P[0],animation:"twinkle 2.6s ease-in-out 0.4s infinite",pointerEvents:"none"}} />
+        <div style={{position:"absolute",bottom:"25%",left:"20%",width:16,height:16,borderRadius:"50%",background:P[2],animation:"twinkle 2s ease-in-out 0.7s infinite",pointerEvents:"none"}} />
+        <div style={{position:"absolute",bottom:"18%",right:"12%",width:10,height:10,borderRadius:"50%",background:P[3],animation:"twinkle 3s ease-in-out 0.2s infinite",pointerEvents:"none"}} />
       <div style={{maxWidth:480}}>
         <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18}}><div style={{width:6,height:32,background:ACC,borderRadius:3}} /><h2 style={{fontFamily:D,fontSize:"clamp(28px,5vw,40px)",fontWeight:700,color:B,margin:0}}>say hello<span style={{color:ACC}}>.</span></h2></div>
         <div style={{fontFamily:D,fontSize:"clamp(14px,2.1vw,16px)",fontWeight:500,color:B,opacity:0.85,lineHeight:1.6}}>
@@ -465,10 +480,16 @@ function App() {
 				{/* HOME */}
 				{section === "home" && (
 					<div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
-						<div style={{ position: "absolute", top: "18%", left: "9%", width: 46, height: 46, background: PASTELS[0], borderRadius: 7, animation: "blkFloatA 7s ease-in-out infinite, fadeIn 1s ease 0.3s both" }} />
-						<div style={{ position: "absolute", bottom: "20%", right: "11%", width: 32, height: 32, background: PASTELS[2], borderRadius: "50%", animation: "blkFloatB 9s ease-in-out infinite, fadeIn 1s ease 0.6s both" }} />
-						<div style={{ position: "absolute", top: "60%", left: "14%", width: 20, height: 58, background: PASTELS[1], borderRadius: 5, animation: "blkFloatC 8s ease-in-out infinite, fadeIn 1s ease 0.9s both" }} />
-						<div style={{ position: "absolute", top: "24%", right: "16%", width: 60, height: 16, background: PASTELS[3], borderRadius: 4, animation: "blkFloatD 10s ease-in-out infinite, fadeIn 1s ease 1.2s both" }} />
+					<div style={{ position: "absolute", top: "14%", left: "10%", width: 16, height: 16, borderRadius: "50%", background: PASTELS[0], animation: "twinkle 2.2s ease-in-out infinite, fadeIn 1s ease 0.3s both" }} />
+					<div style={{ position: "absolute", top: "22%", right: "15%", width: 12, height: 12, borderRadius: "50%", background: PASTELS[1], animation: "twinkle 2.8s ease-in-out 0.4s infinite, fadeIn 1s ease 0.5s both" }} />
+					<div style={{ position: "absolute", bottom: "30%", left: "20%", width: 14, height: 14, borderRadius: "50%", background: PASTELS[2], animation: "twinkle 2s ease-in-out 0.8s infinite, fadeIn 1s ease 0.7s both" }} />
+					<div style={{ position: "absolute", bottom: "18%", right: "12%", width: 10, height: 10, borderRadius: "50%", background: PASTELS[3], animation: "twinkle 3s ease-in-out 0.2s infinite, fadeIn 1s ease 0.9s both" }} />
+					<div style={{ position: "absolute", top: "50%", left: "7%", width: 18, height: 18, borderRadius: "50%", background: PASTELS[0], animation: "twinkle 2.6s ease-in-out 1s infinite, fadeIn 1s ease 1.1s both" }} />
+					<div style={{ position: "absolute", top: "38%", right: "8%", width: 11, height: 11, borderRadius: "50%", background: PASTELS[2], animation: "twinkle 2.4s ease-in-out 0.6s infinite, fadeIn 1s ease 1.3s both" }} />
+						
+						
+						
+						
 
 						<div style={{ display: "flex", whiteSpace: "nowrap", marginBottom: 12, position: "relative", zIndex: 2 }}>
 							{NAME.split("").map((char, i) => {
