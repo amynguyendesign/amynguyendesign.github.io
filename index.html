@@ -279,7 +279,7 @@ function Horse() {
     return () => cancelAnimationFrame(raf);
   }, []);
   useEffect(() => () => { if (tmo.current) clearTimeout(tmo.current); }, []);
-  const HOVER = ["oh hi! 👋", "you look great today ✨", "how did you know Amy", "did you drink water?"];
+  const HOVER = ["oh hi! 👋", "you look great today ✨", "how did you know Amy"];
   const CLICK = ["hey!", "excuse me??", "do I look clickable to you?", "ouch!"];
   const speak = (kind) => {
     const list = kind === "click" ? CLICK : HOVER;
