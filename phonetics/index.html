@@ -188,7 +188,7 @@
           {LL.map(l=>(
             <button key={l.id} onClick={()=>{setLid(l.id);setFil("all");}}
               style={{flex:1,padding:"10px 6px",borderRadius:10,fontSize:13,fontWeight:700,border:lid===l.id?"2.5px solid "+B:"2px solid "+B+"20",background:lid===l.id?l.color:"#fff",color:B,transition:"all 0.2s"}}>
-              {l.flag} {l.label}
+              {l.label}
               <div style={{fontSize:10,fontWeight:500,opacity:0.5,marginTop:2}}>{l.data.length} phonemes</div>
             </button>
           ))}
@@ -213,7 +213,7 @@
                 <div style={{display:"flex",flexWrap:"wrap",gap:4,marginBottom:8}}>
                   {p.sp.map((s,j)=>(<span key={j} style={{fontSize:11,fontWeight:600,background:L.color+"30",color:B,borderRadius:4,padding:"2px 7px"}}>{s}</span>))}
                 </div>
-                <div style={{display:"flex",flexWrap:"wrap",gap:"4px 12px",alignItems:"baseline"}}>
+                <div style={{display:"flex",flexWrap:"wrap",gap:"6px 14px",alignItems:"center"}}>
                   {p.ex.map((w,j)=>{const h=hl(w,p.sp);return(
                     <button key={j} onClick={()=>speak(w,L.sp)} title={"🔊 "+w}
                       style={{background:"none",border:"none",padding:"2px 0",fontSize:14,fontWeight:600,color:B,display:"inline-flex",alignItems:"center",gap:3}}>
@@ -228,7 +228,7 @@
             </div>
           ))}
         </div>
-        <div style={{textAlign:"center",marginTop:24,fontSize:12,fontWeight:500,color:B,opacity:0.35}}>{L.flag} {L.data.length} phonemes · amynguyen.studio</div>
+        <div style={{textAlign:"center",marginTop:24,fontSize:12,fontWeight:500,color:B,opacity:0.35}}>{L.data.length} phonemes · amynguyen.studio</div>
       </div>
     );
   }
