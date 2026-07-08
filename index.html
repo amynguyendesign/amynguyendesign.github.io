@@ -263,24 +263,6 @@ function ContactPage(){
 }
 
 
-var EXP_KEY = "pony-carrot-experiment";
-function resolveExpVariant(cb) {
-  try { var ov = new URLSearchParams(window.location.search).get("ponyvar"); if (ov === "control" || ov === "test") { cb(ov, "override"); return; } } catch (e) {}
-  var stored = null; try { stored = localStorage.getItem("pony_exp_variant"); } catch (e) {}
-  if (stored === "control" || stored === "test") { cb(stored, "stored"); return; }
-  function fin(v, src) { try { localStorage.setItem("pony_exp_variant", v); } catch (e) {} cb(v, src); }
-  var rand = function () { return Math.random() < 0.5 ? "control" : "test"; };
-  var settled = false;
-  if (window.posthog && posthog.onFeatureFlags) {
-    posthog.onFeatureFlags(function () {
-      if (settled) return;
-      var v = posthog.getFeatureFlag(EXP_KEY);
-      if (v === "control" || v === "test") { settled = true; fin(v, "flag"); }
-    });
-    setTimeout(function () { if (!settled) { settled = true; fin(rand(), "local"); } }, 1200);
-  } else { fin(rand(), "local"); }
-}
-
 function Carrot({ x }) {
   return (
     <div style={{ position: "absolute", bottom: "calc(7% + 12px)", left: x + "%", transform: "translate(-50%,0)", width: 30, height: 42, zIndex: 7, pointerEvents: "none", animation: "carrotDrop 0.45s cubic-bezier(0.34,1.56,0.64,1)" }}>
@@ -322,33 +304,16 @@ function Treats({ x, onDone }) {
 function Horse() {
   const FR = ["src/assets/pony-idle.png", "src/assets/pony-walk.png", "src/assets/pony-gather.png"];
   const st = useRef({ x: 12, dir: 1, bob: 0, frame: 0, mode: "walk", carrotX: null, eatUntil: 0 });
-  const idx = useRef({ hover: 0, click: 0 });
+  const idx = useRef({ hover: 0 });
   const tmo = useRef(null);
   const [, tick] = useState(0);
   const [bub, setBub] = useState(null);
   const [carrot, setCarrot] = useState(null);
   const [treats, setTreats] = useState(null);
   const [visible, setVisible] = useState(false);
-  const [variant, setVariant] = useState(null);
-  const variantRef = useRef(null);
-  const exposed = useRef(false);
-
   useEffect(() => { const t = setTimeout(() => setVisible(true), 3500); return () => clearTimeout(t); }, []);
-  useEffect(() => {
-    resolveExpVariant(function (v, source) {
-      variantRef.current = v; setVariant(v);
-      if (window.posthog && posthog.register) posthog.register({ pony_exp_variant: v });
-    });
-  }, []);
-  useEffect(() => {
-    if (visible && variant && !exposed.current) {
-      exposed.current = true;
-      track("experiment_exposure", { experiment: EXP_KEY, variant: variant });
-    }
-  }, [visible, variant]);
 
   const HOVER = ["oh hi!", "you look great today", "how did you know Amy?"];
-  const CLICK = ["hey!", "excuse me??", "do I look clickable to you?", "ouch!"];
   const EAT = ["yum!", "mmm, carrots", "*crunch*", "more please?", "so good"];
   const showBubble = (text, kind) => {
     setBub({ t: text, k: Date.now(), kind: kind });
@@ -358,29 +323,18 @@ function Horse() {
   const speakHover = () => {
     if (st.current.mode !== "walk") return;
     const i = idx.current.hover % HOVER.length; idx.current.hover = i + 1;
-    track("pony_interaction", { kind: "hover", variant: variantRef.current });
+    track("pony_interaction", { kind: "hover" });
     showBubble(HOVER[i], "hover");
-  };
-  const speakClick = () => {
-    const i = idx.current.click % CLICK.length; idx.current.click = i + 1;
-    track("pony_interaction", { kind: "click", variant: variantRef.current });
-    showBubble(CLICK[i], "click");
   };
   const feed = () => {
     const s = st.current;
     if (s.mode !== "walk") return;
-    track("pony_interaction", { kind: "feed", variant: variantRef.current });
+    track("pony_interaction", { kind: "feed" });
     let cx = s.x + s.dir * 11;
     if (cx > 78 || cx < 10) cx = s.x - s.dir * 11;
     cx = Math.max(10, Math.min(78, cx));
     s.carrotX = cx; s.mode = "toEat";
     setCarrot(cx); setBub(null);
-  };
-  const onPonyClick = () => {
-    var v = variantRef.current;
-    track("pony_clicked", { variant: v });
-    if (v === "test") { feed(); }
-    else { if (IS_TOUCH) { speakHover(); } else { speakClick(); } }
   };
 
   useEffect(() => {
@@ -423,16 +377,16 @@ function Horse() {
   useEffect(() => () => { if (tmo.current) clearTimeout(tmo.current); }, []);
 
   const s = st.current;
-  const bg = bub ? (bub.kind === "eat" ? PASTELS[1] : bub.kind === "click" ? PASTELS[3] : PASTELS[0]) : PASTELS[0];
-  const fg = bub && bub.kind === "click" ? WHITE : BLACK;
+  const bg = bub && bub.kind === "eat" ? PASTELS[1] : PASTELS[0];
+  const fg = BLACK;
   return (
     <React.Fragment>
       {carrot != null && <Carrot x={carrot} />}
       {treats && <Treats key={treats.k} x={treats.x} onDone={() => setTreats(null)} />}
       <div style={{ position: "absolute", bottom: "7%", left: s.x + "%", transform: "translate(-50%, " + (-s.bob) + "px)", width: 62, height: 62, zIndex: 6, cursor: "pointer", pointerEvents: visible ? "auto" : "none", opacity: visible ? 1 : 0, transition: "opacity 1.2s ease" }}
         onMouseEnter={() => { if (!IS_TOUCH) speakHover(); }}
-        onClick={(e) => { e.stopPropagation(); onPonyClick(); }}
-        title={variant === "control" ? "pony" : "feed me a carrot"}>
+        onClick={(e) => { e.stopPropagation(); feed(); }}
+        title="feed me a carrot">
         {bub && (
           <div key={bub.k} style={{ position: "absolute", bottom: 66, left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap", background: bg, border: "2px solid " + BLACK, borderRadius: 12, padding: "6px 12px", fontFamily: DISP, fontSize: 11, fontWeight: 700, color: fg, boxShadow: "2px 2px 0 " + BLACK + "14", animation: "bubbleIn 0.35s cubic-bezier(0.16,1,0.3,1)", pointerEvents: "none" }}>{bub.t}
             <div style={{ position: "absolute", bottom: -8, left: "50%", transform: "translateX(-50%)", width: 0, height: 0, borderLeft: "6px solid transparent", borderRight: "6px solid transparent", borderTop: "8px solid " + BLACK }} />
