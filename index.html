@@ -95,6 +95,8 @@
 
 
 @keyframes bubbleIn{from{opacity:0;transform:translateX(-50%) translateY(6px) scale(0.92);}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}}
+@keyframes carrotDrop{0%{opacity:0;transform:translate(-50%,-18px) scale(0.4) rotate(-12deg);}60%{opacity:1;}100%{opacity:1;transform:translate(-50%,0) scale(1) rotate(0deg);}}
+@keyframes treatFloat{0%{opacity:0;transform:translateY(0) scale(0.4);}25%{opacity:1;}100%{opacity:0;transform:translateY(-38px) scale(1);}}
 </style>
 	</head>
 	<body>
@@ -261,24 +263,112 @@ function ContactPage(){
 }
 
 
+function Carrot({ x }) {
+  return (
+    <div style={{ position: "absolute", bottom: "6%", left: x + "%", transform: "translate(-50%,0)", width: 30, height: 42, zIndex: 7, pointerEvents: "none", animation: "carrotDrop 0.45s cubic-bezier(0.34,1.56,0.64,1)" }}>
+      <svg viewBox="0 0 40 56" width="30" height="42" style={{ display: "block" }}>
+        <g fill={PASTELS[3]} stroke={BLACK} strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round">
+          <path d="M20 21 C16 13 15 6 17 3 C19.5 6 20.5 11 20 16 Z" />
+          <path d="M20 21 C20 12 21 5 24.5 3 C25.5 8 24 13 21.5 18 Z" />
+          <path d="M20 21 C24 14 27.5 9.5 30.5 8.5 C29.5 13.5 26 17.5 22 20 Z" />
+          <path d="M20 21 C16 14 12.5 10 9.5 9 C10.5 14 14 18 18 20.5 Z" />
+        </g>
+        <path d="M12.5 19.5 Q20 16 27.5 19.5 L21.2 52 Q20 54.5 18.8 52 Z" fill={PASTELS[0]} stroke={BLACK} strokeWidth="1.7" strokeLinejoin="round" />
+        <g stroke="#C98B93" strokeWidth="1.4" strokeLinecap="round" opacity="0.75">
+          <line x1="15.5" y1="27" x2="24.5" y2="27" />
+          <line x1="16.6" y1="34" x2="23.4" y2="34" />
+          <line x1="17.7" y1="41" x2="22.3" y2="41" />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
+function Treats({ x, onDone }) {
+  useEffect(() => { const t = setTimeout(onDone, 1150); return () => clearTimeout(t); }, []);
+  const items = [
+    { dx: -11, c: PASTELS[0], s: 9, d: 0 },
+    { dx: 7, c: PASTELS[1], s: 7, d: 0.09 },
+    { dx: -3, c: PASTELS[3], s: 8, d: 0.17 },
+    { dx: 13, c: PASTELS[2], s: 6, d: 0.05 },
+  ];
+  return (
+    <div style={{ position: "absolute", bottom: "15%", left: x + "%", transform: "translateX(-50%)", zIndex: 8, pointerEvents: "none", width: 0, height: 0 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ position: "absolute", left: it.dx, bottom: 0, width: it.s, height: it.s, borderRadius: "50%", background: it.c, opacity: 0, animation: "treatFloat 1.05s ease " + it.d + "s forwards" }} />
+      ))}
+    </div>
+  );
+}
+
 function Horse() {
   const FR = ["src/assets/pony-idle.png", "src/assets/pony-walk.png", "src/assets/pony-gather.png"];
-  const st = useRef({ x: 12, dir: 1, bob: 0, frame: 0 });
-  const idx = useRef({ hover: 0, click: 0 });
+  const st = useRef({ x: 12, dir: 1, bob: 0, frame: 0, mode: "walk", carrotX: null, eatUntil: 0 });
+  const idx = useRef({ hover: 0 });
   const tmo = useRef(null);
   const [, tick] = useState(0);
   const [bub, setBub] = useState(null);
+  const [carrot, setCarrot] = useState(null);
+  const [treats, setTreats] = useState(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), 3500); return () => clearTimeout(t); }, []);
+
+  const HOVER = ["oh hi!", "you look great today", "how did you know Amy?"];
+  const EAT = ["yum!", "mmm, carrots", "*crunch*", "more please?", "so good"];
+  const showBubble = (text, kind) => {
+    setBub({ t: text, k: Date.now(), kind: kind });
+    if (tmo.current) clearTimeout(tmo.current);
+    tmo.current = setTimeout(() => setBub(null), 2000);
+  };
+  const speakHover = () => {
+    if (st.current.mode !== "walk") return;
+    const i = idx.current.hover % HOVER.length; idx.current.hover = i + 1;
+    if (typeof track === "function") track("pony_interaction", { kind: "hover" });
+    showBubble(HOVER[i], "hover");
+  };
+  const feed = () => {
+    const s = st.current;
+    if (s.mode !== "walk") return;
+    if (typeof track === "function") track("pony_interaction", { kind: "feed" });
+    let cx = s.x + s.dir * 11;
+    if (cx > 78 || cx < 10) cx = s.x - s.dir * 16;
+    cx = Math.max(10, Math.min(78, cx));
+    s.carrotX = cx; s.mode = "toEat";
+    setCarrot(cx);
+    setBub(null);
+  };
+
   useEffect(() => {
     let raf, t0 = performance.now(), lf = 0;
     const loop = (now) => {
       const s = st.current, t = (now - t0) / 1000;
-      s.x += s.dir * (IS_TOUCH ? 0.035 : 0.05);
-      if (s.x >= 80) { s.x = 80; s.dir = -1; }
-      if (s.x <= 8) { s.x = 8; s.dir = 1; }
-      s.bob = Math.abs(Math.sin(t * 5.5)) * 4;
-      if (now - lf > 170) { s.frame = (s.frame + 1) % 3; lf = now; }
+      if (s.mode === "walk") {
+        s.x += s.dir * (IS_TOUCH ? 0.035 : 0.05);
+        if (s.x >= 80) { s.x = 80; s.dir = -1; }
+        if (s.x <= 8) { s.x = 8; s.dir = 1; }
+        s.bob = Math.abs(Math.sin(t * 5.5)) * 4;
+        if (now - lf > 170) { s.frame = (s.frame + 1) % 3; lf = now; }
+      } else if (s.mode === "toEat") {
+        const d = s.carrotX - s.x, step = IS_TOUCH ? 0.10 : 0.14;
+        s.dir = d < 0 ? -1 : 1;
+        if (Math.abs(d) <= step + 0.6) {
+          s.x = s.carrotX; s.mode = "eating"; s.eatUntil = now + 850; s.frame = 2;
+        } else {
+          s.x += s.dir * step;
+          s.bob = Math.abs(Math.sin(t * 7)) * 5;
+          if (now - lf > 120) { s.frame = (s.frame + 1) % 3; lf = now; }
+        }
+      } else if (s.mode === "eating") {
+        s.frame = 2;
+        s.bob = Math.abs(Math.sin(t * 9)) * 2.5;
+        if (now > s.eatUntil) {
+          s.carrotX = null; setCarrot(null);
+          setTreats({ k: Date.now(), x: s.x });
+          const i = Math.floor(Math.random() * EAT.length);
+          showBubble(EAT[i], "eat");
+          s.mode = "walk";
+        }
+      }
       tick((n) => n + 1);
       raf = requestAnimationFrame(loop);
     };
@@ -286,35 +376,29 @@ function Horse() {
     return () => cancelAnimationFrame(raf);
   }, []);
   useEffect(() => () => { if (tmo.current) clearTimeout(tmo.current); }, []);
-  const HOVER = ["oh hi!", "you look great today", "how did you know Amy?"];
-  const CLICK = ["hey!", "excuse me??", "do I look clickable to you?", "ouch!"];
-  const speak = (kind) => {
-    if (typeof track === "function") track("pony_interaction", { kind: kind });
-    const list = kind === "click" ? CLICK : HOVER;
-    const i = idx.current[kind] % list.length;
-    idx.current[kind] = i + 1;
-    setBub({ t: list[i], k: Date.now(), kind: kind });
-    if (tmo.current) clearTimeout(tmo.current);
-    tmo.current = setTimeout(() => setBub(null), 2200);
-  };
+
   const s = st.current;
-  const isClick = bub && bub.kind === "click";
-  const bg = isClick ? PASTELS[3] : PASTELS[0];
-  const fg = isClick ? WHITE : BLACK;
+  const isEat = bub && bub.kind === "eat";
+  const bg = isEat ? PASTELS[1] : PASTELS[0];
+  const fg = BLACK;
   return (
-    <div style={{ position: "absolute", bottom: "7%", left: s.x + "%", transform: "translate(-50%, " + (-s.bob) + "px)", width: 62, height: 62, zIndex: 6, cursor: "pointer", pointerEvents: visible ? "auto" : "none", opacity: visible ? 1 : 0, transition: "opacity 1.2s ease" }}
-      onMouseEnter={() => speak("hover")}
-      onClick={(e) => { e.stopPropagation(); speak(IS_TOUCH ? "hover" : "click"); }}
-      title="pony">
-      {bub && (
-        <div key={bub.k} style={{ position: "absolute", bottom: 66, left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap", background: bg, border: "2px solid " + BLACK, borderRadius: 12, padding: "6px 12px", fontFamily: DISP, fontSize: 11, fontWeight: 700, color: fg, boxShadow: "2px 2px 0 " + BLACK + "14", animation: "bubbleIn 0.35s cubic-bezier(0.16,1,0.3,1)", pointerEvents: "none" }}>{bub.t}
-          <div style={{ position: "absolute", bottom: -8, left: "50%", transform: "translateX(-50%)", width: 0, height: 0, borderLeft: "6px solid transparent", borderRight: "6px solid transparent", borderTop: "8px solid " + BLACK }} />
+    <React.Fragment>
+      {carrot != null && <Carrot x={carrot} />}
+      {treats && <Treats key={treats.k} x={treats.x} onDone={() => setTreats(null)} />}
+      <div style={{ position: "absolute", bottom: "7%", left: s.x + "%", transform: "translate(-50%, " + (-s.bob) + "px)", width: 62, height: 62, zIndex: 6, cursor: "pointer", pointerEvents: visible ? "auto" : "none", opacity: visible ? 1 : 0, transition: "opacity 1.2s ease" }}
+        onMouseEnter={() => { if (!IS_TOUCH) speakHover(); }}
+        onClick={(e) => { e.stopPropagation(); feed(); }}
+        title="feed me a carrot">
+        {bub && (
+          <div key={bub.k} style={{ position: "absolute", bottom: 66, left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap", background: bg, border: "2px solid " + BLACK, borderRadius: 12, padding: "6px 12px", fontFamily: DISP, fontSize: 11, fontWeight: 700, color: fg, boxShadow: "2px 2px 0 " + BLACK + "14", animation: "bubbleIn 0.35s cubic-bezier(0.16,1,0.3,1)", pointerEvents: "none" }}>{bub.t}
+            <div style={{ position: "absolute", bottom: -8, left: "50%", transform: "translateX(-50%)", width: 0, height: 0, borderLeft: "6px solid transparent", borderRight: "6px solid transparent", borderTop: "8px solid " + BLACK }} />
+          </div>
+        )}
+        <div style={{ width: "100%", height: "100%", position: "relative", transform: s.dir < 0 ? "scaleX(-1)" : "none" }}>
+          {FR.map((src, i) => React.createElement('img', { key: i, src: src, alt: '', draggable: false, style: { position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", opacity: s.frame === i ? 1 : 0 } }))}
         </div>
-      )}
-      <div style={{ width: "100%", height: "100%", position: "relative", transform: s.dir < 0 ? "scaleX(-1)" : "none" }}>
-        {FR.map((src, i) => React.createElement('img', { key: i, src: src, alt: '', draggable: false, style: { position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", opacity: s.frame === i ? 1 : 0 } }))}
       </div>
-    </div>
+    </React.Fragment>
   );
 }
 
@@ -325,6 +409,8 @@ function App() {
 	const particlesRef = useRef([]);
 	const frameRef = useRef(null);
 	const startRef = useRef(performance.now());
+	const homeNavLock = useRef(false);
+	const touchStartY = useRef(null);
 	const [, tickR] = useState(0);
 
 	const initTab = (new URLSearchParams(window.location.search).get("tab") || "home").toLowerCase();
@@ -370,6 +456,21 @@ function App() {
 		} catch (e) {}
 		track("tab_click", { tab_name: id });
 		track("page_view", { page_title: id, page_location: "/" + id });
+	};
+
+	// Discovery nudge: a scroll / swipe on the (otherwise inert) landing sends
+	// confused visitors into About. Fires once per home visit.
+	useEffect(() => { if (section === "home") homeNavLock.current = false; }, [section]);
+	const onHomeWheel = (e) => {
+		if (section !== "home" || homeNavLock.current) return;
+		if (e.deltaY > 10) { homeNavLock.current = true; track("home_scroll_nudge", { via: "wheel" }); goTo("about"); }
+	};
+	const onHomeTouchStart = (e) => {
+		if (section === "home" && e.touches && e.touches.length) touchStartY.current = e.touches[0].clientY;
+	};
+	const onHomeTouchMove = (e) => {
+		if (section !== "home" || homeNavLock.current || touchStartY.current == null || !e.touches || !e.touches.length) return;
+		if (touchStartY.current - e.touches[0].clientY > 42) { homeNavLock.current = true; track("home_scroll_nudge", { via: "swipe" }); goTo("about"); }
 	};
 
 	const computeHomes = useCallback(() => {
@@ -462,7 +563,8 @@ function App() {
 	const craftHL = { background: PASTELS[3], color: WHITE, padding: "2px 8px", borderRadius: 4, fontWeight: 700, letterSpacing: "0.01em" };
 
 	return (
-		<div ref={containerRef} onMouseMove={onMove} onClick={onClick}
+		<div ref={containerRef} onMouseMove={onMove} onClick={onClick} onWheel={onHomeWheel}
+			onTouchStart={onHomeTouchStart} onTouchMove={onHomeTouchMove}
 			onMouseLeave={() => { mouseRef.current = { x: -999, y: -999 }; }}
 			className="an-root"
 			style={{ width: "100%", background: WHITE, position: "relative", overflow: "hidden", cursor: "crosshair", userSelect: "none", display: "flex", flexDirection: "column", fontFamily: DISP }}>
