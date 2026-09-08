@@ -152,11 +152,18 @@ function useObs(ref){var [v,sv]=React.useState({});React.useEffect(function(){va
 function secS(bg){return{height:"100%",width:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"36px 28px",scrollSnapAlign:"start",flexShrink:0,background:bg,position:"relative",overflow:"hidden"};}
 function fd(v,id,dl){return{opacity:v[id]?1:0,transform:v[id]?"translateY(0)":"translateY(26px)",transition:"opacity 0.7s cubic-bezier(0.16,1,0.3,1) "+(dl||0)+"s, transform 0.7s cubic-bezier(0.16,1,0.3,1) "+(dl||0)+"s"};}
 function arrowDown(v,id){return React.createElement('div',{style:Object.assign({},fd(v,id,0.4),{marginTop:20,fontSize:22,fontWeight:700,color:B,opacity:0.4})},"↓");}
-function AboutPage(){
+function AboutPage(props){
   var ref=React.useRef(null),v=useObs(ref);
   var [craftHover,setCraftHover]=useState(false);
+  var backLock=React.useRef(true);          // armed after mount settle
+  var tStartY=React.useRef(null);
+  React.useEffect(function(){ var t=setTimeout(function(){ backLock.current=false; }, 500); return function(){ clearTimeout(t); }; }, []);
+  var goBack=function(via){ if(backLock.current) return; if(props && props.onBackToHome){ backLock.current=true; props.onBackToHome(via); } };
+  var onAboutWheel=function(e){ var el=ref.current; if(!el) return; if(el.scrollTop<=1 && e.deltaY < -10){ goBack("wheel"); } };
+  var onAboutTouchStart=function(e){ var el=ref.current; if(el && el.scrollTop<=1 && e.touches && e.touches.length){ tStartY.current=e.touches[0].clientY; } else { tStartY.current=null; } };
+  var onAboutTouchMove=function(e){ var el=ref.current; if(!el || tStartY.current==null || !e.touches || !e.touches.length) return; if(el.scrollTop<=1 && (e.touches[0].clientY - tStartY.current) > 48){ goBack("swipe"); } };
   return (
-    <div ref={ref} style={{width:"100%",height:"100%",overflow:"auto",scrollSnapType:"y mandatory"}}>
+    <div ref={ref} onWheel={onAboutWheel} onTouchStart={onAboutTouchStart} onTouchMove={onAboutTouchMove} style={{width:"100%",height:"100%",overflow:"auto",scrollSnapType:"y mandatory"}}>
       <div className="sx" data-s="h" style={secS(W)}>
         <div style={{position:"absolute",top:"18%",left:"15%",width:16,height:16,borderRadius:"50%",background:P[2],animation:"twinkle 2.2s ease-in-out infinite",pointerEvents:"none"}} />
         <div style={{position:"absolute",top:"24%",right:"18%",width:12,height:12,borderRadius:"50%",background:P[1],animation:"twinkle 2.8s ease-in-out 0.4s infinite",pointerEvents:"none"}} />
@@ -311,7 +318,7 @@ function Horse() {
   const [carrot, setCarrot] = useState(null);
   const [treats, setTreats] = useState(null);
   const [visible, setVisible] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setVisible(true), 3500); return () => clearTimeout(t); }, []);
+  useEffect(() => { const t = setTimeout(() => setVisible(true), 1500); return () => clearTimeout(t); }, []);
 
   const HOVER = ["oh hi!", "you look great today", "how did you know Amy?"];
   const EAT = ["yum!", "mmm, carrots", "*crunch*", "more please?", "so good"];
@@ -383,7 +390,7 @@ function Horse() {
     <React.Fragment>
       {carrot != null && <Carrot x={carrot} />}
       {treats && <Treats key={treats.k} x={treats.x} onDone={() => setTreats(null)} />}
-      <div style={{ position: "absolute", bottom: "7%", left: s.x + "%", transform: "translate(-50%, " + (-s.bob) + "px)", width: 62, height: 62, zIndex: 6, cursor: "pointer", pointerEvents: visible ? "auto" : "none", opacity: visible ? 1 : 0, transition: "opacity 1.2s ease" }}
+      <div style={{ position: "absolute", bottom: "7%", left: s.x + "%", transform: "translate(-50%, " + (-s.bob) + "px)", width: 62, height: 62, zIndex: 6, cursor: "pointer", pointerEvents: visible ? "auto" : "none", opacity: visible ? 1 : 0, transition: "opacity 1s ease" }}
         onMouseEnter={() => { if (!IS_TOUCH) speakHover(); }}
         onClick={(e) => { e.stopPropagation(); feed(); }}
         title="feed me a carrot">
@@ -625,7 +632,7 @@ function App() {
 				{section === "home" && <Horse />}
 
 				{/* ABOUT */}
-				{section === "about" && <AboutPage />}
+				{section === "about" && <AboutPage onBackToHome={function(via){ track("home_return_gesture",{via:via||"wheel"}); goTo("home"); }} />}
 
 				{/* ART */}
 				{section === "art" && (
