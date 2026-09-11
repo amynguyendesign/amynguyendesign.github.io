@@ -243,8 +243,9 @@ function StudioPage(props){
         
         {arrowDown(v,"sh")}
       </div>
-      {item("a1","01","art","Paintings and studies across oil, watercolor, acrylic, and graphite.","view","#",P[0]+'40')}
+      {item("a3","01","gym app","A workout tracker I designed and built for myself, then kept using every session.","view what i built","/gym/",P[2]+'50')}
       {item("a2","02","m&eacute;lange","A game for building color intuition.","play","/game",P[1]+'50')}
+      {item("a1","03","art","Paintings and studies across oil, watercolor, acrylic, and graphite.","view","#",P[0]+'40')}
       <div className="sx" data-s="se" style={Object.assign({},secS(W),{minHeight:"100%"})}>
         <div style={fd(v,"se",0)}><div style={{display:"flex",gap:5,justifyContent:"center",marginBottom:10}}>{P.map(function(c,i){return React.createElement('div',{key:i,style:{width:12,height:12,borderRadius:i%2?"50%":3,background:c}});})}</div><div style={{fontSize:13,fontWeight:600,color:B,opacity:0.4,textAlign:"center"}}>more coming soon</div></div>
       </div>

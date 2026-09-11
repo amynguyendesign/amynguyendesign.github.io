@@ -128,3 +128,5 @@ yarn-error.log*
 
 # Claude Code
 .claude/
+# private preview harness (never ship)
+_harness/
