@@ -43,3 +43,103 @@
  .coach .actions:has([data-verdict]){display:none}
 }
 @media(max-width:370px){h1{font-size:36px}}
+
+/* ===== game feel layer (Sep 2026) ===== */
+:root{--spring:cubic-bezier(.34,1.5,.64,1);--snap:cubic-bezier(.2,.9,.3,1.15)}
+/* HUD: streak tile + today dots */
+.daily{display:flex;align-items:center;gap:18px;text-align:left}
+.streak{display:flex;align-items:center;gap:11px}
+.streak-num{display:inline-flex;align-items:center;justify-content:center;min-width:52px;height:52px;padding:0 10px;border-radius:14px;background:var(--white);border:1.5px solid var(--ink);box-shadow:4px 4px 0 var(--lavender);font-size:28px;font-weight:700;letter-spacing:-.04em;color:var(--muted);transition:background .3s,color .3s,box-shadow .3s}
+.streak.warm .streak-num{background:var(--lavender);color:var(--ink)}
+.streak.hot .streak-num{background:var(--slate);color:var(--white);box-shadow:4px 4px 0 var(--blush)}
+.streak-copy strong{display:block;font-size:12px;font-weight:600}.streak-copy small{display:block;font-size:10px;color:var(--muted);margin-top:3px;font-family:'Courier New',monospace}
+.streak.bump .streak-num{animation:num-bump .55s var(--spring)}
+.streak.drop .streak-num{animation:num-drop .45s ease-out}
+@keyframes num-bump{0%{transform:scale(1)}35%{transform:scale(1.28) rotate(-6deg)}70%{transform:scale(.94) rotate(2deg)}100%{transform:none}}
+@keyframes num-drop{0%,100%{transform:none}30%{transform:translateY(4px) rotate(-5deg)}60%{transform:translateY(0) rotate(3deg)}}
+.today{text-align:right}.today .dots{display:flex;justify-content:flex-end;gap:7px;margin:0 0 9px}
+.today strong{font-size:12px;font-weight:600}.today small{display:block;font-size:10px;color:var(--muted);margin-top:5px}
+.daily .dot{transition:background .25s,border-color .25s}
+.daily .dot.pop{animation:dot-fill .6s var(--spring)}
+@keyframes dot-fill{0%{transform:scale(.4)}45%{transform:scale(1.45) rotate(12deg)}75%{transform:scale(.9)}100%{transform:none}}
+
+/* sliding mode pill */
+.modes{position:relative}.modes button{position:relative;z-index:1;transition:color .2s,transform .15s var(--spring)}
+.modes button[aria-pressed=true]{background:transparent;border-color:transparent}
+.mode-pill{position:absolute;top:4px;bottom:4px;left:4px;width:0;background:var(--white);border:1px solid #E1DCE8;border-radius:6px;box-shadow:0 2px 0 #D3CEDF;z-index:0}
+.mode-pill.ready{transition:transform .42s var(--spring),width .42s var(--spring)}
+
+/* press squish */
+.primary,.secondary,.round-button,.box-button,.response-chips button,.helper-button,.text-button{transition:transform .16s var(--spring),background .2s,box-shadow .2s}
+.primary:active:not(:disabled),.secondary:active:not(:disabled),.round-button:active:not(:disabled),.box-button:active,.response-chips button:active,.modes button:active{transform:scale(.94)}
+.primary{box-shadow:3px 3px 0 var(--lavender)}.primary:hover:not(:disabled){transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--lavender)}
+.secondary:hover:not(:disabled){transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--pale)}
+.round-button:hover:not(:disabled){transform:scale(1.08)}
+
+/* board: offset shadow, lifting pieces, pops */
+.board{box-shadow:8px 8px 0 var(--lavender);border-color:var(--ink);transition:box-shadow .4s}
+.board-shell{transform-origin:50% 60%}
+.piece{transition:transform .2s var(--spring)}
+.square.movable{cursor:grab;touch-action:none}
+@media(hover:hover){.square.movable:hover .piece{transform:translateY(-5%) scale(1.05)}}
+.square.selected .piece{animation:lift .34s var(--spring) forwards}
+@keyframes lift{0%{transform:none}60%{transform:translateY(-10%) scale(1.14)}100%{transform:translateY(-7%) scale(1.1)}}
+.square.selected .piece{filter:drop-shadow(0 6px 3px #26252B26)}
+.move-dot{animation:dot-pop .32s var(--spring) both;animation-delay:var(--d,0ms)}
+@keyframes dot-pop{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+.square.drag-over{box-shadow:inset 0 0 0 3px var(--strong)}
+.square.drag-over .move-dot{transform:scale(1.4)}
+.square.drag-src .piece{opacity:.22}
+.drag-ghost{position:fixed;left:0;top:0;z-index:1000;pointer-events:none;filter:drop-shadow(0 10px 8px #26252B30);will-change:transform}
+.drag-ghost svg{width:84%;height:84%;display:block;margin:8%}
+body.is-dragging,body.is-dragging *{cursor:grabbing!important;user-select:none;-webkit-user-select:none}
+.square.in-check{background-image:radial-gradient(circle at 50% 52%,#E7C2C8 0,#F2D7D9 36%,transparent 72%)}
+.square.in-check .piece{animation:check-pulse 1.6s ease-in-out infinite}
+@keyframes check-pulse{50%{transform:scale(1.06)}}
+.square.nervous .piece{animation:nervous 2.8s ease-in-out infinite}
+@keyframes nervous{0%,100%{transform:none}50%{transform:translateY(-3.5%)}}
+.square.mated .piece{transform:translateY(6%) rotate(78deg);animation:none}
+.board-shell:has(.square.mated) .board{box-shadow:8px 8px 0 var(--blush)}
+
+/* effects layer */
+.fx-layer{position:absolute;inset:0;pointer-events:none;z-index:20;overflow:visible}
+.confetti{position:absolute;display:block;will-change:transform,opacity}
+.float-label{position:absolute;white-space:nowrap;font-size:13px;font-weight:700;letter-spacing:-.01em;color:var(--strong);background:var(--white);border:1.5px solid var(--ink);border-radius:999px;padding:4px 10px;box-shadow:2px 2px 0 var(--blush)}
+.mate-sticker{position:absolute;left:50%;top:44%;font-size:clamp(28px,6.4vw,46px);font-weight:700;letter-spacing:-.05em;color:var(--ink);background:var(--white);border:2px solid var(--ink);border-radius:16px;padding:10px 22px 12px;box-shadow:6px 6px 0 var(--lavender);animation:sticker 1.9s var(--snap) forwards}
+.mate-sticker span{color:var(--slate)}
+@keyframes sticker{0%{transform:translate(-50%,-50%) scale(.4) rotate(-16deg);opacity:0}16%{transform:translate(-50%,-50%) scale(1.08) rotate(-4deg);opacity:1}26%{transform:translate(-50%,-50%) scale(1) rotate(-6deg)}78%{transform:translate(-50%,-50%) scale(1) rotate(-6deg);opacity:1}100%{transform:translate(-50%,-58%) scale(.92) rotate(-6deg);opacity:0}}
+
+/* coach entrance: words rise, blocks follow */
+.coach.enter h2 .w{display:inline-block;animation:word-in .5s var(--snap) both;animation-delay:calc(var(--i)*45ms)}
+@keyframes word-in{0%{transform:translateY(60%) rotate(4deg);opacity:0}100%{transform:none;opacity:1}}
+.coach.enter>*:not(h2){animation:block-in .45s var(--snap) both}
+.coach.enter>*:nth-child(1){animation-delay:0ms}.coach.enter>*:nth-child(3){animation-delay:120ms}.coach.enter>*:nth-child(4){animation-delay:170ms}.coach.enter>*:nth-child(5){animation-delay:220ms}.coach.enter>*:nth-child(6){animation-delay:270ms}.coach.enter>*:nth-child(n+7){animation-delay:320ms}
+@keyframes block-in{0%{transform:translateY(10px);opacity:0}100%{transform:none;opacity:1}}
+.coach.enter .check-row{animation:block-in .4s var(--snap) both}.coach.enter .check-row:nth-child(2){animation-delay:60ms}.coach.enter .check-row:nth-child(3){animation-delay:120ms}
+.coach.enter .check-row.no .row-state{display:inline-block;animation:tick .5s var(--spring) both;animation-delay:.35s}
+@keyframes tick{0%{transform:scale(.3);opacity:0}100%{transform:none;opacity:1}}
+.check-row button:hover .row-label{transform:translateX(3px)}.check-row .row-label{transition:transform .2s var(--spring)}
+.primary[data-action=next]:hover{gap:20px}.primary{transition:transform .16s var(--spring),box-shadow .2s,gap .25s var(--spring)}
+
+/* pony cheerleader */
+.pony-cheer{display:flex;align-items:flex-end;gap:6px;margin:0 0 14px;height:70px}
+.pony-cheer img{width:64px;height:64px;display:block;transform-origin:50% 100%;animation:pony-hop 1s var(--snap) both}
+.pony-cheer .bubble{position:relative;margin-bottom:38px;background:var(--blush);color:var(--ink);font-size:12px;font-weight:600;padding:7px 12px;border-radius:12px 12px 12px 3px;white-space:nowrap;animation:bubble-in .45s var(--spring) .35s both}
+@keyframes pony-hop{0%{transform:translateY(12px) scale(.9);opacity:0}20%{transform:translateY(0) scale(1.04,.94);opacity:1}40%{transform:translateY(-16px) scale(.97,1.04)}58%{transform:translateY(0) scale(1.06,.93)}74%{transform:translateY(-8px)}88%{transform:translateY(0) scale(1.03,.97)}100%{transform:none}}
+@keyframes bubble-in{0%{transform:scale(.3) translate(-10px,10px);opacity:0}100%{transform:none;opacity:1}}
+.pony-cheer img:hover{animation:pony-hop .9s var(--snap)}
+
+@media(max-width:850px){.streak-num{min-width:44px;height:44px;font-size:24px;border-radius:12px}}
+@media(max-width:660px){
+ .daily{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:16px}
+ .streak{gap:9px}.streak-num{min-width:38px;height:38px;font-size:20px;border-radius:10px;box-shadow:3px 3px 0 var(--lavender)}.streak.hot .streak-num{box-shadow:3px 3px 0 var(--blush)}
+ .streak-copy strong{font-size:11px}.streak-copy small{display:block;font-size:9px}
+ .today{text-align:right}.today .dots{margin:0 0 6px;gap:5px}.today strong{font-size:10px}.today small{display:none}
+ .board{box-shadow:5px 5px 0 var(--lavender)}.board-shell:has(.square.mated) .board{box-shadow:5px 5px 0 var(--blush)}
+ .pony-cheer{height:60px;margin-bottom:10px}.pony-cheer img{width:54px;height:54px}.pony-cheer .bubble{margin-bottom:32px}
+ .float-label{font-size:11px;padding:3px 8px}
+ .modes{position:relative}
+}
+@media(prefers-reduced-motion:reduce){.mode-pill.ready{transition:none}.square.selected .piece{transform:translateY(-7%) scale(1.1)}}
+
+html,body{overflow-x:clip}
