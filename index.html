@@ -115,17 +115,17 @@ const SPRING = 0.06, DAMPING = 0.8, REPEL_RADIUS = 150, REPEL_FORCE = 2000;
 const IS_TOUCH = (typeof window !== 'undefined') && window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)').matches;
 
 const ART_IMAGES = [
-	{ src: "src/assets/graphite.jpg", title: "Graphite Study", medium: "Graphite", alt: "Graphite" },
-	{ src: "src/assets/onions.JPG", title: "Onions", medium: "Watercolor", alt: "Onions" },
-	{ src: "src/assets/cactus.jpg", title: "Cactus", medium: "Watercolor", alt: "Cactus" },
-	{ src: "src/assets/sf.jpg", title: "San Francisco", medium: "Watercolor", alt: "SF" },
-	{ src: "src/assets/chocolate.JPG", title: "Chocolate", medium: "Oil", alt: "Chocolate" },
-	{ src: "src/assets/spatula.JPG", title: "Spatula", medium: "Watercolor", alt: "Spatula" },
-	{ src: "src/assets/bird.jpg", title: "Bird", medium: "Watercolor", alt: "Bird" },
-	{ src: "src/assets/metal.jpg", title: "Metal", medium: "Acrylic", alt: "Metal" },
-	{ src: "src/assets/coffee.jpg", title: "Coffee", medium: "Watercolor", alt: "Coffee" },
-	{ src: "src/assets/surreal.jpg", title: "Surreal", medium: "Oil", alt: "Surreal" },
-	{ src: "src/assets/toast.jpg", title: "Toast", medium: "Watercolor", alt: "Toast" },
+	{ src: "src/assets/opt/graphite.webp", thumb: "src/assets/opt/graphite-thumb.webp", title: "Graphite Study", medium: "Graphite", alt: "Graphite" },
+	{ src: "src/assets/opt/onions.webp", thumb: "src/assets/opt/onions-thumb.webp", title: "Onions", medium: "Watercolor", alt: "Onions" },
+	{ src: "src/assets/opt/cactus.webp", thumb: "src/assets/opt/cactus-thumb.webp", title: "Cactus", medium: "Watercolor", alt: "Cactus" },
+	{ src: "src/assets/opt/sf.webp", thumb: "src/assets/opt/sf-thumb.webp", title: "San Francisco", medium: "Watercolor", alt: "SF" },
+	{ src: "src/assets/opt/chocolate.webp", thumb: "src/assets/opt/chocolate-thumb.webp", title: "Chocolate", medium: "Oil", alt: "Chocolate" },
+	{ src: "src/assets/opt/spatula.webp", thumb: "src/assets/opt/spatula-thumb.webp", title: "Spatula", medium: "Watercolor", alt: "Spatula" },
+	{ src: "src/assets/opt/bird.webp", thumb: "src/assets/opt/bird-thumb.webp", title: "Bird", medium: "Watercolor", alt: "Bird" },
+	{ src: "src/assets/opt/metal.webp", thumb: "src/assets/opt/metal-thumb.webp", title: "Metal", medium: "Acrylic", alt: "Metal" },
+	{ src: "src/assets/opt/coffee.webp", thumb: "src/assets/opt/coffee-thumb.webp", title: "Coffee", medium: "Watercolor", alt: "Coffee" },
+	{ src: "src/assets/opt/surreal.webp", thumb: "src/assets/opt/surreal-thumb.webp", title: "Surreal", medium: "Oil", alt: "Surreal" },
+	{ src: "src/assets/opt/toast.webp", thumb: "src/assets/opt/toast-thumb.webp", title: "Toast", medium: "Watercolor", alt: "Toast" },
 ];
 
 const NAV_ITEMS = ["home", "about", "studio", "contact"];
@@ -212,7 +212,7 @@ function AboutPage(props){
         </div>
       </div>
       <div className="sx" data-s="z" style={secS(W)}>
-        <div style={fd(v,"z",0)}><img src="src/assets/amy.jpg" alt="Amy" style={{width:"clamp(120px,28vw,170px)",borderRadius:10,border:"3px solid "+B,transform:"rotate(-2deg)",boxShadow:"8px 8px 0 "+P[1]}} /></div>
+        <div style={fd(v,"z",0)}><img src="src/assets/opt/amy.webp" alt="Amy" style={{width:"clamp(120px,28vw,170px)",borderRadius:10,border:"3px solid "+B,transform:"rotate(-2deg)",boxShadow:"8px 8px 0 "+P[1]}} /></div>
       </div>
     </div>
   );
@@ -310,7 +310,7 @@ function Treats({ x, onDone }) {
 }
 
 function Horse() {
-  const FR = ["src/assets/pony-idle.png", "src/assets/pony-walk.png", "src/assets/pony-gather.png"];
+  const FR = ["src/assets/opt/pony-idle.png", "src/assets/opt/pony-walk.png", "src/assets/opt/pony-gather.png"];
   const st = useRef({ x: 12, dir: 1, bob: 0, frame: 0, mode: "walk", carrotX: null, eatUntil: 0 });
   const idx = useRef({ hover: 0 });
   const tmo = useRef(null);
@@ -583,7 +583,7 @@ function App() {
 				<div onClick={() => setLightbox(null)} style={{ position: "fixed", inset: 0, zIndex: 100, background: "rgba(255,255,255,0.92)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", animation: "fadeIn 0.2s", padding: 24 }}>
 					<div style={{ position: "relative" }} onClick={(e) => e.stopPropagation()}>
 						<div onClick={() => setLightbox(null)} style={{ position: "absolute", top: -14, right: -14, width: 30, height: 30, borderRadius: "50%", background: WHITE, border: "2px solid " + BLACK, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontFamily: DISP, fontSize: 14, fontWeight: 700, color: BLACK, zIndex: 101 }}>&times;</div>
-						<img src={lightbox} alt="" style={{ maxWidth: "82vw", maxHeight: "82vh", objectFit: "contain", borderRadius: 4, border: "3px solid " + BLACK, display: "block" }} />
+						<img src={lightbox} alt="" decoding="async" style={{ maxWidth: "82vw", maxHeight: "82vh", objectFit: "contain", borderRadius: 4, border: "3px solid " + BLACK, display: "block" }} />
 					</div>
 				</div>
 			)}
@@ -648,11 +648,11 @@ function App() {
 								{ART_IMAGES.map((img, i) => {
 									const hov = hoveredArt === i; const pc = PASTELS[i % PASTELS.length];
 									return (
-										<div key={i} onMouseEnter={() => setHoveredArt(i)} onMouseLeave={() => setHoveredArt(null)}
+										<div key={i} onMouseEnter={() => { setHoveredArt(i); const p = new Image(); p.src = img.src; }} onMouseLeave={() => setHoveredArt(null)}
 											onClick={(e) => { e.stopPropagation(); setLightbox(img.src); track("art_lightbox_open", { image: img.title, medium: img.medium }); }}
 											style={{ background: WHITE, border: "2px solid " + (hov ? pc : BLACK), borderRadius: 5, overflow: "hidden", cursor: "pointer", transform: hov ? "translateY(-4px) rotate(-0.5deg)" : "none", boxShadow: hov ? "4px 4px 0 " + pc : "none", transition: "all 0.25s cubic-bezier(0.34,1.56,0.64,1)" }}>
 											<div style={{ aspectRatio: "1", overflow: "hidden", borderBottom: "1.5px solid " + (hov ? pc : BLACK) }}>
-												<img src={img.src} alt={img.alt} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+												<img src={img.thumb} alt={img.alt} loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
 											</div>
 											<div style={{ padding: "6px 9px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
 												<span style={{ fontFamily: DISP, fontSize: 11, color: BLACK, fontWeight: 600, opacity: 0.7 }}>{img.title}</span>
