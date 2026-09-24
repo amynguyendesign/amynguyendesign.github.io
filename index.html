@@ -226,7 +226,7 @@ function StudioPage(props){
         <div style={fd(v,id,0)}><span style={{fontSize:"clamp(56px,11vw,92px)",fontWeight:700,color:ACC,opacity:0.22,lineHeight:1,display:"block"}}>{num}</span></div>
         <div style={fd(v,id,0.15)}><div style={{fontSize:"clamp(30px,5.5vw,50px)",fontWeight:700,color:B,lineHeight:1.05,marginTop:-6}} dangerouslySetInnerHTML={{__html:title}} /></div>
         <p style={Object.assign({},fd(v,id,0.3),{fontSize:"clamp(13px,2vw,17px)",fontWeight:500,color:B,opacity:0.6,lineHeight:1.55,marginTop:12,maxWidth:380})}>{desc}</p>
-        <div style={Object.assign({},fd(v,id,0.45),{marginTop:22})}><a href={href} onClick={function(e){e.preventDefault();track("project_click",{project:num,href:href});if(href&&href.charAt(0)==='/'){window.location.href=href;}else if(onArt){onArt();}}} style={{fontFamily:D,fontSize:14,fontWeight:700,color:B,textDecoration:"none",border:"2px solid "+B,borderRadius:8,padding:"10px 22px",display:"inline-block"}}>{cta} →</a></div>
+        <div style={Object.assign({},fd(v,id,0.45),{marginTop:22})}><a href={href} onClick={function(e){e.preventDefault();track("project_click",{project:num,href:href});if(href&&href.charAt(0)==='/'){window.location.href=new URL('.'+href,document.baseURI).href;}else if(onArt){onArt();}}} style={{fontFamily:D,fontSize:14,fontWeight:700,color:B,textDecoration:"none",border:"2px solid "+B,borderRadius:8,padding:"10px 22px",display:"inline-block"}}>{cta} →</a></div>
       </div>
     </div>
   );}
@@ -245,7 +245,8 @@ function StudioPage(props){
       </div>
       {item("a3","01","gym app","A mobile workout tracker.","read case study","/gym/",P[2]+'50')}
       {item("a2","02","m&eacute;lange","A game for building color intuition.","play","/game",P[1]+'50')}
-      {item("a1","03","art","Paintings and studies across oil, watercolor, acrylic, and graphite.","view","#",P[0]+'40')}
+      {item("mate","03","mate, spotted.","A chess trainer for spotting checkmate.","play","/mate/",P[2]+'40')}
+      {item("a1","04","art","Paintings and studies across oil, watercolor, acrylic, and graphite.","view","#",P[0]+'40')}
       <div className="sx" data-s="se" style={Object.assign({},secS(W),{minHeight:"100%"})}>
         <div style={fd(v,"se",0)}><div style={{display:"flex",gap:5,justifyContent:"center",marginBottom:10}}>{P.map(function(c,i){return React.createElement('div',{key:i,style:{width:12,height:12,borderRadius:i%2?"50%":3,background:c}});})}</div><div style={{fontSize:13,fontWeight:600,color:B,opacity:0.4,textAlign:"center"}}>more coming soon</div></div>
       </div>
