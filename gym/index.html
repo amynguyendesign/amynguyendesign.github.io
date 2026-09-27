@@ -30,8 +30,8 @@
   .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
   /* nav */
   .nav{display:flex;justify-content:space-between;align-items:center;padding:22px 0;font-size:13px;font-weight:700}
-  .nav a{text-decoration:none;padding:6px 12px;border-radius:999px;background:var(--lav);transition:transform .15s}
-  .nav a:hover{transform:translateY(-1px)}
+  .nav{padding:14px 0}
+  
   .nav .mono{font-family:var(--mono);font-weight:400;background:none;color:var(--slate);letter-spacing:.06em;font-size:12px;padding:0}
   /* hero */
   .hero{padding:44px 0 20px}
@@ -164,6 +164,8 @@
   .det b{display:block;font-size:16px;font-weight:700;margin-bottom:4px}
   .det p{font-size:14px;font-weight:500;opacity:.75}
   /* footer */
+  .close .sec-p{max-width:640px}
+  .close .sec-p + .sec-p{margin-top:14px}
   footer{margin:80px 0 40px;padding-top:24px;border-top:3px solid var(--black);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px;font-weight:600}
   footer a{text-decoration:none;background:var(--blush);padding:6px 12px;border-radius:999px}
   /* reveal */
@@ -183,11 +185,18 @@
     .phone.vid{width:250px;height:574px} .phone.vid video{height:541px}
   }
   @media (max-width:520px){ .wrap{padding:0 16px} .nav .mono{font-size:11px;letter-spacing:.02em} .nav{gap:10px} .nav a{white-space:nowrap} .fan .phone{width:250px;height:530px} }
+/* shared Studio breadcrumb (same on every Studio sub-page) */
+.studio-crumb{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-family:"Space Grotesk","Helvetica Neue",Arial,sans-serif;font-size:14px;font-weight:600;letter-spacing:-.01em;color:#16183A;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.studio-crumb .crumb-arrow{display:inline-block;font-weight:700;font-size:20px;line-height:1;opacity:.4;transform:rotate(90deg);transition:transform .25s cubic-bezier(.34,1.5,.64,1),opacity .2s}
+.studio-crumb:hover .crumb-arrow,.studio-crumb:focus-visible .crumb-arrow{transform:rotate(90deg) translateY(4px);opacity:.85}
+.studio-crumb:hover{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1.5px}
+.studio-crumb:focus-visible{outline:2px solid #748DA6;outline-offset:4px;border-radius:4px}
+footer .studio-crumb{min-height:0}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <nav class="nav"><a href="/">← Amy Nguyen</a><a class="mono" href="/?tab=studio">Studio / Gym App</a></nav>
+  <nav class="nav" aria-label="Breadcrumb"><a class="studio-crumb" href="/studio/"><span class="crumb-arrow" aria-hidden="true">↓</span>amy nguyen / studio</a></nav>
 
   <header class="hero">
     <div class="eyebrow">Mobile app case study</div>
@@ -297,9 +306,15 @@
     </div>
   </section>
 
-    <footer>
+    <section class="close">
+    <h2 class="sec-h rv">Looking back<span class="dot">.</span></h2>
+    <p class="sec-p rv">This went through more iterations than anything else I've built, because the feedback loop was short: I was the user, in the gym, noticing where I hesitated. The tap that felt like one too many. The number I didn't want to type mid-set. Each version removed one of those.</p>
+    <p class="sec-p rv">It was good practice in owning a flow end to end, watching how it actually gets used, and letting that decide what changes next.</p>
+  </section>
+
+  <footer>
     <span>Built with React and Firebase. Runs as a mobile web app.</span>
-    <span><a href="/?tab=studio">← Back to Studio</a></span>
+    <span><a class="studio-crumb" href="/studio/"><span class="crumb-arrow" aria-hidden="true">↓</span>amy nguyen / studio</a></span>
   </footer>
 </div>
 <script>

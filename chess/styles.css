@@ -431,3 +431,11 @@ body{font-weight:500;color:var(--ink)}
 .sources i{font-style:italic}
 
 @media(max-width:370px){h1{font-size:clamp(28px,9.6vw,36px)!important}}
+
+/* shared Studio breadcrumb (same on every Studio sub-page) */
+.studio-crumb{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-family:var(--font);font-size:14px;font-weight:600;letter-spacing:-.01em;color:#16183A;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.studio-crumb .crumb-arrow{display:inline-block;font-weight:700;font-size:20px;line-height:1;opacity:.4;transform:rotate(90deg);transition:transform .25s cubic-bezier(.34,1.5,.64,1),opacity .2s}
+.studio-crumb:hover .crumb-arrow,.studio-crumb:focus-visible .crumb-arrow{transform:rotate(90deg) translateY(4px);opacity:.85}
+.studio-crumb:hover{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1.5px}
+.studio-crumb:focus-visible{outline:2px solid #748DA6;outline-offset:4px;border-radius:4px}
+.site-header .studio-crumb{min-height:40px}

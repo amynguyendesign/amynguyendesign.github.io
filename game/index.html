@@ -27,6 +27,7 @@
 
 		<!-- Preconnect -->
 		<link rel="preconnect" href="https://unpkg.com" crossorigin />
+		<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 		<link rel="preconnect" href="https://www.gstatic.com" crossorigin />
 
 		<!-- Firebase -->
@@ -72,7 +73,13 @@
 					transition-duration: 0.01ms !important;
 				}
 			}
-		</style>
+		/* shared Studio breadcrumb (same on every Studio sub-page) */
+.studio-crumb{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-family:"Space Grotesk","Helvetica Neue",Arial,sans-serif;font-size:14px;font-weight:600;letter-spacing:-.01em;color:#16183A;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.studio-crumb .crumb-arrow{display:inline-block;font-weight:700;font-size:20px;line-height:1;opacity:.4;transform:rotate(90deg);transition:transform .25s cubic-bezier(.34,1.5,.64,1),opacity .2s}
+.studio-crumb:hover .crumb-arrow,.studio-crumb:focus-visible .crumb-arrow{transform:rotate(90deg) translateY(4px);opacity:.85}
+.studio-crumb:hover{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1.5px}
+.studio-crumb:focus-visible{outline:2px solid #748DA6;outline-offset:4px;border-radius:4px}
+</style>
 	</head>
 	<body>
 		<div id="root" style="width:100%;display:flex;align-items:center;justify-content:center"></div>
@@ -1410,29 +1417,8 @@
         .op-input::placeholder { color: ${P.dim}; }
       `}</style>
       {phase === 'menu' && (
-        <nav aria-label="Breadcrumb" style={{ padding: isMobile ? '16px 20px 0' : '20px 40px 0' }}>
-          <a
-            href="/?tab=studio"
-            style={{
-              fontFamily: '"Courier New", Courier, monospace',
-              fontSize: '0.875rem',
-              color: P.text,
-              textDecoration: 'none',
-              letterSpacing: '0.03em',
-              transition: 'color 0.15s ease',
-              display: 'inline-flex',
-              alignItems: 'center',
-              minHeight: 44,
-              padding: '8px 0',
-              outline: 'none',
-              borderRadius: 4,
-              opacity: 0.6,
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = P.cta; e.currentTarget.style.opacity = 1; }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = P.text; e.currentTarget.style.opacity = 0.6; }}
-            onFocus={(e) => { e.currentTarget.style.outline = '2px solid ' + P.cta; e.currentTarget.style.outlineOffset = '2px'; }}
-            onBlur={(e) => { e.currentTarget.style.outline = 'none'; }}
-          >&#8592; studio</a>
+        <nav aria-label="Breadcrumb" style={{ padding: isMobile ? '12px 20px 0' : '16px 40px 0' }}>
+          <a className="studio-crumb" href="/studio/"><span className="crumb-arrow" aria-hidden="true">↓</span>amy nguyen / studio</a>
         </nav>
       )}
       {(phase === 'play' || phase === 'reveal') && (

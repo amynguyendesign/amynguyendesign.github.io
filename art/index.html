@@ -23,6 +23,7 @@
 
 		<!-- Preconnect -->
 		<link rel="preconnect" href="https://unpkg.com" crossorigin />
+		<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 		<link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
 		<!-- Analytics -->
@@ -47,6 +48,13 @@
 				-webkit-font-smoothing: antialiased;
 			}
 			a { text-decoration: none; }
+/* shared Studio breadcrumb (same on every Studio sub-page) */
+.studio-crumb{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-family:"Space Grotesk","Helvetica Neue",Arial,sans-serif;font-size:14px;font-weight:600;letter-spacing:-.01em;color:#16183A;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.studio-crumb .crumb-arrow{display:inline-block;font-weight:700;font-size:20px;line-height:1;opacity:.4;transform:rotate(90deg);transition:transform .25s cubic-bezier(.34,1.5,.64,1),opacity .2s}
+.studio-crumb:hover .crumb-arrow,.studio-crumb:focus-visible .crumb-arrow{transform:rotate(90deg) translateY(4px);opacity:.85}
+.studio-crumb:hover{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1.5px}
+.studio-crumb:focus-visible{outline:2px solid #748DA6;outline-offset:4px;border-radius:4px}
+
 			@media (prefers-reduced-motion: reduce) {
 				*, *::before, *::after {
 					animation-duration: 0.01ms !important;
@@ -213,34 +221,8 @@
 						<Lightbox src={lightboxImg} onClose={() => setLightboxImg(null)} />
 
 						{/* Back link */}
-						<nav aria-label="Breadcrumb" style={{
-							padding: "20px 24px 0",
-							maxWidth: 800,
-							margin: "0 auto",
-						}}>
-							<a
-								href="/?tab=studio"
-								style={{
-									fontFamily: MONO,
-									fontSize: "0.875rem",
-									color: COLORS.dark,
-									textDecoration: "none",
-									letterSpacing: "0.03em",
-									transition: "color 0.15s ease",
-									display: "inline-flex",
-									alignItems: "center",
-									minHeight: 44,
-									padding: "8px 0",
-									outline: "none",
-									borderRadius: 4,
-								}}
-								onMouseEnter={(e) => e.currentTarget.style.color = COLORS.accent}
-								onMouseLeave={(e) => e.currentTarget.style.color = COLORS.dark}
-								onFocus={(e) => { e.currentTarget.style.outline = "2px solid " + COLORS.accent; e.currentTarget.style.outlineOffset = "2px"; }}
-								onBlur={(e) => { e.currentTarget.style.outline = "none"; }}
-							>
-								&#8592; studio
-							</a>
+						<nav aria-label="Breadcrumb" style={{ padding: "16px 24px 0", maxWidth: 800, margin: "0 auto" }}>
+							<a className="studio-crumb" href="/studio/"><span className="crumb-arrow" aria-hidden="true">↓</span>amy nguyen / studio</a>
 						</nav>
 
 						{/* Header */}
