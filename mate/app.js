@@ -1,4 +1,5 @@
 import {Chess, inspectCheck, assessMove} from './rules.js';
+import {sfx} from './sound.js';
 import {PATTERNS, familyOf, patternByKey, demoFor, countFor, allPuzzles} from './patterns.js';
 
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -163,7 +164,7 @@ function chooseSquare(sq){
  if(!puzzle||pendingPromotion||busy||phase!=='play')return;
  const c=new Chess(fen),piece=c.get(sq);
  if(selected&&tryMoveTo(sq))return;
- if(piece&&piece.color===attacker&&c.turn()===attacker){selected=selected===sq?null:sq;legalTargets=selected?c.moves({square:selected,verbose:true}):[];feedback='';render();focusSquare(sq);return;}
+ if(piece&&piece.color===attacker&&c.turn()===attacker){selected=selected===sq?null:sq;legalTargets=selected?c.moves({square:selected,verbose:true}):[];feedback='';if(selected)sfx.pick();render();focusSquare(sq);return;}
  if(selected){selected=null;legalTargets=[];render();}
 }
 function tryMoveTo(sq){const moves=legalTargets.filter(m=>m.to===sq);if(!selected||!moves.length)return false;if(moves.some(m=>m.promotion)){pendingPromotion={from:selected,to:sq};renderPromotion();$('#promotion button[data-promote]').focus();return true;}playMove({from:selected,to:sq});return true;}
@@ -172,6 +173,7 @@ async function playMove(move){
  let result;
  try{result=remaining===2?await compute('assessMove',[fen,move,remaining]):assessMove(fen,move,remaining);}catch(e){if(epoch!==workEpoch)return;busy=false;feedback='That move couldn’t be checked. Try again.';render();return;}if(epoch!==workEpoch)return;
  if(!result.legal){feedback='That isn’t a legal move here.';render();return;}
+ {const dl=dropMove?0:250;const cap=/x/.test(result.san);setTimeout(()=>sfx[cap?'capture':'move'](),dl);if(result.mate){setTimeout(()=>sfx.mate(progress.streak+1),dl+320);setTimeout(()=>sfx.pop(),dl+900);}else if(!(result.winning&&remaining===2))setTimeout(()=>sfx.wrong(),dl+180);}
  attempt=result;fen=result.fen;lastMove={...move,san:result.san};selected=null;legalTargets=[];pendingPromotion=null;hintFrom=null;proof=inspectCheck(fen);
  if(result.mate){phase='done';line.push(lastMove);finish();fxQueue.push('mate');}
  else if(result.winning&&remaining===2){phase='line';line.push(lastMove);}
@@ -180,12 +182,12 @@ async function playMove(move){
 }
 function defend(){
  if(phase!=='line'||!attempt?.replyFen)return;
- fen=attempt.replyFen;lastMove=attempt.reply;line.push(lastMove);stageFen=fen;remaining=1;phase='play';hintLevel=Math.min(hintLevel,1);hintFrom=null;attempt=null;
+ setTimeout(()=>sfx[/x/.test(attempt.reply?.san||'')?'capture':'move'](),250);fen=attempt.replyFen;lastMove=attempt.reply;line.push(lastMove);stageFen=fen;remaining=1;phase='play';hintLevel=Math.min(hintLevel,1);hintFrom=null;attempt=null;
  render();animateMove(lastMove);
 }
 async function hint(){
  if(!puzzle||phase!=='play'||busy)return;const epoch=workEpoch;assisted=true;
- hintLevel++;
+ hintLevel++;sfx.hint();
  if(hintLevel===1&&fam(puzzle)){render();return;}
  if(hintLevel===1)hintLevel=2;
  let moves;try{moves=await compute('winningMoves',[fen,remaining]);}catch(e){if(epoch!==workEpoch)return;busy=false;feedback='The hint couldn’t be checked. Try again.';render();return;}if(epoch!==workEpoch)return;
@@ -193,12 +195,12 @@ async function hint(){
  if(hintLevel===2){hintFrom=moves[0].from;render();return;}
  playMove(moves[0]);
 }
-function nameIt(k){if(phase!=='done'||named)return;named=k;const right=k===fam(puzzle);if(right){fxQueue.push('right');}else{try{navigator.vibrate?.([8,40,8]);}catch(e){}}render();}
-function next(delta=1){if(!deck.length)return;let i=idx+delta;if(i>=deck.length){const cur=puzzle;deck=collection();if(deck.length>1&&cur&&baseId(deck[0])===baseId(cur))deck.push(deck.shift());i=0;}if(i<0)i=deck.length-1;load(i,true);if(matchMedia('(max-width:660px)').matches)document.querySelector('.board-meta').scrollIntoView({block:'start',behavior:smooth()});}
+function nameIt(k){if(phase!=='done'||named)return;named=k;const right=k===fam(puzzle);right?sfx.right():sfx.miss();if(right){fxQueue.push('right');}else{try{navigator.vibrate?.([8,40,8]);}catch(e){}}render();}
+function next(delta=1){if(!deck.length)return;sfx.next();let i=idx+delta;if(i>=deck.length){const cur=puzzle;deck=collection();if(deck.length>1&&cur&&baseId(deck[0])===baseId(cur))deck.push(deck.shift());i=0;}if(i<0)i=deck.length-1;load(i,true);if(matchMedia('(max-width:660px)').matches)document.querySelector('.board-meta').scrollIntoView({block:'start',behavior:smooth()});}
 function action(name){
  if(name==='next')next();
  if(name==='retry')resetStage();
- if(name==='refute'&&attempt?.defenses?.length){const m=attempt.defenses[0];fen=m.fen;lastMove=m;defenseShown=true;defenseNote=m.san+' gets away.';render();animateMove(m);}
+ if(name==='refute'&&attempt?.defenses?.length){const m=attempt.defenses[0];setTimeout(()=>sfx.move(),250);fen=m.fen;lastMove=m;defenseShown=true;defenseNote=m.san+' gets away.';render();animateMove(m);}
  if(name==='hint')hint();
  if(name==='defend')defend();
  if(name==='restart')load(idx);
@@ -209,6 +211,7 @@ function action(name){
 }
 $('#app').addEventListener('click',e=>{
  const b=e.target.closest('button');if(!b||b.disabled)return;
+ if(!b.dataset.square&&!b.dataset.name&&b.dataset.action!=='hint'&&b.dataset.action!=='next'&&b.dataset.action!=='defend')sfx.tap();
  if(b.dataset.square){if(performance.now()<suppressUntil)return;chooseSquare(b.dataset.square);}
  else if(b.dataset.action)action(b.dataset.action);
  else if(b.dataset.practice!==undefined){practice(b.dataset.practice||null);}
@@ -279,7 +282,7 @@ document.addEventListener('pointermove',e=>{
  if(!drag.started){if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)<7)return;
   const c=new Chess(fen),p=c.get(drag.sq);if(!p){drag=null;return;}
   drag.started=true;const r=$(`[data-square="${drag.sq}"]`).getBoundingClientRect();drag.w=r.width;
-  if(selected!==drag.sq){selected=drag.sq;legalTargets=c.moves({square:selected,verbose:true});feedback='';squareNote='';render();}else renderBoard();
+  if(selected!==drag.sq){sfx.pick();selected=drag.sq;legalTargets=c.moves({square:selected,verbose:true});feedback='';squareNote='';render();}else renderBoard();
   const g=document.createElement('div');g.className='drag-ghost';g.innerHTML=pieceSvg(p);g.style.width=g.style.height=r.width+'px';document.body.appendChild(g);drag.ghost=g;document.body.classList.add('is-dragging');
  }
  e.preventDefault();
@@ -299,6 +302,9 @@ function endDrag(e,cancel){
 }
 document.addEventListener('pointerup',e=>endDrag(e,false));document.addEventListener('pointercancel',e=>endDrag(e,true));
 (()=>{const h=$('h1');if(!h)return;let i=0;const walk=n=>[...n.childNodes].forEach(c=>{if(c.nodeType===3){const f=document.createDocumentFragment();[...c.textContent].forEach(ch=>{const s=document.createElement('span');s.className='ch';s.style.setProperty('--i',i++);s.textContent=ch;if(ch===' ')s.innerHTML='&nbsp;';f.appendChild(s);});c.replaceWith(f);}else walk(c);});h.setAttribute('aria-label',h.textContent);walk(h);[...h.querySelectorAll('.ch')].forEach(s=>s.setAttribute('aria-hidden','true'));h.addEventListener('pointerover',e=>{const c=e.target.closest('.ch');if(!c||RM())return;c.classList.remove('hop');void c.offsetWidth;c.classList.add('hop');});})();
+document.addEventListener('pointerdown',()=>sfx.unlock(),{once:true,capture:true});
+const sndBtn=$('#sound-toggle');const paintSnd=()=>{sndBtn.setAttribute('aria-pressed',String(sfx.on));sndBtn.setAttribute('aria-label',sfx.on?'Sound on. Turn off':'Sound off. Turn on');sndBtn.classList.toggle('off',!sfx.on);};
+sndBtn.addEventListener('click',()=>{sfx.toggle();paintSnd();sndBtn.classList.remove('boing');void sndBtn.offsetWidth;sndBtn.classList.add('boing');});paintSnd();
 window.addEventListener('popstate',restoreURL);
 window.addEventListener('storage',e=>{if(e.key===KEY&&e.newValue){try{const p=JSON.parse(e.newValue);if(p.records){progress={...progress,...p};render();}}catch(err){}}});
 restoreURL();writeURL(true);

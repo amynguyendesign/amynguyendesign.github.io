@@ -392,3 +392,16 @@ body{font-weight:500;color:var(--ink)}
  #practice-title{font-size:22px}
  .practice-head .streak-copy{display:none}
 }
+
+/* sound toggle */
+.header-tools{display:flex;align-items:center;gap:12px}
+.sound-toggle{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--ink);background:var(--white);display:inline-flex;align-items:center;justify-content:center;transition:transform .18s var(--spring),box-shadow .2s,background .2s}
+.sound-toggle:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--lavender)}
+.sound-toggle svg{width:22px;height:22px;fill:none;stroke:var(--ink);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sound-toggle .spk{fill:var(--lavender)}
+.sound-toggle .mute{display:none}
+.sound-toggle.off{background:var(--pale)}.sound-toggle.off .wave{display:none}.sound-toggle.off .mute{display:inline}.sound-toggle.off .spk{fill:var(--pale)}
+.sound-toggle:not(.off) .w1{animation:wave 1.8s ease-in-out infinite}.sound-toggle:not(.off) .w2{animation:wave 1.8s ease-in-out .25s infinite}
+@keyframes wave{0%,100%{opacity:1}50%{opacity:.35}}
+.sound-toggle.boing{animation:num-bump .5s var(--spring)}
+@media(max-width:660px){.sound-toggle{width:36px;height:36px}.header-tools{gap:8px}}
