@@ -48,6 +48,7 @@
 				-webkit-font-smoothing: antialiased;
 			}
 			a { text-decoration: none; }
+			@media (max-width:600px){:root{--mb:2px}}
 /* shared Studio breadcrumb (same on every Studio sub-page) */
 .studio-crumb{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-family:"Space Grotesk","Helvetica Neue",Arial,sans-serif;font-size:14px;font-weight:600;letter-spacing:-.01em;color:#16183A;text-decoration:none;-webkit-tap-highlight-color:transparent}
 .studio-crumb .crumb-arrow{display:inline-block;font-weight:700;font-size:20px;line-height:1;opacity:.4;transform:rotate(90deg);transition:transform .25s cubic-bezier(.34,1.5,.64,1),opacity .2s}
@@ -132,7 +133,7 @@
 									border: "1.5px solid " + COLORS.dark,
 									borderRadius: "50%",
 									cursor: "pointer",
-									fontSize: 12,
+									fontSize: "calc(12px + var(--mb,0px))",
 									color: COLORS.dark,
 									fontFamily: MONO,
 									fontWeight: 600,
@@ -192,7 +193,7 @@
 						</div>
 						<div style={{ padding: "6px 8px" }}>
 							<div style={{
-								fontSize: 9,
+								fontSize: "calc(9px + var(--mb,0px))",
 								color: COLORS.ink,
 								letterSpacing: "0.03em",
 								fontWeight: 600,
@@ -247,7 +248,7 @@
 								borderRadius: 1,
 							}} role="presentation" />
 							<p style={{
-								fontSize: "1rem",
+								fontSize: "calc(1rem + var(--mb,0px))",
 								color: COLORS.ink,
 								lineHeight: 1.5,
 								letterSpacing: "0.03em",
@@ -288,33 +289,8 @@
 						</div>
 
 						{/* Footer */}
-						<footer style={{
-							textAlign: "center",
-							padding: "20px 0 32px",
-						}}>
-							<a
-								href="/?tab=studio"
-								style={{
-									fontFamily: MONO,
-									fontSize: "0.875rem",
-									color: COLORS.dark,
-									textDecoration: "none",
-									letterSpacing: "0.03em",
-									transition: "color 0.15s ease",
-									display: "inline-flex",
-									alignItems: "center",
-									minHeight: 44,
-									padding: "8px 12px",
-									outline: "none",
-									borderRadius: 4,
-								}}
-								onMouseEnter={(e) => e.currentTarget.style.color = COLORS.accent}
-								onMouseLeave={(e) => e.currentTarget.style.color = COLORS.dark}
-								onFocus={(e) => { e.currentTarget.style.outline = "2px solid " + COLORS.accent; e.currentTarget.style.outlineOffset = "2px"; }}
-								onBlur={(e) => { e.currentTarget.style.outline = "none"; }}
-							>
-								&#8592; back to studio
-							</a>
+						<footer style={{ textAlign: "center", padding: "20px 0 32px" }}>
+							<a className="studio-crumb" href="/studio/"><span className="crumb-arrow" aria-hidden="true">↓</span>studio</a>
 						</footer>
 					</div>
 				);

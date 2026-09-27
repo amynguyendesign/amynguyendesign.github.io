@@ -439,3 +439,14 @@ body{font-weight:500;color:var(--ink)}
 .studio-crumb:hover{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1.5px}
 .studio-crumb:focus-visible{outline:2px solid #748DA6;outline-offset:4px;border-radius:4px}
 .site-header .studio-crumb{min-height:40px}
+
+/* mobile: body text +2px (Sep 27 2026) */
+@media (max-width:600px){
+  body .pat-line{font-size:17px}
+  body .pat-origin,body .pat-num{font-size:13px}
+  body .pat-go{font-size:15px} body .pat-go .count{font-size:14px}
+  body .pat-head .primary{font-size:17px}
+  body .sources,body .sources p,body .sources span,body .sources a,body .sources i{font-size:14px}
+  body .board-meta span,body .practice-head .back,body .tags .chip{font-size:15px}
+  body .coach .helper-button,body .deck-count,body .deck-count span{font-size:16px}
+}
