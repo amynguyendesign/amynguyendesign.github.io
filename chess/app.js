@@ -222,7 +222,6 @@ $('#app').addEventListener('click',e=>{
 $('#previous').addEventListener('click',()=>next(-1));$('#skip').addEventListener('click',()=>next());
 $('#board').addEventListener('keydown',e=>{const sq=e.target.closest('[data-square]')?.dataset.square;if(!sq)return;if(e.key==='Escape'){selected=null;legalTargets=[];render();focusSquare(sq);return;}const directions={ArrowUp:-8,ArrowDown:8,ArrowLeft:-1,ArrowRight:1};if(!(e.key in directions))return;e.preventDefault();const squares=boardSquares(),n=squares.indexOf(sq),offset=directions[e.key];if(offset===-1&&n%8===0||offset===1&&n%8===7)return;const target=squares[n+offset];if(target)focusSquare(target);});
 $('#promotion').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();action('cancel-promotion');}});
-const dialog=$('#how-dialog');$('#how-open').addEventListener('click',()=>dialog.showModal());$('#how-close').addEventListener('click',()=>dialog.close());$('#how-start').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
 // ---------- views ----------
 function setView(v,push){
  view=v;$('#practice-view').hidden=v!=='practice';$('#patterns-view').hidden=v!=='patterns';

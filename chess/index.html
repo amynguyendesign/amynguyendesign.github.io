@@ -8,10 +8,10 @@
 <link rel="icon" href="../favicon.ico"><link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-<header class="site-header"><a class="studio-crumb" href="/studio/"><span class="crumb-arrow" aria-hidden="true">↓</span>amy nguyen / studio</a><div class="header-tools"><button id="sound-toggle" class="sound-toggle" aria-pressed="true" aria-label="Sound on. Turn off"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="spk" d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="wave w1" d="M15.2 9.2a4 4 0 0 1 0 5.6"/><path class="wave w2" d="M17.8 6.8a7.4 7.4 0 0 1 0 10.4"/><path class="mute" d="M16 9.5l5 5M21 9.5l-5 5"/></svg></button><button class="text-button" id="how-open">How to play <span aria-hidden="true">↗</span></button></div></header>
+<header class="site-header"><a class="studio-crumb" href="/studio/"><span class="crumb-arrow" aria-hidden="true">↓</span>studio</a><div class="header-tools"><button id="sound-toggle" class="sound-toggle" aria-pressed="true" aria-label="Sound on. Turn off"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="spk" d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="wave w1" d="M15.2 9.2a4 4 0 0 1 0 5.6"/><path class="wave w2" d="M17.8 6.8a7.4 7.4 0 0 1 0 10.4"/><path class="mute" d="M16 9.5l5 5M21 9.5l-5 5"/></svg></button></div></header>
 <main id="app">
 <div class="bg-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-<section class="masthead"><div><h1>checkmate<span class="comma">,</span> spotted<span class="period">.</span></h1><p class="intro">Learn the shape. Spot it fast.</p></div></section>
+<section class="masthead"><div><h1>checkmate<span class="comma">,</span> spotted<span class="period">.</span></h1></div></section>
 <div id="practice-view" hidden>
 <div class="practice-head"><button class="back" data-action="back"><span aria-hidden="true">←</span> Patterns</button><h2 id="practice-title"></h2><div class="daily" id="daily" aria-label="Streak"></div></div>
 <section class="play-layout">
@@ -23,7 +23,7 @@
 <section id="patterns-view" class="patterns-view" hidden></section>
 <p id="storage-warning" class="storage-warning" hidden>Browser storage is unavailable. You can still play, but progress won’t be saved.</p>
 </main>
-<dialog id="how-dialog"><div class="dialog-header"><h2>How it works</h2><button id="how-close" class="round-button" aria-label="Close instructions">×</button></div><ol class="how-steps"><li><b>1</b><div><strong>Learn the pattern.</strong><span>Watch each one play out.</span></div></li><li><b>2</b><div><strong>Spot it.</strong><span>Tap or drag the mating move.</span></div></li><li><b>3</b><div><strong>Name it.</strong><span>In Mix, guess which pattern it was.</span></div></li></ol><button id="how-start" class="primary">Got it →</button></dialog>
+
 <noscript>This chess trainer needs JavaScript enabled.</noscript>
 <script type="module" src="./app.js"></script>
 </body></html>
