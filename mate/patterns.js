@@ -1,26 +1,34 @@
 // patterns.js — the named mating patterns (worksheet catalog) + position variants for endless practice.
 import { puzzles, verdicts } from './puzzles.js';
 
+// Names and definitions follow the standard references cited on the page:
+// Renaud & Kahn, The Art of the Checkmate (1953); Wikipedia, "Checkmate pattern"; Lichess Practice, Checkmate Patterns I–IV.
 export const PATTERNS = [
- {key:'back-rank',name:'Back rank',line:'The king’s own pawns wall it in. A rook lands on the back row.',pieces:['r','q'],origin:'The most common mate in real games.',match:['back rank','queen sacrifice, back rank']},
- {key:'smothered',name:'Smothered mate',line:'Boxed in by its own pieces, the king can’t dodge a knight.',pieces:['n'],origin:'Philidor’s legacy is the queen-sac version.',match:['smothered mate','Philidor']},
- {key:'arabian',name:'Arabian mate',line:'Rook and knight corner the king. The knight guards the rook.',pieces:['r','n'],origin:'Found in 9th-century Arabic manuscripts.',match:['Arabian']},
- {key:'anastasia',name:'Anastasia’s mate',line:'A knight shuts the escape. The rook or queen mates down the edge.',pieces:['n','r'],origin:'From a German novel, 1803.',match:['Anastasia']},
- {key:'boden',name:'Boden’s mate',line:'Two bishops cross diagonals over the king.',pieces:['b','b'],origin:'Samuel Boden, London, 1853.',match:['Boden']},
- {key:'epaulette',name:'Epaulette mate',line:'The king’s own rooks sit either side of it. A queen checks from the front.',pieces:['q'],origin:'The rooks look like shoulder pads.',match:['epaulette']},
- {key:'opera',name:'Opera mate',line:'Rook mates on the back rank. A bishop guards it from far away.',pieces:['r','b'],origin:'Morphy, at the Paris Opera, 1858.',match:['Opera']},
- {key:'greco',name:'Greco’s mate',line:'A bishop takes the last escape square. The queen or rook mates on the edge.',pieces:['b','q'],origin:'Gioachino Greco, 1600s.',match:['Greco']},
- {key:'hook',name:'Hook mate',line:'Pawn guards knight, knight guards rook. The chain closes the net.',pieces:['r','n','p'],origin:'The three pieces link like a hook.',match:['hook mate']},
- {key:'double-check',name:'Double check',line:'Two pieces check at once. The king has to move, and can’t.',pieces:['n','r'],origin:'No block or capture stops two checks.',match:['double check']},
- {key:'battery',name:'Queen & bishop battery',line:'A bishop backs up the queen on one diagonal. She lands next to the king, safe.',pieces:['q','b'],origin:'Lined up like batteries in a row.',match:['queen and bishop battery']},
- {key:'kiss',name:'Kiss of death',line:'The queen goes face to face with the king, guarded by a friend.',pieces:['q','p'],origin:'Also called the supported queen.',match:['supported queen','pawn-supported queen']},
- {key:'ladder',name:'Ladder mate',line:'Two rooks take turns stepping the king to the edge.',pieces:['r','r'],origin:'Also called the lawnmower.',match:['ladder']},
- {key:'edge',name:'Edge mate',line:'King and queen (or rook) pin the lone king to the edge.',pieces:['k','q'],origin:'The first endgame everyone learns.',match:['edge mate']},
- {key:'promotion',name:'Promotion mate',line:'A pawn becomes a queen and mates on arrival.',pieces:['p','q'],origin:'Eight squares, one big finish.',match:['promotion mate']},
+ {key:'back-rank',name:'Back-rank mate',line:'The king’s own pawns wall it in. A rook or queen lands on the back row.',pieces:['r','q'],origin:'Also called a back-row mate.',match:['back rank','queen sacrifice, back rank']},
+ {key:'smothered',name:'Smothered mate',line:'Boxed in by its own pieces, the king can’t dodge a knight.',pieces:['n'],origin:'Philidor’s legacy is the queen-sacrifice version.',match:['smothered mate','philidor\'s legacy (queen sacrifice, smothered mate)']},
+ {key:'arabian',name:'Arabian mate',line:'Rook and knight corner the king. The knight guards the rook.',pieces:['r','n'],origin:'Described in early Arabic chess manuscripts.',match:['rook and knight (arabian mate)']},
+ {key:'anastasia',name:'Anastasia’s mate',line:'A knight shuts the escape. The rook or queen mates down the edge.',pieces:['n','r'],origin:'From Heinse’s novel Anastasia und das Schachspiel, 1803.',match:['anastasia\'s mate','anastasia\'s mate (queen sacrifice)']},
+ {key:'boden',name:'Boden’s mate',line:'Two bishops cross diagonals over the king.',pieces:['b','b'],origin:'Schulder vs. Boden, London, 1853.',match:['boden\'s mate','boden\'s mate (queen sacrifice)']},
+ {key:'epaulette',name:'Epaulette mate',line:'The king’s own pieces sit on both sides of it. The queen checks from the front.',pieces:['q'],origin:'The rooks look like shoulder epaulettes.',match:['epaulette mate']},
+ {key:'opera',name:'Opera mate',line:'A rook mates on the back rank. A bishop guards it from far away.',pieces:['r','b'],origin:'Morphy, at the Paris Opera, 1858.',match:['opera mate (rook supported by bishop)']},
+ {key:'anderssen',name:'Anderssen’s mate',line:'A rook mates on the back rank, guarded by a pawn right beside the king.',pieces:['r','p'],origin:'Named after Adolf Anderssen.',match:['anderssen\'s mate']},
+ {key:'greco',name:'Greco’s mate',line:'A bishop takes the last escape square. The queen or rook mates on the edge.',pieces:['b','q'],origin:'Named after Gioachino Greco, 1600s.',match:['greco\'s mate (bishop covers g8)']},
+ {key:'hook',name:'Hook mate',line:'Pawn guards knight, knight guards rook. The chain closes the net.',pieces:['r','n','p'],origin:'The three pieces link like a hook.',match:['hook mate (rook, knight and pawn)']},
+ {key:'damiano',name:'Damiano’s mate',line:'A pawn guards the queen as she lands right next to the king.',pieces:['q','p'],origin:'Published by Pedro Damiano, 1512.',match:['damiano\'s mate']},
+ {key:'damiano-bishop',name:'Damiano’s bishop mate',line:'A bishop backs up the queen as she lands next to the king.',pieces:['q','b'],origin:'The bishop version of Damiano’s mate.',match:['damiano\'s bishop mate','queen and bishop battery']},
+ {key:'lolli',name:'Lolli’s mate',line:'A pawn wedged into the king’s shelter lets the queen land beside it.',pieces:['q','p'],origin:'Named after Giambattista Lolli.',match:['lolli\'s mate']},
+ {key:'dovetail',name:'Dovetail mate',line:'The queen lands diagonally next to the king. Its own pieces block the last two exits.',pieces:['q'],origin:'Also called Cozio’s mate.',match:['dovetail mate']},
+ {key:'swallow',name:'Swallow’s tail mate',line:'The queen lands straight in front. Two of the king’s own pieces sit behind it like a forked tail.',pieces:['q'],origin:'Also called the guéridon mate.',match:['swallow\'s tail mate']},
+ {key:'triangle',name:'Triangle mate',line:'The queen lands next to the king with a rook two squares behind her.',pieces:['q','r'],origin:'King, queen and rook form a triangle.',match:['triangle mate']},
+ {key:'morphy',name:'Morphy’s mate',line:'A bishop checks from far away. A rook and the king’s own pawn seal the corner.',pieces:['b','r'],origin:'Named after Paul Morphy.',match:['morphy\'s mate']},
+ {key:'corner',name:'Corner mate',line:'A rook seals the file, the king’s own pawn blocks, a knight lands the check.',pieces:['r','n'],origin:'The king is stuck in its own corner.',match:['corner mate']},
+ {key:'blind-swine',name:'Blind swine mate',line:'Two rooks on the seventh rank team up right next to the king.',pieces:['r','r'],origin:'Janowski’s nickname for doubled rooks on the seventh.',match:['blind swine mate']},
+ {key:'ladder',name:'Ladder mate',line:'Two major pieces take turns pushing the king to the edge.',pieces:['r','r'],origin:'Also called the lawnmower mate.',match:['two-rook ladder mate']},
 ];
+const norm=s=>String(s||'').toLowerCase().replace(/[’‘]/g,"'").trim();
 export function familyOf(pattern){
- if(!pattern)return null;
- for(const p of PATTERNS) if(p.match.some(m=>pattern.toLowerCase().includes(m.toLowerCase())))return p.key;
+ const n=norm(pattern);if(!n)return null;
+ for(const p of PATTERNS) if(p.match.some(m=>norm(m)===n))return p.key;
  return null;
 }
 export const patternByKey = Object.fromEntries(PATTERNS.map(p=>[p.key,p]));

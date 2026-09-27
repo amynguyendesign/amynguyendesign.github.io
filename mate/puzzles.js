@@ -222,6 +222,73 @@ export const puzzles = [
     lesson: 'Take the rook on g1 with the queen. After the king recaptures, the rook lands on f1 protected by the bishop from b5.',
     solutions: ['Qxg1+'],
   },
+  // ---------------------------------------------------------------- added Sep 2026: standard named patterns
+  {
+    id: 'm1-damiano-w', fen: '5rk1/pp6/6P1/8/8/7Q/5PP1/6K1 w - - 0 1', mateIn: 1,
+    pattern: "Damiano's mate", title: "Damiano's mate",
+    lesson: "The pawn on g6 guards h7 and f7. The queen lands on h7, and the rook on f8 blocks the last door.",
+    solutions: ["Qh7#"],
+  },
+  {
+    id: 'm1-damiano-2-w', fen: 'r4bk1/p4p2/1p4P1/7Q/8/8/5PP1/6K1 w - - 0 1', mateIn: 1,
+    pattern: "Damiano's mate", title: "Damiano's mate",
+    lesson: "Same shape, different blocker: the bishop on f8 and the pawn on f7 box the king in. The queen lands on h7, guarded by the g6 pawn.",
+    solutions: ["Qh7#"],
+  },
+  {
+    id: 'm1-damiano-bishop-w', fen: '5rk1/pp3pp1/8/8/4Q3/3B4/5PPP/6K1 w - - 0 1', mateIn: 1,
+    pattern: "Damiano's bishop mate", title: "Damiano's bishop mate",
+    lesson: "The queen steps off the diagonal and the bishop behind her lights it up. Qh7 is guarded, and the rook on f8 blocks the escape.",
+    solutions: ["Qh7#"],
+  },
+  {
+    id: 'm1-lolli-w', fen: 'r5k1/pp3p1p/5PpQ/8/8/8/5PPP/6K1 w - - 0 1', mateIn: 1,
+    pattern: "Lolli's mate", title: "Lolli's mate",
+    lesson: "A white pawn wedged on f6 guards g7. The queen swings in from h6 and the king has nowhere left to stand.",
+    solutions: ["Qg7#"],
+  },
+  {
+    id: 'm1-dovetail-w', fen: '1Q2r3/p3kppp/1p6/8/8/8/5PPP/3R2K1 w - - 0 1', mateIn: 1,
+    pattern: "dovetail mate", title: "Dovetail mate",
+    lesson: "The queen lands diagonally next to the king on d6, guarded by the rook. The king's own rook and pawn fill the two squares she can't reach.",
+    solutions: ["Qd6#"],
+  },
+  {
+    id: 'm1-swallow-w', fen: '5r1b/pp4k1/8/7P/8/3Q4/PP6/2K5 w - - 0 1', mateIn: 1,
+    pattern: "swallow's tail mate", title: "Swallow's tail mate",
+    lesson: "The queen lands straight in front of the king on g6, guarded by the h5 pawn. The rook and bishop behind the king are the forked tail.",
+    solutions: ["Qg6#"],
+  },
+  {
+    id: 'm1-morphy-w', fen: 'r6k/pp5p/8/8/7B/8/PP6/K5R1 w - - 0 1', mateIn: 1,
+    pattern: "Morphy's mate", title: "Morphy's mate",
+    lesson: "The rook owns the g-file and the king's own pawn blocks h7. The bishop only needs to reach the long diagonal.",
+    solutions: ["Bf6#"],
+  },
+  {
+    id: 'm1-anderssen-w', fen: 'r5k1/pp4P1/5K2/8/8/8/8/7R w - - 0 1', mateIn: 1,
+    pattern: "Anderssen's mate", title: "Anderssen's mate",
+    lesson: "The pawn on g7 guards h8, and the king on f6 guards the pawn. The rook drops onto the back rank.",
+    solutions: ["Rh8#"],
+  },
+  {
+    id: 'm1-blind-swine-w', fen: '5rk1/1R5R/p7/2p5/8/8/5PPP/6K1 w - - 0 1', mateIn: 1,
+    pattern: "blind swine mate", title: "Blind swine mate",
+    lesson: "Two rooks on the seventh rank guard each other. The second one arrives on g7 and the king is stuck between them.",
+    solutions: ["Rbg7#"],
+  },
+  {
+    id: 'm1-triangle-w', fen: '4kb1r/pp3ppp/8/3R4/6Q1/8/5PPP/6K1 w - - 0 1', mateIn: 1,
+    pattern: "triangle mate", title: "Triangle mate",
+    lesson: "The queen lands on d7, guarded by the rook two squares behind her. King, queen and rook form a triangle.",
+    solutions: ["Qd7#"],
+  },
+  {
+    id: 'm1-corner-w', fen: 'r6k/pp5p/8/4N3/8/8/PP6/K5R1 w - - 0 1', mateIn: 1,
+    pattern: "corner mate", title: "Corner mate",
+    lesson: "The rook seals the g-file and the king's own pawn blocks h7. A knight jump to f7 finishes it.",
+    solutions: ["Nf7#"],
+  },
 ];
 
 // Side to move is in check. answer: 'mate' when there is no legal defense, 'not' otherwise.

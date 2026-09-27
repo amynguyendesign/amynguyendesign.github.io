@@ -422,3 +422,10 @@ body{font-weight:500;color:var(--ink)}
 
 .board-pill b{display:inline;background:none;border:0;box-shadow:none;padding:0;width:auto;height:auto;border-radius:0;font-size:inherit}
 .move-line+.thinking{margin-top:16px}
+
+/* sources footer (discreet) */
+.sources{margin:44px 0 0;padding-top:18px;border-top:1px solid var(--line);max-width:760px}
+.sources p{margin:0 0 8px;font-family:'Courier New',monospace;font-size:12px;line-height:1.6;color:var(--muted)}
+.sources p span{font-family:var(--font);font-weight:600;color:var(--ink);margin-right:8px;text-transform:lowercase}
+.sources a{color:var(--ink);text-underline-offset:3px}
+.sources i{font-style:italic}
