@@ -405,3 +405,7 @@ body{font-weight:500;color:var(--ink)}
 @keyframes wave{0%,100%{opacity:1}50%{opacity:.35}}
 .sound-toggle.boing{animation:num-bump .5s var(--spring)}
 @media(max-width:660px){.sound-toggle{width:36px;height:36px}.header-tools{gap:8px}}
+
+.piece{width:92%;height:92%}
+.msq .pc{width:94%;height:94%}
+.drag-ghost svg{width:92%;height:92%;margin:4%}
