@@ -375,3 +375,20 @@ body{font-weight:500;color:var(--ink)}
 .pat-origin,.streak-copy small,.deck-count span,.coord{font-weight:500}
 .how-steps strong,.reveal-name,.pat-top h3,.coach h2,h1{color:var(--ink)}
 .chip,.rail-chip,.quiz-opt,.primary,.secondary,.helper-button,.views button{font-weight:600}
+
+/* ===== no tabs: practice is a drill-in from a pattern (Sep 27 2026) ===== */
+.practice-head{display:flex;align-items:center;gap:16px;border-top:1px solid var(--line);padding:18px 0 16px;margin-bottom:10px}
+.practice-head .back{font-size:14px;font-weight:600;padding:9px 15px;border-radius:999px;border:1.5px solid var(--ink);background:var(--white);flex:none;transition:transform .18s var(--spring),box-shadow .2s}
+.practice-head .back:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--lavender)}
+.practice-head .back:active{transform:scale(.94)}
+.practice-head .back span{display:inline-block;transition:transform .2s var(--spring)}.practice-head .back:hover span{transform:translateX(-3px)}
+#practice-title{flex:1;margin:0;font-size:clamp(24px,3vw,32px);letter-spacing:-.04em;line-height:1.1;animation:tile-in .45s var(--spring)}
+.mix-dots{display:inline-flex;gap:4px;margin-left:10px;vertical-align:middle}.mix-dots i{width:9px;height:9px;border-radius:50%;background:var(--blush);animation:think 1s var(--spring) infinite}.mix-dots i:nth-child(2){background:var(--lavender);animation-delay:.15s}.mix-dots i:nth-child(3){background:var(--blue);animation-delay:.3s}
+.practice-head .daily{position:static!important;margin:0!important;flex:none}
+.masthead{margin-bottom:16px}
+@media(max-width:660px){
+ .practice-head{gap:10px;padding:14px 0 12px}
+ .practice-head .back{font-size:13px;padding:8px 12px}
+ #practice-title{font-size:22px}
+ .practice-head .streak-copy{display:none}
+}

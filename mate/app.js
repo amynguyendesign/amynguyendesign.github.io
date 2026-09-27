@@ -77,7 +77,7 @@ function nameQuiz(){return `<p class="quiz-q">Which pattern was that?</p><div cl
 function coachHTML(){
  if(!puzzle)return `<div class="empty"><h2>Nothing here yet.</h2></div>`;
  if(busy)return `<h2>${busyText}</h2><div class="thinking" aria-hidden="true"><i></i><i></i><i></i></div><button class="secondary" data-action="retry">Cancel</button>`;
- const k=fam(puzzle),tag=patternKey?chip(esc(patternByKey[patternKey].name),'good'):chip(hintLevel>=1&&k?esc(patternByKey[k].name):'Mystery pattern',hintLevel>=1?'good':'');
+ const k=fam(puzzle),tag=patternKey?'':chip(hintLevel>=1&&k?esc(patternByKey[k].name):'Mystery pattern',hintLevel>=1?'good':'');
  const m2=puzzle.mateIn===2?chip('Mate in 2'):'';
  if(phase==='done'){
   if(needsName())return `${pony(assisted?'we got there.':cheer)}<h2>Checkmate.</h2>${moveLine()}${nameQuiz()}`;
@@ -98,11 +98,7 @@ function renderHUD(){
  const st=progress.streak,best=progress.best,sfx=prevStreak===null?'':st>prevStreak?'bump':st<prevStreak?'drop':'';prevStreak=st;
  $('#daily').innerHTML=`<div class="streak ${sfx} ${st>=3?'hot':st>0?'warm':''}" role="img" aria-label="${st} clean in a row, best ${best}"><span class="streak-num">${st}</span><span class="streak-copy"><strong>in a row</strong><small>best ${best}</small></span></div>`;
 }
-function renderRail(){
- const chips=[`<button class="rail-chip mix" data-rail="" aria-pressed="${!patternKey}"><span class="rail-dots" aria-hidden="true"><i></i><i></i><i></i></span>Mix</button>`].concat(PATTERNS.map(p=>`<button class="rail-chip" data-rail="${p.key}" aria-pressed="${patternKey===p.key}">${esc(p.name)}</button>`));
- const rail=$('#rail');rail.innerHTML=chips.join('');
- requestAnimationFrame(()=>{const a=rail.querySelector('[aria-pressed="true"]');if(a){const r=rail.getBoundingClientRect(),b=a.getBoundingClientRect();if(b.left<r.left+20||b.right>r.right-20)rail.scrollTo({left:rail.scrollLeft+(b.left-r.left)-r.width/2+b.width/2,behavior:smooth()});}});
-}
+function renderHead(){const t=$('#practice-title');if(!t)return;const P=patternKey&&patternByKey[patternKey];t.innerHTML=P?esc(P.name):'Mix<span class="mix-dots" aria-hidden="true"><i></i><i></i><i></i></span>';}
 function render(){
  renderHUD();
  if(view!=='practice')return;
@@ -209,13 +205,12 @@ function action(name){
  if(name==='cancel-promotion'){pendingPromotion=null;renderPromotion();focusSquare(selected);}
  if(name==='back-proof'){fen=attempt?.fen||stageFen;lastMove=attempt?{from:attempt.from,to:attempt.to,san:attempt.san}:null;defenseShown=false;defenseNote='';render();}
  if(name==='mix')practice(null);
+ if(name==='back'){const k=patternKey;setView('patterns',true);if(k)openCard(k);}
 }
 $('#app').addEventListener('click',e=>{
  const b=e.target.closest('button');if(!b||b.disabled)return;
  if(b.dataset.square){if(performance.now()<suppressUntil)return;chooseSquare(b.dataset.square);}
  else if(b.dataset.action)action(b.dataset.action);
- else if(b.dataset.view){setView(b.dataset.view,true);if(b.dataset.view==='practice'&&!puzzle){deck=collection();load(0,true);}}
- else if(b.dataset.rail!==undefined){const k=b.dataset.rail||null;if(k===patternKey)return;patternKey=k;deck=collection();load(0,true);renderRail();}
  else if(b.dataset.practice!==undefined){practice(b.dataset.practice||null);}
  else if(b.dataset.name){nameIt(b.dataset.name);}
  else if(b.dataset.openPattern){setView('patterns',true);openCard(b.dataset.openPattern);}
@@ -231,7 +226,7 @@ const dialog=$('#how-dialog');$('#how-open').addEventListener('click',()=>dialog
 function setView(v,push){
  view=v;$('#practice-view').hidden=v!=='practice';$('#patterns-view').hidden=v!=='patterns';
  $$('.views button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===v)));
- if(v==='patterns'){buildPatterns();observeDemos(true);}else{observeDemos(false);renderRail();}
+ if(v==='patterns'){buildPatterns();observeDemos(true);}else{observeDemos(false);renderHead();}
  if(push){writeURL();window.scrollTo({top:0,behavior:smooth()});}
  if(v==='practice'&&puzzle)render();
 }

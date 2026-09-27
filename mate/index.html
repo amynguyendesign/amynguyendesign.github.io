@@ -11,9 +11,9 @@
 <header class="site-header"><a href="../?tab=studio" class="studio-link"><span aria-hidden="true">↖</span> amy nguyen / studio</a><button class="text-button" id="how-open">How to play <span aria-hidden="true">↗</span></button></header>
 <main id="app">
 <div class="bg-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-<section class="masthead"><div><h1>mate<span class="comma">,</span> spotted<span class="period">.</span></h1><p class="intro">Learn the shape. Spot it fast.</p><nav class="views" aria-label="Section"><button data-view="patterns" aria-pressed="true">Patterns</button><button data-view="practice" aria-pressed="false">Practice</button></nav></div><div class="daily" id="daily" aria-label="Practice progress"></div></section>
+<section class="masthead"><div><h1>mate<span class="comma">,</span> spotted<span class="period">.</span></h1><p class="intro">Learn the shape. Spot it fast.</p></div></section>
 <div id="practice-view" hidden>
-<div class="rail-wrap"><div id="rail" class="rail" role="group" aria-label="Pattern"></div></div>
+<div class="practice-head"><button class="back" data-action="back"><span aria-hidden="true">←</span> Patterns</button><h2 id="practice-title"></h2><div class="daily" id="daily" aria-label="Streak"></div></div>
 <section class="play-layout">
 <div class="board-column"><div class="board-meta"><span id="turn-label" role="status">Loading…</span><span id="position-label" class="mono"></span></div><div class="board-shell"><div id="board" class="board" role="group" aria-label="Chess board"></div><div class="promotion" id="promotion" hidden></div></div><div id="board-actionbar" class="board-actionbar" hidden></div><div id="square-note" class="square-note" role="status"></div></div>
 <aside id="coach" class="coach" aria-label="Puzzle"></aside>
