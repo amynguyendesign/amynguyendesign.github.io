@@ -1,5 +1,5 @@
 import {Chess, kingBox, inspectCheck, assessMove, matingMoves, winningMoves} from './rules.js';
-import {puzzles, verdicts} from './puzzles.js';
+import {PATTERNS, familyOf, patternByKey, demoFor, countFor, allPuzzles, allVerdicts} from './patterns.js';
 
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -19,7 +19,7 @@ let progress={records:{},days:{}},canSave=true;
 try {const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved&&typeof saved.records==='object'&&saved.records&&typeof saved.days==='object'&&saved.days)progress=saved;}catch(e){canSave=false;}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(progress));}catch(e){canSave=false;}$('#storage-warning').hidden=canSave;}
 function day(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
-let mode='1',filter='all',deck=[],idx=0,puzzle,fen,baseFen,stageFen,orientation='w',attacker='w',remaining=1;
+let view='play',patternKey=null,resurfaced=new Set(),mode='1',filter='all',deck=[],idx=0,puzzle,fen,baseFen,stageFen,orientation='w',attacker='w',remaining=1;
 let selected=null,legalTargets=[],phase='play',boxOn=false,boxInfo=[],squareNote='',hintLevel=0,hintFrom=null,assisted=false,dirty=false,recorded=false;
 let feedback='',lastMove=null,attempt=null,proof=null,proofFen=null,expanded=null,defenseShown=false,pendingPromotion=null,line=[],verdictChoice=null;
 let busy=false,activeWorker=null,workEpoch=0,busyText='';
@@ -31,17 +31,21 @@ function cancelSolver(){workEpoch++;if(activeWorker){activeWorker.terminate();ac
 function compute(action,args){busy=true;busyText=action==='winningMoves'?'Thinking…':'Checking every defense…';render();return new Promise((resolve,reject)=>{const worker=new Worker(new URL('./solver.js',import.meta.url),{type:'module'});activeWorker=worker;worker.onmessage=({data})=>{worker.terminate();if(activeWorker===worker){activeWorker=null;busy=false;}data.error?reject(new Error(data.error)):resolve(data.result);};worker.onerror=()=>{worker.terminate();if(activeWorker===worker){activeWorker=null;busy=false;}reject(new Error('Chess verification unavailable.'));};worker.postMessage({action,args});});}
 const getKey=()=>`${mode}:${puzzle.id}`;
 function entry(){const k=getKey();if(!progress.records[k])progress.records[k]={solves:0,misses:0,assisted:0,clean:0};return progress.records[k];}
-function wrong(){dirty=true;const r=entry();r.misses++;r.last=Date.now();progress.streak=0;fxQueue.push('wrong');save();}
+function wrong(){if(puzzle&&!resurfaced.has(getKey())){resurfaced.add(getKey());deck.splice(Math.min(idx+4,deck.length),0,puzzle);}dirty=true;const r=entry();r.misses++;r.last=Date.now();progress.streak=0;fxQueue.push('wrong');save();}
 function finish(revealed=false){if(recorded)return;recorded=true;const r=entry();r.last=Date.now();if(revealed||assisted){r.assisted++;progress.streak=0;}else r.solves++;if(!revealed&&!assisted&&!dirty){r.clean++;progress.streak++;progress.best=Math.max(progress.best,progress.streak);const d=day();progress.days[d]=Array.isArray(progress.days[d])?progress.days[d]:[];if(!progress.days[d].includes(getKey()))progress.days[d].push(getKey());}save();}
-function collection(){const source=mode==='judge'?verdicts:puzzles.filter(p=>p.mateIn===Number(mode));return source.filter(p=>{const r=progress.records[`${mode}:${p.id}`];return filter==='review'?r&&(r.misses>0||r.assisted>0):filter==='new'?!r: true;});}
-function writeURL(replace=false){const u=new URL(location.href);u.searchParams.set('mode',mode);if(puzzle)u.searchParams.set('puzzle',puzzle.id);else u.searchParams.delete('puzzle');u.searchParams.set('collection',filter);history[replace?'replaceState':'pushState']({},'',u);}
+const baseId=p=>p.id.split('~')[0];
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+ for(let i=1;i<a.length;i++){const near=a.slice(Math.max(0,i-4),i).map(baseId);if(near.includes(baseId(a[i]))){const k=a.findIndex((x,j)=>j>i&&!near.includes(baseId(x)));if(k>0)[a[i],a[k]]=[a[k],a[i]];}}return a;}
+function poolFor(m,key){const judge=m==='judge';let src=judge?allVerdicts:allPuzzles.filter(p=>p.mateIn===Number(m));if(key&&!judge)src=src.filter(p=>familyOf(p.pattern)===key);return src;}
+function collection(){return shuffle(poolFor(mode,patternKey).filter(p=>{const r=progress.records[`${mode}:${p.id}`];return filter==='review'?r&&(r.misses>0||r.assisted>0):filter==='new'?!r: true;}));}
+function writeURL(replace=false){const u=new URL(location.href);if(view==='patterns')u.searchParams.set('view','patterns');else u.searchParams.delete('view');if(patternKey&&mode!=='judge')u.searchParams.set('pattern',patternKey);else u.searchParams.delete('pattern');u.searchParams.set('mode',mode);if(puzzle)u.searchParams.set('puzzle',puzzle.id);else u.searchParams.delete('puzzle');u.searchParams.set('collection',filter);history[replace?'replaceState':'pushState']({},'',u);}
 function load(index=0,nav=false){
  cancelSolver();
  idx=Math.max(0,Math.min(index,deck.length-1));puzzle=deck[idx];selected=null;legalTargets=[];phase='play';boxOn=false;squareNote='';hintLevel=0;hintFrom=null;assisted=false;dirty=false;recorded=false;feedback='';lastMove=null;attempt=null;proof=null;proofFen=null;expanded=null;defenseShown=false;pendingPromotion=null;line=[];verdictChoice=null;cheer=CHEERS[Math.floor(Math.random()*CHEERS.length)];
  if(puzzle){fen=puzzle.fen;baseFen=fen;stageFen=fen;const c=new Chess(fen);attacker=mode==='judge'?other(c.turn()):c.turn();orientation=attacker;remaining=puzzle.mateIn||1;}
  if(nav)writeURL();render();
 }
-function restoreURL(){const q=new URL(location.href).searchParams;mode=['1','2','judge'].includes(q.get('mode'))?q.get('mode'):'1';filter=['all','review','new'].includes(q.get('collection'))?q.get('collection'):'all';deck=collection();load(Math.max(0,deck.findIndex(p=>p.id===q.get('puzzle'))));}
+function restoreURL(){const q=new URL(location.href).searchParams;mode=['1','2','judge'].includes(q.get('mode'))?q.get('mode'):'1';patternKey=patternByKey[q.get('pattern')]?q.get('pattern'):null;setView(q.get('view')==='patterns'?'patterns':'play',false);filter=['all','review','new'].includes(q.get('collection'))?q.get('collection'):'all';deck=collection();load(Math.max(0,deck.findIndex(p=>p.id===q.get('puzzle'))));}
 function resetStage(){cancelSolver();if(hintLevel>=2&&!hintFrom)hintLevel=1;fen=stageFen;phase='play';selected=null;legalTargets=[];lastMove=line.length?line[line.length-1]:null;attempt=null;proof=null;proofFen=null;expanded=null;defenseShown=false;feedback='';squareNote='';pendingPromotion=null;render();}
 function boardSquares(){const a=[];for(let r=0;r<8;r++)for(let f=0;f<8;f++)a.push(String.fromCharCode(97+(orientation==='w'?f:7-f))+(orientation==='w'?8-r:r+1));return a;}
 function renderBoard(){
@@ -69,7 +73,7 @@ function checklist(){
  if(expanded){const r=proof?.[expanded]||[];detail=`<div class="tile-detail"><p>${TILE[expanded].tip}</p>${live?(r.length?`<div class="response-chips">${r.map((m,n)=>`<button data-reply="${expanded}:${n}" aria-label="Play defense ${esc(m.san)}">${esc(m.san)} ↗</button>`).join('')}</div>`:'<p class="none">Nothing works. ✓</p>'):'<p class="none">Make a check to test it.</p>'}</div>`;}
  return `<div class="tiles" role="group" aria-label="Escape, capture, block">${tiles}</div>${detail}`;
 }
-function lesson(){return `<div class="lesson"><span class="chip">${esc(puzzle.pattern||'the pattern')}</span><p>${esc(puzzle.lesson)}</p></div>`;}
+function lesson(){const fk=familyOf(puzzle.pattern);return `<div class="lesson">${fk?`<button class="chip link" data-open-pattern="${fk}">${esc(patternByKey[fk].name)} ↗</button>`:`<span class="chip">${esc(puzzle.pattern||'the pattern')}</span>`}<p>${esc(puzzle.lesson)}</p></div>`;}
 function pony(text){return `<div class="pony-cheer" aria-hidden="true"><img src="../src/assets/opt/pony-idle.png" alt="" width="64" height="64"><span class="bubble">${esc(text)}</span></div>`;}
 function moveLine(){return line.length?`<p class="move-line">${line.map(m=>`<span>${esc(m.san)}</span>`).join('')}</p>`:'';}
 const chip=(t,k='')=>`<span class="chip ${k}">${t}</span>`;
@@ -98,7 +102,11 @@ function render(){
  const n=(Array.isArray(progress.days[day()])?progress.days[day()]:[]).length,st=progress.streak,best=progress.best;
  const popDot=prevDots!==null&&n>prevDots?n-1:-1,sfx=prevStreak===null?'':st>prevStreak?'bump':st<prevStreak?'drop':'';prevDots=n;prevStreak=st;
  $('#daily').innerHTML=`<div class="streak ${sfx} ${st>=3?'hot':st>0?'warm':''}" role="img" aria-label="${st} clean in a row, best ${best}"><span class="streak-num">${st}</span><span class="streak-copy"><strong>in a row</strong><small>best ${best}</small></span></div><div class="today"><div class="dots" aria-hidden="true">${Array.from({length:5},(_,i)=>`<span class="dot ${i<n?'on':''} ${i===popDot?'pop':''}"></span>`).join('')}</div><strong>${n}/5 today</strong></div>`;
- $('#deck-strip').innerHTML=deck.map((p,i)=>{const r=progress.records[`${mode}:${p.id}`];const st=!r?'':r.clean?'clean':r.misses?'miss':'done';return `<button class="pip ${st} ${i===idx?'current':''}" data-jump="${i}" aria-label="Position ${i+1}${st?', '+st:''}"${i===idx?' aria-current="true"':''}></button>`;}).join('');$('#previous').disabled=deck.length<2;$('#skip').disabled=deck.length<2;$('#box-toggle').disabled=!puzzle;$('#flip').disabled=!puzzle;
+ const w0=Math.max(0,Math.min(idx-4,deck.length-10)),w1=Math.min(deck.length,w0+10);
+ $('#deck-strip').innerHTML=deck.slice(w0,w1).map((p,j)=>{const i=w0+j;const r=progress.records[`${mode}:${p.id}`];const st=!r?'':r.clean?'clean':r.misses?'miss':'done';return `<button class="pip ${st} ${i===idx?'current':''}" data-jump="${i}" aria-label="Position ${i+1}${st?', '+st:''}"${i===idx?' aria-current="true"':''}></button>`;}).join('')+`<span class="deck-count mono">${deck.length?idx+1:0}<span>/${deck.length}</span></span>`;
+ $('#pattern-chip').innerHTML=patternKey&&mode!=='judge'?`<button class="pattern-pill" data-action="clear-pattern" aria-label="Stop practising ${esc(patternByKey[patternKey].name)}">${esc(patternByKey[patternKey].name)} <span aria-hidden="true">×</span></button>`:'';
+ $$('.modes button').forEach(b=>{b.disabled=!!patternKey&&b.dataset.mode!=='judge'&&!poolFor(b.dataset.mode,patternKey).length;});
+ $('#previous').disabled=deck.length<2;$('#skip').disabled=deck.length<2;$('#box-toggle').disabled=!puzzle;$('#flip').disabled=!puzzle;
  renderBoard();$('#coach').innerHTML=coachHTML();$('#storage-warning').hidden=canSave;
  const key=`${mode}|${puzzle?.id}|${phase}|${remaining}|${busy}`;if(key!==lastCoachKey){lastCoachKey=key;enterCoach();}
  positionPill();flushFx();
@@ -204,7 +212,7 @@ function playDefense(key,index){
  const c=new Chess(proofFen);const played=c.move({from:m.from,to:m.to,...(m.promotion?{promotion:m.promotion}:{})});
  if(!played)return;fen=c.fen();lastMove=m;defenseShown=true;squareNote=`${m.san} gets out.`;render();animateMove(m);if(matchMedia('(max-width:660px)').matches)document.querySelector('.board-meta').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});
 }
-function next(delta=1){if(deck.length){load((idx+delta+deck.length)%deck.length,true);if(matchMedia('(max-width:660px)').matches)document.querySelector('.board-meta').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});}}
+function next(delta=1){if(deck.length){let i=idx+delta;if(i>=deck.length){const cur=puzzle;deck=collection();if(deck.length>1&&cur&&baseId(deck[0])===baseId(cur))deck.push(deck.shift());i=0;}if(i<0)i=deck.length-1;load(i,true);if(matchMedia('(max-width:660px)').matches)document.querySelector('.board-meta').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});}}
 function action(name){
  if(name==='see-proof')$('#coach').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});
  if(name==='next')next();
@@ -216,6 +224,7 @@ function action(name){
  if(name==='cancel-promotion'){pendingPromotion=null;renderPromotion();focusSquare(selected);}
  if(name==='back-proof'){fen=proofFen;lastMove=attempt?{from:attempt.from,to:attempt.to,san:attempt.san}:null;defenseShown=false;squareNote='';render();}
  if(name==='all'){filter='all';deck=collection();load(0,true);}
+ if(name==='clear-pattern'){patternKey=null;deck=collection();load(0,true);}
 }
 $('#app').addEventListener('click',e=>{
  const b=e.target.closest('button');if(!b||b.disabled)return;
@@ -224,6 +233,10 @@ $('#app').addEventListener('click',e=>{
  else if(b.dataset.action)action(b.dataset.action);
  else if(b.dataset.verdict)judge(b.dataset.verdict);
  else if(b.dataset.proof){expanded=expanded===b.dataset.proof?null:b.dataset.proof;$('#coach').innerHTML=coachHTML();$(`[data-proof="${b.dataset.proof}"]`)?.focus({preventScroll:true});}
+ else if(b.dataset.view){setView(b.dataset.view,true);}
+ else if(b.dataset.practice){practice(b.dataset.practice);}
+ else if(b.dataset.openPattern){setView('patterns',true);openCard(b.dataset.openPattern);}
+ else if(b.dataset.demoReplay){startDemo(b.closest('.mini'),true);}
  else if(b.dataset.jump!==undefined){load(Number(b.dataset.jump),true);}
  else if(b.dataset.reply){const [key,n]=b.dataset.reply.split(':');playDefense(key,Number(n));}
  else if(b.dataset.promote&&pendingPromotion){const move={...pendingPromotion,promotion:b.dataset.promote};pendingPromotion=null;playMove(move);}
@@ -235,6 +248,55 @@ $('#filter').addEventListener('change',e=>{filter=e.target.value;deck=collection
 $('#board').addEventListener('keydown',e=>{const sq=e.target.closest('[data-square]')?.dataset.square;if(!sq)return;if(e.key==='Escape'){selected=null;legalTargets=[];render();focusSquare(sq);return;}const directions={ArrowUp:-8,ArrowDown:8,ArrowLeft:-1,ArrowRight:1};if(!(e.key in directions))return;e.preventDefault();const squares=boardSquares(),n=squares.indexOf(sq),offset=directions[e.key];if(offset===-1&&n%8===0||offset===1&&n%8===7)return;const target=squares[n+offset];if(target)focusSquare(target);});
 $('#promotion').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();action('cancel-promotion');}});
 const dialog=$('#how-dialog');$('#how-open').addEventListener('click',()=>dialog.showModal());$('#how-close').addEventListener('click',()=>dialog.close());$('#how-start').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
+// ---------- patterns view (worksheets) ----------
+function setView(v,push){
+ view=v;$('#play-view').hidden=v!=='play';$('#patterns-view').hidden=v!=='patterns';
+ $$('.views button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===v)));
+ if(v==='patterns'){buildPatterns();observeDemos(true);}else observeDemos(false);
+ if(push){writeURL();window.scrollTo({top:0,behavior:RM()?'instant':'smooth'});}
+ if(v==='play')requestAnimationFrame(positionPill);
+}
+function practice(key){
+ patternKey=key;filter='all';if(mode==='judge'||!poolFor(mode,key).length)mode=poolFor('1',key).length?'1':'2';
+ deck=collection();setView('play',false);load(0,true);window.scrollTo({top:0,behavior:RM()?'instant':'smooth'});
+}
+function openCard(key){requestAnimationFrame(()=>{const c=$(`#pat-${key}`);if(!c)return;c.scrollIntoView({block:'center',behavior:RM()?'instant':'smooth'});c.classList.remove('flash');void c.offsetWidth;c.classList.add('flash');});}
+function miniHTML(fen,orient,marks={}){
+ const c=new Chess(fen);let out='';
+ for(let r=0;r<8;r++)for(let f=0;f<8;f++){const sq=String.fromCharCode(97+(orient==='w'?f:7-f))+(orient==='w'?8-r:r+1);const p=c.get(sq);const dark=(sq.charCodeAt(0)-97+Number(sq[1]))%2===1;
+  out+=`<div class="msq ${dark?'dark':''} ${marks[sq]||''}" data-sq="${sq}">${p?`<span class="pc">${pieceSvg(p)}</span>`:''}</div>`;}
+ return out;
+}
+let patternsBuilt=false;
+function buildPatterns(){
+ if(patternsBuilt)return;patternsBuilt=true;
+ $('#patterns-view').innerHTML=`<div class="pat-head"><h2>15 ways to checkmate<span>.</span></h2></div><div class="pat-grid">${PATTERNS.map((p,i)=>`<article class="pat-card" id="pat-${p.key}" style="--i:${i}"><div class="pat-top"><span class="pat-num mono">${String(i+1).padStart(2,'0')}</span><h3>${esc(p.name)}</h3></div><div class="mini" data-demo="${p.key}" role="img" aria-label="${esc(p.name)} example"><div class="mini-board"></div><button class="mini-replay" data-demo-replay="1" aria-label="Replay ${esc(p.name)}">↻</button></div><p class="pat-line">${esc(p.line)}</p><div class="pat-foot"><div class="pat-pieces" aria-hidden="true">${p.pieces.map(t=>`<span>${pieceSvg({type:t,color:'w'})}</span>`).join('')}</div><button class="primary pat-go" data-practice="${p.key}">Practice <span class="count">${countFor(p.key)*4}</span></button></div><p class="pat-origin">${esc(p.origin)}</p></article>`).join('')}</div>`;
+ $$('.mini').forEach(el=>{const p=demoFor(el.dataset.demo);el.querySelector('.mini-board').innerHTML=miniHTML(p.fen,new Chess(p.fen).turn());});
+}
+let demoObs=null;
+function observeDemos(on){
+ if(!on){demoObs?.disconnect();$$('.mini').forEach(stopDemo);return;}
+ if(!demoObs)demoObs=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting?startDemo(e.target):stopDemo(e.target)),{threshold:.45});
+ $$('.mini').forEach(el=>demoObs.observe(el));
+}
+function stopDemo(el){(el._t||[]).forEach(clearTimeout);el._t=[];el._on=false;}
+function startDemo(el,force){
+ if(!el||(el._on&&!force))return;stopDemo(el);el._on=true;
+ const p=demoFor(el.dataset.demo),c=new Chess(p.fen),o=c.turn(),mv=c.move(p.solutions[0]),after=c.fen(),ac=new Chess(after);
+ const target=ac.board().flat().find(x=>x&&x.type==='k'&&x.color===ac.turn())?.square;
+ const b=el.querySelector('.mini-board'),T=(fn,ms)=>el._t.push(setTimeout(fn,ms));
+ if(RM()){b.innerHTML=miniHTML(after,o,{[mv.from]:'from',[mv.to]:'to',[target]:'mk mated'});return;}
+ const cycle=()=>{
+  b.innerHTML=miniHTML(p.fen,o);
+  T(()=>{b.querySelector(`[data-sq="${mv.from}"]`)?.classList.add('lift');b.querySelector(`[data-sq="${mv.to}"]`)?.classList.add('aim');},700);
+  T(()=>{const f=b.querySelector(`[data-sq="${mv.from}"]`),t=b.querySelector(`[data-sq="${mv.to}"]`),pc=f?.querySelector('.pc');if(!pc||!t)return;const a=f.getBoundingClientRect(),z=t.getBoundingClientRect();pc.animate([{transform:'translate(0,0) scale(1.12)'},{transform:`translate(${(z.x-a.x)*.5}px,${(z.y-a.y)*.5-z.height*.5}px) scale(1.2)`,offset:.5},{transform:`translate(${z.x-a.x}px,${z.y-a.y}px) scale(1)`}],{duration:520,easing:'cubic-bezier(.3,.7,.4,1)',fill:'forwards'});},1300);
+  T(()=>{b.innerHTML=miniHTML(after,o,{[mv.from]:'from',[mv.to]:'to land',[target]:'mk'});},1840);
+  T(()=>{b.innerHTML=miniHTML(after,o,{[mv.from]:'from',[mv.to]:'to',[target]:'mk mated'});},2200);
+  T(cycle,4800);
+ };
+ cycle();
+}
+
 // ---------- drag and drop (tap-tap still works) ----------
 $('#board').addEventListener('pointerdown',e=>{
  if(e.pointerType==='mouse'&&e.button!==0)return;
@@ -268,4 +330,4 @@ document.addEventListener('pointerup',e=>endDrag(e,false));document.addEventList
 (()=>{const h=$('h1');if(!h)return;let i=0;const walk=n=>[...n.childNodes].forEach(c=>{if(c.nodeType===3){const f=document.createDocumentFragment();[...c.textContent].forEach(ch=>{const s=document.createElement('span');s.className='ch';s.style.setProperty('--i',i++);s.textContent=ch;if(ch===' ')s.innerHTML='&nbsp;';f.appendChild(s);});c.replaceWith(f);}else walk(c);});h.setAttribute('aria-label',h.textContent);walk(h);[...h.querySelectorAll('.ch')].forEach(s=>s.setAttribute('aria-hidden','true'));h.addEventListener('pointerover',e=>{const c=e.target.closest('.ch');if(!c||RM())return;c.classList.remove('hop');void c.offsetWidth;c.classList.add('hop');});})();
 window.addEventListener('popstate',restoreURL);
 window.addEventListener('storage',e=>{if(e.key===KEY&&e.newValue){try{const p=JSON.parse(e.newValue);if(p.records&&p.days){progress=p;render();}}catch(err){}}});
-restoreURL();writeURL(true);
+restoreURL();writeURL(true);positionPill();
