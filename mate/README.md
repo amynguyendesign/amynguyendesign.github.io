@@ -1,4 +1,4 @@
-# Mate, spotted.
+# Checkmate, spotted.
 
 A standalone chess training game for Amy Nguyen Studio. First version, awaiting user review. Nothing published.
 
