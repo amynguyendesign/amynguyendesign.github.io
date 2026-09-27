@@ -28,7 +28,7 @@ const CHEERS=['checkmate!','no way out.','that’s the one.','gg, king.','clean.
 let lastCoachKey='',enterTimer=0,prevDots=null,prevStreak=null,dropMove=null,suppressUntil=0,drag=null,fxQueue=[],cheer=CHEERS[0];
 progress.streak=Number(progress.streak)||0;progress.best=Number(progress.best)||0;
 function cancelSolver(){workEpoch++;if(activeWorker){activeWorker.terminate();activeWorker=null;}busy=false;}
-function compute(action,args){busy=true;busyText=action==='winningMoves'?'Finding a forcing move…':'Checking every defense…';render();return new Promise((resolve,reject)=>{const worker=new Worker(new URL('./solver.js',import.meta.url),{type:'module'});activeWorker=worker;worker.onmessage=({data})=>{worker.terminate();if(activeWorker===worker){activeWorker=null;busy=false;}data.error?reject(new Error(data.error)):resolve(data.result);};worker.onerror=()=>{worker.terminate();if(activeWorker===worker){activeWorker=null;busy=false;}reject(new Error('Chess verification unavailable.'));};worker.postMessage({action,args});});}
+function compute(action,args){busy=true;busyText=action==='winningMoves'?'Thinking…':'Checking every defense…';render();return new Promise((resolve,reject)=>{const worker=new Worker(new URL('./solver.js',import.meta.url),{type:'module'});activeWorker=worker;worker.onmessage=({data})=>{worker.terminate();if(activeWorker===worker){activeWorker=null;busy=false;}data.error?reject(new Error(data.error)):resolve(data.result);};worker.onerror=()=>{worker.terminate();if(activeWorker===worker){activeWorker=null;busy=false;}reject(new Error('Chess verification unavailable.'));};worker.postMessage({action,args});});}
 const getKey=()=>`${mode}:${puzzle.id}`;
 function entry(){const k=getKey();if(!progress.records[k])progress.records[k]={solves:0,misses:0,assisted:0,clean:0};return progress.records[k];}
 function wrong(){dirty=true;const r=entry();r.misses++;r.last=Date.now();progress.streak=0;fxQueue.push('wrong');save();}
@@ -53,47 +53,52 @@ function renderBoard(){
  const canMove=mode!=='judge'&&phase==='play'&&!busy&&!pendingPromotion&&c.turn()===attacker;
  const selXY=selected?[selected.charCodeAt(0),Number(selected[1])]:null;
  $('#board').innerHTML=boardSquares().map((sq,i)=>{const p=c.get(sq),mark=boxOn?boxInfo.find(x=>x.square===sq):null;const dark=(sq.charCodeAt(0)-97+Number(sq[1]))%2===1;const move=lastMove&&(lastMove.from===sq||lastMove.to===sq);const classes=['square',dark?'dark':'',selected===sq?'selected':'',move?'last':'',hintFrom===sq?'hint-piece':'',canMove&&p&&p.color===attacker?'movable':'',checkedKing===sq?'in-check':'',sq===king?'target-king':'',mated&&sq===king?'mated':'',!mated&&phase==='play'&&sq===king&&checkedKing!==sq?'nervous':'',drag?.started&&drag.sq===sq?'drag-src':''].filter(Boolean).join(' ');const dd=selXY?Math.max(Math.abs(sq.charCodeAt(0)-selXY[0]),Math.abs(Number(sq[1])-selXY[1])):0;return `<button class="${classes}" data-square="${sq}" tabindex="${i===0?0:-1}" aria-label="${sq}${p?', '+colorName(p.color)+' '+names[p.type]:', empty'}${mark?', '+mark.status:''}" ${selected===sq?'aria-pressed="true"':''}>${i%8===0?`<span class="coord rank">${sq[1]}</span>`:''}${i>=56?`<span class="coord file">${sq[0]}</span>`:''}${mark?`<span class="box-mark ${mark.status}"><span class="box-symbol">${mark.status==='covered'?'•':mark.status==='blocked'?'×':'○'}</span></span>`:''}${boxOn&&king===sq?'<span class="king-target"></span>':''}${p?`<span class="piece">${pieceSvg(p)}</span>`:''}${targets.has(sq)?`<span class="move-dot ${p?'capture':''}" style="--d:${dd*45}ms"></span>`:''}</button>`;}).join('');
- $('#board-actionbar').hidden=busy||(!defenseShown&&!['done','wrong','line'].includes(phase)&&!(mode==='judge'&&phase==='play'));$('#board-actionbar').innerHTML=defenseShown?'<button class="secondary" data-action="back-proof">Back to the check ↶</button>':mode==='judge'&&phase==='play'?'<button class="primary" data-verdict="mate">It’s checkmate</button><button class="secondary" data-verdict="not">Not mate</button>':phase==='line'?'<button class="primary" data-action="defend">Play the defense →</button>':'<button class="secondary" data-action="see-proof">'+(phase==='done'?'Checkmate. See why ↓':'Not mate. See why ↓')+'</button>';
- $('#turn-label').innerHTML=`<span class="turn-dot ${c.turn()==='b'?'black':''}"></span>${phase==='done'?'Checkmate':mode==='judge'&&phase==='judged'?(proof.mate?'Checkmate':'Check, not mate'):mode==='judge'?'Inspect the checked king':colorName(c.turn())+' to move'}`;
+ $('#board-actionbar').hidden=busy||(!defenseShown&&!['done','wrong','line'].includes(phase)&&!(mode==='judge'&&phase==='play'));$('#board-actionbar').innerHTML=defenseShown?'<button class="secondary" data-action="back-proof">Back ↶</button>':mode==='judge'&&phase==='play'?'<button class="primary" data-verdict="mate">Checkmate</button><button class="secondary" data-verdict="not">Not mate</button>':phase==='line'?'<button class="primary" data-action="defend">Their move →</button>':'<button class="secondary" data-action="see-proof">'+'See why ↓'+'</button>';
+ $('#turn-label').innerHTML=`<span class="turn-dot ${c.turn()==='b'?'black':''}"></span>${phase==='done'?'Checkmate':mode==='judge'&&phase==='judged'?(proof.mate?'Checkmate':'Check, not mate'):mode==='judge'?'Mate or not?':colorName(c.turn())+' to move'}`;
  $('#position-label').textContent=`${String(idx+1).padStart(2,'0')} / ${String(deck.length).padStart(2,'0')}`;
  $('#box-toggle').setAttribute('aria-pressed',String(boxOn));$('#box-legend').hidden=!boxOn;
- $('#square-note').textContent=squareNote||(boxOn?'Tap a marked square to see what closes it off.':'Tap a piece, then its destination.');
- if(mode==='judge'&&!boxOn&&!squareNote)$('#square-note').textContent='No moves needed. Is this check already checkmate?';
+ $('#square-note').textContent=squareNote||(boxOn?'Tap a marked square.':'');
  renderPromotion();
 }
 function renderPromotion(){const el=$('#promotion');el.hidden=!pendingPromotion;if(!pendingPromotion)return;el.innerHTML=`<strong>Promote your pawn</strong><div class="options">${['q','r','b','n'].map(t=>`<button data-promote="${t}" aria-label="Promote to ${names[t]}">${pieceSvg({type:t,color:attacker})}</button>`).join('')}</div><button class="text-button" data-action="cancel-promotion">Cancel</button>`;}
-const explanation={escape:'Can the king make a legal move, including capturing the checking piece?',capture:'Can a piece other than the king legally capture the checker?',block:'Can a defender legally move between the checking piece and the king?'};
-function checklist(){return `<div class="checklist">${['escape','capture','block'].map((key,i)=>{const replies=proof?.[key]||[];const available=!!proof&&proof.check;const open=expanded===key;return `<div class="check-row ${available?(replies.length?'yes':'no'):''}"><button data-proof="${key}" aria-expanded="${open}"><span class="row-label"><span class="step-num">0${i+1}</span>${key[0].toUpperCase()+key.slice(1)}</span><span class="row-state">${available?(replies.length?`${replies.length} legal ${replies.length===1?'reply':'replies'} ↗`:'None ✓'):'Check this'} ${open?'−':'+'}</span></button>${open?`<div class="row-detail"><p>${explanation[key]}</p>${available?(replies.length?`<div class="response-chips">${replies.map((m,n)=>`<button data-reply="${key}:${n}" aria-label="Play defense ${esc(m.san)}">${esc(m.san)} ↗</button>`).join('')}</div>`:'No legal reply of this kind.'): 'Try a checking move to test it.'}</div>`:''}</div>`;}).join('')}</div>${proof?.check?'<p class="proof-caption">Every legal reply is checked. King captures are included under Escape.</p>':''}`;}
+const TILE={escape:{label:'Escape',icon:'<path d="M3 10h10.5M9.5 5.5 14 10l-4.5 4.5"/><path d="M17 4v12"/>',tip:'The king steps away, or takes the checker.'},capture:{label:'Capture',icon:'<path d="M5 5l10 10M15 5 5 15"/>',tip:'Another piece takes the checker.'},block:{label:'Block',icon:'<path d="M2.5 10H8"/><rect x="10" y="3" width="4" height="14" rx="1.2"/>',tip:'A piece steps in between.'}};
+function checklist(){
+ const live=!!proof&&proof.check;
+ const tiles=['escape','capture','block'].map((k,i)=>{const r=proof?.[k]||[];const st=live?(r.length?'yes':'no'):'idle';const aria=`${TILE[k].label}: ${st==='idle'?'not tested yet':st==='no'?'no legal reply':r.length+' legal '+(r.length===1?'reply':'replies')}`;return `<button class="tile ${st} ${expanded===k?'open':''}" data-proof="${k}" aria-expanded="${expanded===k}" aria-label="${aria}" style="--i:${i}"><svg viewBox="0 0 20 20" aria-hidden="true">${TILE[k].icon}</svg><span class="tile-label">${TILE[k].label}</span><span class="tile-state" aria-hidden="true">${st==='idle'?'?':st==='no'?'✓':r.length}</span></button>`;}).join('');
+ let detail='';
+ if(expanded){const r=proof?.[expanded]||[];detail=`<div class="tile-detail"><p>${TILE[expanded].tip}</p>${live?(r.length?`<div class="response-chips">${r.map((m,n)=>`<button data-reply="${expanded}:${n}" aria-label="Play defense ${esc(m.san)}">${esc(m.san)} ↗</button>`).join('')}</div>`:'<p class="none">Nothing works. ✓</p>'):'<p class="none">Make a check to test it.</p>'}</div>`;}
+ return `<div class="tiles" role="group" aria-label="Escape, capture, block">${tiles}</div>${detail}`;
+}
+function lesson(){return `<div class="lesson"><span class="chip">${esc(puzzle.pattern||'the pattern')}</span><p>${esc(puzzle.lesson)}</p></div>`;}
 function pony(text){return `<div class="pony-cheer" aria-hidden="true"><img src="../src/assets/opt/pony-idle.png" alt="" width="64" height="64"><span class="bubble">${esc(text)}</span></div>`;}
-function lesson(){return `<div class="lesson"><h3>${esc(puzzle.pattern||'What to notice')}</h3><p>${esc(puzzle.lesson)}</p></div>`;}
-function moveLine(){return line.length?`<p class="mono">${line.map(m=>esc(m.san)).join(' · ')}</p>`:'';}
+function moveLine(){return line.length?`<p class="move-line">${line.map(m=>`<span>${esc(m.san)}</span>`).join('')}</p>`:'';}
+const chip=(t,k='')=>`<span class="chip ${k}">${t}</span>`;
 function coachHTML(){
- if(!puzzle)return `<div class="empty"><h2>${filter==='review'?'Nothing to revisit.':'All caught up.'}</h2><p>${filter==='review'?'Missed and assisted positions will collect here.':'There are no untried positions in this set.'}</p><button class="primary" data-action="all">Show all positions →</button></div>`;
- if(busy)return `<p class="eyebrow">The full legal-move test</p><h2>${busyText}</h2><p>Checking all legal replies, including captures and blocks. The board will be ready in a moment.</p><button class="secondary" data-action="retry">Cancel</button>`;
- if(mode==='judge'&&phase==='play')return `<p class="eyebrow">The verification drill</p><h2>Mate. Or just check?</h2><p>${colorName(new Chess(fen).turn())} is in check. Before you decide, look for <strong>escape, capture, and block</strong>.</p><div class="actions"><button class="primary" data-verdict="mate">It’s checkmate</button><button class="secondary" data-verdict="not">Not mate</button></div><button class="helper-button" data-action="hint">${boxOn?'Inspect an escape square':'Show the king’s box'}</button>${checklist()}`;
+ if(!puzzle)return `<div class="empty"><h2>${filter==='review'?'Nothing to revisit.':'All caught up.'}</h2><button class="primary" data-action="all">Show all positions →</button></div>`;
+ if(busy)return `<h2>${busyText}</h2><div class="thinking" aria-hidden="true"><i></i><i></i><i></i></div><button class="secondary" data-action="retry">Cancel</button>`;
+ if(mode==='judge'&&phase==='play')return `<h2>Mate, or<br>just check?</h2><div class="actions"><button class="primary" data-verdict="mate">Checkmate</button><button class="secondary" data-verdict="not">Not mate</button></div>${checklist()}<button class="helper-button" data-action="hint">${boxOn?'Inspect an escape square':'Show the king’s box'}</button>`;
  if(mode==='judge'){
- const yes=verdictChoice===puzzle.answer;
- return `${yes?pony(proof.mate?'good eye.':'yep. still breathing.'):''}<p class="eyebrow">${yes?'Good eye':'The detail to catch'}</p><h2>${proof.mate?'Nowhere to go.':'There’s still a way out.'}</h2><p>${yes?'You spotted it. ': 'Not quite. '}${proof.mate?'The king is in check and every legal defense is ruled out.':'A check is only mate when every defense fails. Open a row below and play a legal reply.'}</p>${defenseShown?'<div class="feedback">Defense played on the board. <button class="helper-button" data-action="back-proof">Back to the check</button></div>':''}${checklist()}${lesson()}<div class="actions"><button class="primary" data-action="next">Next position →</button></div>`;
+  const yes=verdictChoice===puzzle.answer;
+  return `${yes?pony(proof.mate?'good eye.':'yep. still breathing.'):''}${chip(yes?'Good eye':'Not quite',yes?'good':'miss')}<h2>${proof.mate?'Nowhere to go.':'There’s a way out.'}</h2>${defenseShown?'<div class="feedback">Defense on the board. <button class="helper-button" data-action="back-proof">Back ↶</button></div>':''}${checklist()}${lesson()}<div class="actions"><button class="primary" data-action="next">Next →</button></div>`;
  }
- if(phase==='done')return `${pony(assisted?'we got there.':cheer)}<p class="eyebrow">${assisted?'Pattern revealed':dirty?'Found it':'Clean solve'}</p><h2>That’s checkmate.</h2>${moveLine()}<p>${assisted?'Trace what each piece controls. Then try it again without the hint.':'Not just a check. No escape, no capture, no block.'}</p>${checklist()}${lesson()}<div class="actions"><button class="primary" data-action="next">Next position →</button><button class="secondary" data-action="restart">Try again</button></div>`;
- if(phase==='line')return `<p class="eyebrow">First move found</p><h2>One more move.</h2>${moveLine()}<p>That move forces mate against every legal defense. Let’s play one of them. Can you finish the pattern?</p><div class="actions"><button class="primary" data-action="defend">Play the defense →</button></div>${checklist()}`;
+ if(phase==='done')return `${pony(assisted?'we got there.':cheer)}${chip(assisted?'With a hint':dirty?'Found it':'Clean solve',assisted?'':'good')}<h2>Checkmate.</h2>${moveLine()}${checklist()}${lesson()}<div class="actions"><button class="primary" data-action="next">Next →</button><button class="secondary" data-action="restart">Again ↻</button></div>`;
+ if(phase==='line')return `${chip('First move ✓','good')}<h2>One more.</h2>${moveLine()}<div class="actions"><button class="primary" data-action="defend">Their move →</button></div>`;
  if(phase==='wrong'){
- const isCheck=proof?.check;
- const title=proof?.stalemate?'No moves. But no check.':isCheck?'Check isn’t always mate.':'The net isn’t closed.';
- const body=proof?.stalemate?'That is stalemate: a draw, not checkmate. The king must actually be in check.':isCheck?(remaining===2?'This check doesn’t force mate within two moves against every defense. The rows below show legal replies to the check.':'There’s a legal defense. Use the three-part test to see what you missed.'):remaining===2?'That move doesn’t force mate within two moves against every defense. Try another way to close the net.':'That move doesn’t check the king. Checkmate has to start with check.';
- return `<p class="eyebrow">${esc(attempt?.san||'Try again')}</p><h2>${title}</h2><p>${body}</p>${defenseShown?'<div class="feedback">Defense played. <button class="helper-button" data-action="back-proof">Back to the check</button></div>':''}${remaining===2&&attempt?.defenses?.length?`<div class="hint-panel"><strong>${esc(attempt.defenses[0].san)}</strong> avoids mate on your next move.<br><button class="helper-button" data-action="refute">Play that defense ↗</button></div>`:''}${isCheck?checklist():''}<div class="actions"><button class="primary" data-action="retry">Try another move ↶</button></div>`;
+  const isCheck=proof?.check;
+  const title=proof?.stalemate?'Stalemate.':isCheck?'Check, not mate.':'The net’s open.';
+  const body=proof?.stalemate?'No check means a draw.':isCheck?(remaining===2?'They wriggle out.':'Tap a tile to see the way out.'):remaining===2?'They slip away.':'Mate starts with check.';
+  return `${chip(esc(attempt?.san||'Hmm'),'miss')}<h2>${title}</h2><p class="short">${body}</p>${defenseShown?'<div class="feedback">Defense on the board. <button class="helper-button" data-action="back-proof">Back ↶</button></div>':''}${remaining===2&&attempt?.defenses?.length?`<div class="hint-panel"><strong>${esc(attempt.defenses[0].san)}</strong> gets away. <button class="helper-button" data-action="refute">Show me ↗</button></div>`:''}${isCheck?checklist():''}<div class="actions"><button class="primary" data-action="retry">Try again ↶</button></div>`;
  }
- const hint=hintLevel?`<div class="hint-panel">${hintLevel===1?'<strong>Start with the king’s box.</strong> Tap a marked square. Look for a check that leaves no legal escape, capture, or block.':`<strong>Start with the ${esc(names[new Chess(fen).get(hintFrom)?.type]||'highlighted piece')} on ${esc(hintFrom)}.</strong> Which move makes the net complete?`}</div>`:'';
- return `<p class="eyebrow">${colorName(attacker)} to move${line.length?' · Finish the line':''}</p><h2>${remaining===2?'Set the trap.<br>Then close it.':'One move.<br>No way out.'}</h2>${moveLine()}<p>${remaining===2?'Find a move that forces checkmate on your next turn, whatever the defense.':'Find checkmate. Tap a piece, then its destination.'}</p>${feedback?`<div class="feedback" role="status">${esc(feedback)}</div>`:''}${hint}<button class="helper-button" data-action="hint">${hintLevel===0?'Need a nudge?':hintLevel===1?'Which piece should I look at?':'Show the move'}</button>${checklist()}<p class="proof-caption">The habit: check every check. Then rule out all three defenses.</p>`;
+ const hint=hintLevel?`<div class="hint-panel">${hintLevel===1?'<strong>Look at the king’s box.</strong>':`<strong>Try the ${esc(names[new Chess(fen).get(hintFrom)?.type]||'glowing piece')} on ${esc(hintFrom)}.</strong>`}</div>`:'';
+ return `<h2>${remaining===2?'Set the trap.<br>Then close it.':'One move.<br>No way out.'}</h2>${moveLine()}${feedback?`<div class="feedback" role="status">${esc(feedback)}</div>`:''}${hint}${checklist()}<button class="helper-button" data-action="hint">${hintLevel===0?'Need a nudge?':hintLevel===1?'Which piece?':'Show me'}</button>`;
 }
 function render(){
  $('.board-column').hidden=!puzzle;$('.play-layout').classList.toggle('is-empty',!puzzle);
  $$('.modes button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));$('#filter').value=filter;
  const n=(Array.isArray(progress.days[day()])?progress.days[day()]:[]).length,st=progress.streak,best=progress.best;
  const popDot=prevDots!==null&&n>prevDots?n-1:-1,sfx=prevStreak===null?'':st>prevStreak?'bump':st<prevStreak?'drop':'';prevDots=n;prevStreak=st;
- $('#daily').innerHTML=`<div class="streak ${sfx} ${st>=3?'hot':st>0?'warm':''}" role="img" aria-label="${st} clean in a row, best ${best}"><span class="streak-num">${st}</span><span class="streak-copy"><strong>in a row</strong><small>best ${best}</small></span></div><div class="today"><div class="dots" aria-hidden="true">${Array.from({length:5},(_,i)=>`<span class="dot ${i<n?'on':''} ${i===popDot?'pop':''}"></span>`).join('')}</div><strong>${n} clean today</strong><small>Five is a lovely start.</small></div>`;
- $('#position-select').innerHTML=deck.map((p,i)=>`<option value="${i}" ${i===idx?'selected':''}>Position ${String(i+1).padStart(2,'0')}</option>`).join('');
- $('#position-select').disabled=!deck.length;$('#previous').disabled=deck.length<2;$('#skip').disabled=deck.length<2;$('#box-toggle').disabled=!puzzle;$('#flip').disabled=!puzzle;
+ $('#daily').innerHTML=`<div class="streak ${sfx} ${st>=3?'hot':st>0?'warm':''}" role="img" aria-label="${st} clean in a row, best ${best}"><span class="streak-num">${st}</span><span class="streak-copy"><strong>in a row</strong><small>best ${best}</small></span></div><div class="today"><div class="dots" aria-hidden="true">${Array.from({length:5},(_,i)=>`<span class="dot ${i<n?'on':''} ${i===popDot?'pop':''}"></span>`).join('')}</div><strong>${n}/5 today</strong></div>`;
+ $('#deck-strip').innerHTML=deck.map((p,i)=>{const r=progress.records[`${mode}:${p.id}`];const st=!r?'':r.clean?'clean':r.misses?'miss':'done';return `<button class="pip ${st} ${i===idx?'current':''}" data-jump="${i}" aria-label="Position ${i+1}${st?', '+st:''}"${i===idx?' aria-current="true"':''}></button>`;}).join('');$('#previous').disabled=deck.length<2;$('#skip').disabled=deck.length<2;$('#box-toggle').disabled=!puzzle;$('#flip').disabled=!puzzle;
  renderBoard();$('#coach').innerHTML=coachHTML();$('#storage-warning').hidden=canSave;
  const key=`${mode}|${puzzle?.id}|${phase}|${remaining}|${busy}`;if(key!==lastCoachKey){lastCoachKey=key;enterCoach();}
  positionPill();flushFx();
@@ -156,7 +161,7 @@ function chooseSquare(sq){
  const c=new Chess(fen),piece=c.get(sq),mark=boxInfo.find(x=>x.square===sq);
  if(mode!=='judge'&&phase==='play'){
   if(selected&&tryMoveTo(sq))return;
-  if(piece&&piece.color===attacker&&c.turn()===attacker){selected=selected===sq?null:sq;legalTargets=selected?c.moves({square:selected,verbose:true}):[];feedback='';squareNote=selected?`${colorName(piece.color)} ${names[piece.type]} on ${sq}. Choose a highlighted square.`:'';render();focusSquare(sq);return;}
+  if(piece&&piece.color===attacker&&c.turn()===attacker){selected=selected===sq?null:sq;legalTargets=selected?c.moves({square:selected,verbose:true}):[];feedback='';squareNote='';render();focusSquare(sq);return;}
  }
  if(boxOn&&mark){squareNote=`${sq.toUpperCase()}: ${mark.reason}`;$('#square-note').textContent=squareNote;return;}
  if(phase==='play'&&mode!=='judge'&&selected){feedback='That isn’t a legal move. Choose a highlighted square.';$('#coach').innerHTML=coachHTML();}
@@ -197,14 +202,14 @@ function judge(choice){
 function playDefense(key,index){
  const m=proof?.[key]?.[index];if(!m||!proofFen)return;
  const c=new Chess(proofFen);const played=c.move({from:m.from,to:m.to,...(m.promotion?{promotion:m.promotion}:{})});
- if(!played)return;fen=c.fen();lastMove=m;defenseShown=true;squareNote=`${m.san}: a legal defense. This was check, not checkmate.`;render();animateMove(m);if(matchMedia('(max-width:660px)').matches)document.querySelector('.board-meta').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});
+ if(!played)return;fen=c.fen();lastMove=m;defenseShown=true;squareNote=`${m.san} gets out.`;render();animateMove(m);if(matchMedia('(max-width:660px)').matches)document.querySelector('.board-meta').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});
 }
 function next(delta=1){if(deck.length){load((idx+delta+deck.length)%deck.length,true);if(matchMedia('(max-width:660px)').matches)document.querySelector('.board-meta').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});}}
 function action(name){
  if(name==='see-proof')$('#coach').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});
  if(name==='next')next();
  if(name==='retry')resetStage();
- if(name==='refute'&&attempt?.defenses?.length){const m=attempt.defenses[0];fen=m.fen;lastMove=m;defenseShown=true;squareNote=m.san+': no immediate checkmate remains after this defense.';render();animateMove(m);}
+ if(name==='refute'&&attempt?.defenses?.length){const m=attempt.defenses[0];fen=m.fen;lastMove=m;defenseShown=true;squareNote=m.san+' and no mate follows.';render();animateMove(m);}
  if(name==='hint')hint();
  if(name==='defend')defend();
  if(name==='restart')load(idx);
@@ -219,13 +224,13 @@ $('#app').addEventListener('click',e=>{
  else if(b.dataset.action)action(b.dataset.action);
  else if(b.dataset.verdict)judge(b.dataset.verdict);
  else if(b.dataset.proof){expanded=expanded===b.dataset.proof?null:b.dataset.proof;$('#coach').innerHTML=coachHTML();$(`[data-proof="${b.dataset.proof}"]`)?.focus({preventScroll:true});}
+ else if(b.dataset.jump!==undefined){load(Number(b.dataset.jump),true);}
  else if(b.dataset.reply){const [key,n]=b.dataset.reply.split(':');playDefense(key,Number(n));}
  else if(b.dataset.promote&&pendingPromotion){const move={...pendingPromotion,promotion:b.dataset.promote};pendingPromotion=null;playMove(move);}
 });
 $('#box-toggle').addEventListener('click',()=>{boxOn=!boxOn;if(boxOn&&phase==='play')assisted=true;squareNote='';render();});
 $('#flip').addEventListener('click',()=>{orientation=other(orientation);renderBoard();});
 $('#previous').addEventListener('click',()=>next(-1));$('#skip').addEventListener('click',()=>next());
-$('#position-select').addEventListener('change',e=>load(Number(e.target.value),true));
 $('#filter').addEventListener('change',e=>{filter=e.target.value;deck=collection();load(0,true);});
 $('#board').addEventListener('keydown',e=>{const sq=e.target.closest('[data-square]')?.dataset.square;if(!sq)return;if(e.key==='Escape'){selected=null;legalTargets=[];render();focusSquare(sq);return;}const directions={ArrowUp:-8,ArrowDown:8,ArrowLeft:-1,ArrowRight:1};if(!(e.key in directions))return;e.preventDefault();const squares=boardSquares(),n=squares.indexOf(sq),offset=directions[e.key];if(offset===-1&&n%8===0||offset===1&&n%8===7)return;const target=squares[n+offset];if(target)focusSquare(target);});
 $('#promotion').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();action('cancel-promotion');}});
@@ -241,7 +246,7 @@ document.addEventListener('pointermove',e=>{
  if(!drag.started){if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)<7)return;
   const c=new Chess(fen),p=c.get(drag.sq);if(!p){drag=null;return;}
   drag.started=true;const r=$(`[data-square="${drag.sq}"]`).getBoundingClientRect();drag.w=r.width;
-  if(selected!==drag.sq){selected=drag.sq;legalTargets=c.moves({square:selected,verbose:true});feedback='';squareNote=`${colorName(p.color)} ${names[p.type]} on ${drag.sq}. Drop it on a highlighted square.`;render();}else renderBoard();
+  if(selected!==drag.sq){selected=drag.sq;legalTargets=c.moves({square:selected,verbose:true});feedback='';squareNote='';render();}else renderBoard();
   const g=document.createElement('div');g.className='drag-ghost';g.innerHTML=pieceSvg(p);g.style.width=g.style.height=r.width+'px';document.body.appendChild(g);drag.ghost=g;document.body.classList.add('is-dragging');
  }
  e.preventDefault();
@@ -260,6 +265,7 @@ function endDrag(e,cancel){
  else{d.ghost.remove();renderBoard();}
 }
 document.addEventListener('pointerup',e=>endDrag(e,false));document.addEventListener('pointercancel',e=>endDrag(e,true));
+(()=>{const h=$('h1');if(!h)return;let i=0;const walk=n=>[...n.childNodes].forEach(c=>{if(c.nodeType===3){const f=document.createDocumentFragment();[...c.textContent].forEach(ch=>{const s=document.createElement('span');s.className='ch';s.style.setProperty('--i',i++);s.textContent=ch;if(ch===' ')s.innerHTML='&nbsp;';f.appendChild(s);});c.replaceWith(f);}else walk(c);});h.setAttribute('aria-label',h.textContent);walk(h);[...h.querySelectorAll('.ch')].forEach(s=>s.setAttribute('aria-hidden','true'));h.addEventListener('pointerover',e=>{const c=e.target.closest('.ch');if(!c||RM())return;c.classList.remove('hop');void c.offsetWidth;c.classList.add('hop');});})();
 window.addEventListener('popstate',restoreURL);
 window.addEventListener('storage',e=>{if(e.key===KEY&&e.newValue){try{const p=JSON.parse(e.newValue);if(p.records&&p.days){progress=p;render();}}catch(err){}}});
 restoreURL();writeURL(true);
