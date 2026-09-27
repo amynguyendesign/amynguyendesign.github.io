@@ -143,3 +143,41 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important;user-select:none;-
 @media(prefers-reduced-motion:reduce){.mode-pill.ready{transition:none}.square.selected .piece{transform:translateY(-7%) scale(1.1)}}
 
 html,body{overflow-x:clip}
+
+/* ===== readability pass (Sep 27 2026): bigger type, darker muted ===== */
+:root{--muted:#4F4D58}
+.site-header,.site-header button{font-size:14px}.text-button{font-size:14px}
+.eyebrow,.coach .eyebrow{font-size:12px;letter-spacing:.12em}
+.intro{font-size:17px}
+.modes button{font-size:14px}.filter-label select{font-size:14px}
+.board-meta{font-size:14px}.mono{font-size:13px}
+.coord{font-size:11px;font-weight:600}
+.box-button{font-size:14px}.box-legend{font-size:13px}.square-note{font-size:14px}
+.coach h2{font-size:clamp(30px,3.2vw,40px)}
+.coach p{font-size:16px;line-height:1.6;color:var(--ink)}
+.primary,.secondary{font-size:15px;min-height:48px}
+.helper-button{font-size:14px}
+.hint-panel{font-size:15px}.feedback{font-size:14px}
+.check-row button{font-size:15px}.check-row .row-state{font-size:13px}.check-row .step-num{font-size:12px;width:20px}
+.check-row .row-detail,.check-row .row-detail p{font-size:14px}
+.response-chips button{font-size:14px}
+.proof-caption{font-size:13px!important}
+.lesson h3{font-size:15px}.lesson p{font-size:14px!important;color:var(--ink)!important}
+.streak-copy strong,.today strong{font-size:14px}.streak-copy small,.today small{font-size:12px}
+.game-footer p{font-size:13px}.pager select{font-size:13px}
+.pony-cheer .bubble{font-size:14px}
+dialog p,.how-steps li{font-size:16px}.how-steps span{font-size:15px}.small-note{font-size:14px!important}
+@media(max-width:660px){
+ .site-header,.site-header button{font-size:13px}
+ .masthead .eyebrow{font-size:11px;letter-spacing:.1em}
+ .intro{font-size:15px}
+ .modes button{font-size:13px;padding:10px 6px}.filter-label select{font-size:13px}
+ .board-meta{font-size:13px}.coord{font-size:10px}
+ .coach .eyebrow{font-size:11px}.coach h2{font-size:30px}
+ .coach p{font-size:15px}
+ .check-row button{font-size:15px}.check-row .row-state{font-size:13px}
+ .streak-copy strong,.today strong{font-size:13px}.streak-copy small{font-size:11px}
+ .game-footer p{font-size:12px}
+ .box-legend{font-size:12px}
+}
+@media(max-width:370px){.modes button{font-size:12px}}
