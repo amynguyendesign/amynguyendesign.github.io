@@ -450,3 +450,13 @@ body{font-weight:500;color:var(--ink)}
   body .board-meta span,body .practice-head .back,body .tags .chip{font-size:15px}
   body .coach .helper-button,body .deck-count,body .deck-count span{font-size:16px}
 }
+
+/* practice: locked view on phones (Sep 27 2026) — nothing above/around the board changes height */
+html{overflow-anchor:none}
+@media(max-width:660px){
+  .board-actionbar{min-height:48px}
+  .board-actionbar[hidden]{display:flex!important;visibility:hidden;pointer-events:none}
+  .play-layout{min-height:100vh;min-height:100lvh;justify-content:flex-start}
+  .play-layout .board-column{margin:0 auto}
+  .coach{min-height:212px}
+}

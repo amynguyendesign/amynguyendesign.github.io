@@ -194,7 +194,16 @@ async function hint(){
  playMove(moves[0]);
 }
 function nameIt(k){if(phase!=='done'||named)return;named=k;const right=k===fam(puzzle);right?sfx.right():sfx.miss();if(right){fxQueue.push('right');}else{try{navigator.vibrate?.([8,40,8]);}catch(e){}}render();}
-function next(delta=1){if(!deck.length)return;sfx.next();let i=idx+delta;if(i>=deck.length){const cur=puzzle;deck=collection();if(deck.length>1&&cur&&baseId(deck[0])===baseId(cur))deck.push(deck.shift());i=0;}if(i<0)i=deck.length-1;load(i,true);if(matchMedia('(max-width:660px)').matches)document.querySelector('.board-meta').scrollIntoView({block:'start',behavior:smooth()});}
+/* one fixed framing for the whole practice session on phones: the smallest scroll that shows the board and its action bar */
+let lockY=null,lockW=innerWidth;
+addEventListener('resize',()=>{if(Math.abs(innerWidth-lockW)>40){lockW=innerWidth;lockY=null;}});
+function lockView(instant){requestAnimationFrame(()=>{
+  if(!matchMedia('(max-width:660px)').matches){if(scrollY>0&&instant)window.scrollTo({top:0});return;}
+  const meta=document.querySelector('.board-meta'),bar=document.querySelector('#board-actionbar');if(!meta||!bar)return;
+  if(lockY===null){const vh=document.documentElement.clientHeight||innerHeight;const metaTop=meta.getBoundingClientRect().top+scrollY;const barBottom=bar.getBoundingClientRect().bottom+scrollY;lockY=Math.max(0,Math.min(metaTop-8,Math.ceil(barBottom+12-vh)));}
+  if(Math.abs(scrollY-lockY)>2)window.scrollTo({top:lockY,behavior:instant?'auto':smooth()});
+});}
+function next(delta=1){if(!deck.length)return;sfx.next();let i=idx+delta;if(i>=deck.length){const cur=puzzle;deck=collection();if(deck.length>1&&cur&&baseId(deck[0])===baseId(cur))deck.push(deck.shift());i=0;}if(i<0)i=deck.length-1;load(i,true);lockView();}
 function action(name){
  if(name==='next')next();
  if(name==='retry')resetStage();
@@ -230,7 +239,7 @@ function setView(v,push){
  if(push){writeURL();window.scrollTo({top:0,behavior:smooth()});}
  if(v==='practice'&&puzzle)render();
 }
-function practice(key){patternKey=key;deck=collection();setView('practice',false);load(0,true);window.scrollTo({top:0,behavior:smooth()});}
+function practice(key){patternKey=key;deck=collection();setView('practice',false);load(0,true);lockY=null;lockView(true);}
 function openCard(key){requestAnimationFrame(()=>{const c=$(`#pat-${key}`);if(!c)return;c.scrollIntoView({block:'center',behavior:smooth()});c.classList.remove('flash');void c.offsetWidth;c.classList.add('flash');});}
 const SOURCES=`<footer class="sources"><p><span>Sources</span> Pattern names, definitions and name histories follow Georges Renaud &amp; Victor Kahn, <i>The Art of the Checkmate</i> (1953; Dover, 1962), Wikipedia’s <a href="https://en.wikipedia.org/wiki/Checkmate_pattern" target="_blank" rel="noopener">“Checkmate pattern”</a>, and Lichess Practice, <a href="https://lichess.org/practice" target="_blank" rel="noopener">Checkmate Patterns I–IV</a>.</p><p>Every position here is an original composition, checked by exhaustive search. Built with <a href="https://github.com/jhlywa/chess.js" target="_blank" rel="noopener">chess.js</a> (BSD-2-Clause). Type: Space Grotesk (SIL OFL).</p></footer>`;
 let patternsBuilt=false;
