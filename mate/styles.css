@@ -367,3 +367,11 @@ h1 .ch.hop{animation:ch-hop .5s var(--spring)}
 
 .deck-strip{padding-left:5px}
 @media(max-width:660px){.masthead{position:relative}.daily{position:absolute;right:0;bottom:0;margin:0!important}}
+
+/* ===== match outside page type (Sep 27 2026): Space Grotesk 500, INK #16183A, body at .82 ===== */
+:root{--ink:#16183A;--muted:#50526A;--body:rgba(22,24,58,.82)}
+body{font-weight:500;color:var(--ink)}
+.intro,.coach p,.coach .short,.pat-line,.lesson-line,.reveal p,.hint-panel,.feedback,.tile-detail p,.square-note,dialog p,.how-steps span,.quiz-q{font-weight:500!important;color:var(--body)!important;line-height:1.6!important}
+.pat-origin,.streak-copy small,.deck-count span,.coord{font-weight:500}
+.how-steps strong,.reveal-name,.pat-top h3,.coach h2,h1{color:var(--ink)}
+.chip,.rail-chip,.quiz-opt,.primary,.secondary,.helper-button,.views button{font-weight:600}
