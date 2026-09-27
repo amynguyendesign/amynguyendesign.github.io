@@ -96,7 +96,7 @@ function renderHUD(){
  const st=progress.streak,best=progress.best,sfx=prevStreak===null?'':st>prevStreak?'bump':st<prevStreak?'drop':'';prevStreak=st;
  $('#daily').innerHTML=`<div class="streak ${sfx} ${st>=3?'hot':st>0?'warm':''}" role="img" aria-label="${st} clean in a row, best ${best}"><span class="streak-num">${st}</span><span class="streak-copy"><strong>in a row</strong><small>best ${best}</small></span></div>`;
 }
-function renderHead(){const t=$('#practice-title');if(!t)return;const P=patternKey&&patternByKey[patternKey];t.innerHTML=P?esc(P.name):'Mix<span class="mix-dots" aria-hidden="true"><i></i><i></i><i></i></span>';}
+function renderHead(){const t=$('#practice-title');if(!t)return;const P=patternKey&&patternByKey[patternKey];t.textContent=P?P.name:'Mix';}
 function render(){
  renderHUD();
  if(view!=='practice')return;
