@@ -57,9 +57,9 @@ function renderBoard(){
  const mated=phase==='done',canMove=phase==='play'&&!busy&&!pendingPromotion&&c.turn()===attacker;
  const selXY=selected?[selected.charCodeAt(0),Number(selected[1])]:null;
  $('#board').innerHTML=boardSquares().map((sq,i)=>{const p=c.get(sq);const dark=(sq.charCodeAt(0)-97+Number(sq[1]))%2===1;const move=lastMove&&(lastMove.from===sq||lastMove.to===sq);const classes=['square',dark?'dark':'',selected===sq?'selected':'',move?'last':'',hintFrom===sq?'hint-piece':'',canMove&&p&&p.color===attacker?'movable':'',checkedKing===sq?'in-check':'',sq===king?'target-king':'',mated&&sq===king?'mated':'',!mated&&phase==='play'&&sq===king&&checkedKing!==sq?'nervous':'',drag?.started&&drag.sq===sq?'drag-src':''].filter(Boolean).join(' ');const dd=selXY?Math.max(Math.abs(sq.charCodeAt(0)-selXY[0]),Math.abs(Number(sq[1])-selXY[1])):0;return `<button class="${classes}" data-square="${sq}" tabindex="${i===0?0:-1}" aria-label="${sq}${p?', '+colorName(p.color)+' '+names[p.type]:', empty'}" ${selected===sq?'aria-pressed="true"':''}>${i%8===0?`<span class="coord rank">${sq[1]}</span>`:''}${i>=56?`<span class="coord file">${sq[0]}</span>`:''}${p?`<span class="piece">${pieceSvg(p)}</span>`:''}${targets.has(sq)?`<span class="move-dot ${p?'capture':''}" style="--d:${dd*45}ms"></span>`:''}</button>`;}).join('');
- const bar=$('#board-actionbar');const showBar=!busy&&(defenseShown||['done','wrong','line'].includes(phase))&&!(phase==='done'&&needsName());bar.hidden=!showBar;
+ const bar=$('#board-actionbar');const showBar=!busy&&(defenseShown||['done','wrong'].includes(phase))&&!(phase==='done'&&needsName());bar.hidden=!showBar;
  bar.innerHTML=defenseShown?'<button class="secondary" data-action="back-proof">Back ↶</button>':phase==='line'?'<button class="primary" data-action="defend">Their move →</button>':phase==='done'?'<button class="primary" data-action="next">Next →</button>':'<button class="primary" data-action="retry">Try again ↶</button>';
- $('#turn-label').innerHTML=`<span class="turn-dot ${c.turn()==='b'?'black':''}"></span>${phase==='done'?'Checkmate':colorName(c.turn())+' to move'}`;
+ $('#turn-label').innerHTML=`<span class="turn-dot ${c.turn()==='b'?'black':''}"></span>${phase==='done'?'Checkmate':phase==='line'?colorName(c.turn())+' is thinking…':colorName(c.turn())+' to move'}`;
  $('#position-label').textContent=remaining===2||puzzle.mateIn===2?'mate in 2':'mate in 1';
  $('#square-note').textContent=defenseNote;
  renderPromotion();
@@ -81,7 +81,7 @@ function coachHTML(){
   const namedRight=named&&named===k,namedWrong=named&&named!==k;
   return `${pony(namedRight?'you know it.':namedWrong?'so close.':assisted?'we got there.':cheer)}${named?chip(namedRight?'Spotted ✓':'Not that one','good '+(namedRight?'':'miss')):chip(assisted?'With a hint':dirty?'Found it':'Clean solve',assisted?'':'good')}<h2>${namedWrong?'Close.':'Checkmate.'}</h2>${moveLine()}${patternReveal()}<p class="lesson-line">${esc(puzzle.lesson)}</p><div class="actions"><button class="primary" data-action="next">Next →</button><button class="secondary" data-action="restart">Again ↻</button></div>`;
  }
- if(phase==='line')return `${tag}${chip('First move ✓','good')}<h2>One more.</h2>${moveLine()}<div class="actions"><button class="primary" data-action="defend">Their move →</button></div>`;
+ if(phase==='line')return `${chip('First move ✓','good')}<h2>Nice.<br>Now they move…</h2>${moveLine()}<div class="thinking" aria-hidden="true"><i></i><i></i><i></i></div>`;
  if(phase==='wrong'){
   const title=proof?.stalemate?'Stalemate.':remaining===2?'They slip away.':proof?.check?'Check, not mate.':'The net’s open.';
   const body=proof?.stalemate?'No check means a draw.':proof?.check&&remaining===1?'The king still has a way out.':remaining===2?'Look for a move that forces it.':'Mate starts with check.';
@@ -89,7 +89,8 @@ function coachHTML(){
  }
  const P=k?patternByKey[k]:null;
  const hint=hintLevel===1&&P?`<div class="hint-panel"><strong>${esc(P.name)}.</strong> ${esc(P.line)}</div>`:hintLevel>=2?`<div class="hint-panel"><strong>Try the ${esc(names[new Chess(fen).get(hintFrom)?.type]||'glowing piece')} on ${esc(hintFrom)}.</strong></div>`:'';
- return `<div class="tags">${tag}${m2}</div><h2>${remaining===2?'Set the trap.<br>Then close it.':'One move.<br>No way out.'}</h2>${moveLine()}${feedback?`<div class="feedback" role="status">${esc(feedback)}</div>`:''}${hint}<button class="helper-button" data-action="hint">${hintLevel===0?(patternKey?'Remind me':'Which pattern?'):hintLevel===1?'Which piece?':'Show me'}</button>`;
+ const replied=puzzle.mateIn===2&&line.length>=2;
+ return `<div class="tags">${replied?chip(`${colorName(other(attacker))} played ${esc(line[line.length-1].san)}`,'miss'):tag}${replied?'':m2}</div><h2>${replied?'Your move.<br>Finish it.':remaining===2?'Set the trap.<br>Then close it.':'One move.<br>No way out.'}</h2>${moveLine()}${feedback?`<div class="feedback" role="status">${esc(feedback)}</div>`:''}${hint}<button class="helper-button" data-action="hint">${hintLevel===0?(patternKey?'Remind me':'Which pattern?'):hintLevel===1?'Which piece?':'Show me'}</button>`;
 }
 function renderHUD(){
  const st=progress.streak,best=progress.best,sfx=prevStreak===null?'':st>prevStreak?'bump':st<prevStreak?'drop':'';prevStreak=st;
@@ -128,6 +129,7 @@ function burst(el,count){
 }
 function floatLabel(el,text){const layer=fxLayer(),[x,y,w]=centerOf(el),t=document.createElement('span');t.className='float-label';t.textContent=text;t.style.left=x+'px';t.style.top=(y-w*.35)+'px';layer.appendChild(t);t.animate([{transform:'translate(-50%,0) scale(.6)',opacity:0},{transform:'translate(-50%,-14px) scale(1.08)',opacity:1,offset:.25},{transform:'translate(-50%,-22px) scale(1)',opacity:1,offset:.7},{transform:'translate(-50%,-38px) scale(1)',opacity:0}],{duration:1150,easing:'cubic-bezier(.2,.8,.3,1)',fill:'forwards'}).onfinish=()=>t.remove();}
 function sticker(text){const layer=fxLayer(),s=document.createElement('div');s.className='mate-sticker';s.innerHTML=text;layer.appendChild(s);setTimeout(()=>s.remove(),1900);}
+function boardPill(html,ms){const layer=fxLayer();layer.querySelectorAll('.board-pill').forEach(p=>p.remove());const p=document.createElement('div');p.className='board-pill';p.setAttribute('role','status');p.innerHTML=html;layer.appendChild(p);setTimeout(()=>{p.classList.add('out');setTimeout(()=>p.remove(),260);},ms);}
 function fxMate(lite){
  const k=$('.square.mated'),shell=$('.board-shell');if(!k||!shell)return;
  k.querySelector('.piece')?.animate([{transform:'none'},{transform:'translateY(-24%) rotate(-10deg) scale(1.06)',offset:.3},{transform:'translateY(8%) rotate(84deg)',offset:.72},{transform:'translateY(6%) rotate(78deg)'}],{duration:640,easing:'cubic-bezier(.3,.7,.4,1)'});
@@ -172,13 +174,13 @@ async function playMove(move){
  {const dl=dropMove?0:250;const cap=/x/.test(result.san);setTimeout(()=>sfx[cap?'capture':'move'](),dl);if(result.mate){setTimeout(()=>sfx.mate(progress.streak+1),dl+320);setTimeout(()=>sfx.pop(),dl+900);}else if(!(result.winning&&remaining===2))setTimeout(()=>sfx.wrong(),dl+180);}
  attempt=result;fen=result.fen;lastMove={...move,san:result.san};selected=null;legalTargets=[];pendingPromotion=null;hintFrom=null;proof=inspectCheck(fen);
  if(result.mate){phase='done';line.push(lastMove);finish();fxQueue.push('mate');}
- else if(result.winning&&remaining===2){phase='line';line.push(lastMove);}
+ else if(result.winning&&remaining===2){phase='line';line.push(lastMove);const ep=workEpoch;setTimeout(()=>{if(ep===workEpoch&&phase==='line')boardPill(`<span class="pill-dots"><i></i><i></i><i></i></span>${colorName(other(attacker))} is thinking`,900);},450);setTimeout(()=>{if(ep===workEpoch&&phase==='line')defend();},1450);}
  else {phase='wrong';wrong();}
  render();animateMove(lastMove);focusSquare(lastMove.to);
 }
 function defend(){
  if(phase!=='line'||!attempt?.replyFen)return;
- setTimeout(()=>sfx[/x/.test(attempt.reply?.san||'')?'capture':'move'](),250);fen=attempt.replyFen;lastMove=attempt.reply;line.push(lastMove);stageFen=fen;remaining=1;phase='play';hintLevel=Math.min(hintLevel,1);hintFrom=null;attempt=null;
+ const rs=attempt.reply?.san||'';setTimeout(()=>sfx[/x/.test(rs)?'capture':'move'](),250);setTimeout(()=>boardPill(`${colorName(other(attacker))} played <b>${esc(rs||'')}</b>. Your move.`,1900),380);fen=attempt.replyFen;lastMove=attempt.reply;line.push(lastMove);stageFen=fen;remaining=1;phase='play';hintLevel=Math.min(hintLevel,1);hintFrom=null;attempt=null;
  render();animateMove(lastMove);
 }
 async function hint(){
