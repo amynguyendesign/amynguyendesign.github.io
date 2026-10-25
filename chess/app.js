@@ -173,7 +173,7 @@ async function playMove(move){
  if(!result.legal){feedback='That isn’t a legal move here.';render();return;}
  {const dl=dropMove?0:250;const cap=/x/.test(result.san);setTimeout(()=>sfx[cap?'capture':'move'](),dl);if(result.mate){setTimeout(()=>sfx.mate(progress.streak+1),dl+320);setTimeout(()=>sfx.pop(),dl+900);}else if(!(result.winning&&remaining===2))setTimeout(()=>sfx.wrong(),dl+180);}
  attempt=result;fen=result.fen;lastMove={...move,san:result.san};selected=null;legalTargets=[];pendingPromotion=null;hintFrom=null;proof=inspectCheck(fen);
- if(result.mate){phase='done';line.push(lastMove);finish();fxQueue.push('mate');}
+ if(result.mate){phase='done';line.push(lastMove);finish();fxQueue.push('mate');if(needsName())toQuiz();}
  else if(result.winning&&remaining===2){phase='line';line.push(lastMove);const ep=workEpoch;setTimeout(()=>{if(ep===workEpoch&&phase==='line')boardPill(`<span class="pill-dots"><i></i><i></i><i></i></span>${colorName(other(attacker))} is thinking`,900);},450);setTimeout(()=>{if(ep===workEpoch&&phase==='line')defend();},1450);}
  else {phase='wrong';wrong();}
  render();animateMove(lastMove);focusSquare(lastMove.to);
@@ -193,7 +193,7 @@ async function hint(){
  if(hintLevel===2){hintFrom=moves[0].from;render();return;}
  playMove(moves[0]);
 }
-function nameIt(k){if(phase!=='done'||named)return;named=k;const right=k===fam(puzzle);right?sfx.right():sfx.miss();if(right){fxQueue.push('right');}else{try{navigator.vibrate?.([8,40,8]);}catch(e){}}render();}
+function nameIt(k){if(phase!=='done'||named)return;named=k;const right=k===fam(puzzle);right?sfx.right():sfx.miss();if(right){fxQueue.push('right');}else{try{navigator.vibrate?.([8,40,8]);}catch(e){}}render();backToBoard();}
 /* one fixed framing for the whole practice session on phones: the smallest scroll that shows the board and its action bar */
 let lockY=null,lockW=innerWidth;
 addEventListener('resize',()=>{if(Math.abs(innerWidth-lockW)>40){lockW=innerWidth;lockY=null;}});
@@ -203,7 +203,11 @@ function lockView(instant){requestAnimationFrame(()=>{
   if(lockY===null){const vh=document.documentElement.clientHeight||innerHeight;const metaTop=meta.getBoundingClientRect().top+scrollY;const barBottom=bar.getBoundingClientRect().bottom+scrollY;lockY=Math.max(0,Math.min(metaTop-8,Math.ceil(barBottom+12-vh)));}
   if(Math.abs(scrollY-lockY)>2)window.scrollTo({top:lockY,behavior:instant?'auto':smooth()});
 });}
-function next(delta=1){if(!deck.length)return;sfx.next();let i=idx+delta;if(i>=deck.length){const cur=puzzle;deck=collection();if(deck.length>1&&cur&&baseId(deck[0])===baseId(cur))deck.push(deck.shift());i=0;}if(i<0)i=deck.length-1;load(i,true);lockView();}
+/* phones only: the Mix quiz sits below the board, so after the mate celebration glide down to it, and after an answer glide back to the board framing */
+let quizTimer=0;const phone=()=>matchMedia('(max-width:660px)').matches;
+function toQuiz(){clearTimeout(quizTimer);if(!phone())return;const id=puzzle?.id;quizTimer=setTimeout(()=>{if(puzzle?.id!==id||phase!=='done'||!needsName())return;const q=document.querySelector('#coach .quiz'),h=document.querySelector('#coach h2');if(!q)return;const vh=document.documentElement.clientHeight||innerHeight;const qb=q.getBoundingClientRect().bottom+scrollY;const top=h?h.getBoundingClientRect().top+scrollY-16:qb;const y=Math.max(scrollY,Math.min(top,Math.ceil(qb+24-vh)));if(y-scrollY>2)window.scrollTo({top:y,behavior:smooth()});},RM()?250:1500);}
+function backToBoard(){clearTimeout(quizTimer);if(!phone())return;const id=puzzle?.id;quizTimer=setTimeout(()=>{if(puzzle?.id!==id||phase!=='done')return;lockView();},RM()?250:750);}
+function next(delta=1){if(!deck.length)return;clearTimeout(quizTimer);sfx.next();let i=idx+delta;if(i>=deck.length){const cur=puzzle;deck=collection();if(deck.length>1&&cur&&baseId(deck[0])===baseId(cur))deck.push(deck.shift());i=0;}if(i<0)i=deck.length-1;load(i,true);lockView();}
 function action(name){
  if(name==='next')next();
  if(name==='retry')resetStage();
