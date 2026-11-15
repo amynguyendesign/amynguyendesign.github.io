@@ -25,6 +25,7 @@
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 		<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+		<link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap" rel="stylesheet" />
 		<script async src="https://www.googletagmanager.com/gtag/js?id=G-DHB2BNWHZG"></script>
 		<script>
 			window.dataLayer = window.dataLayer || [];
@@ -225,7 +226,7 @@ function StudioPage(props){
         <div style={fd(v,id,0)}><span style={{fontSize:"clamp(56px,11vw,92px)",fontWeight:700,color:ACC,opacity:0.22,lineHeight:1,display:"block"}}>{num}</span></div>
         <div style={fd(v,id,0.15)}><div style={{fontSize:"clamp(30px,5.5vw,50px)",fontWeight:700,color:B,lineHeight:1.05,marginTop:-6}} dangerouslySetInnerHTML={{__html:title}} /></div>
         <p style={Object.assign({},fd(v,id,0.3),{fontSize:"calc(clamp(13px,2vw,17px) + var(--mb,0px))",fontWeight:500,color:B,opacity:0.6,lineHeight:1.55,marginTop:12,maxWidth:380})}>{desc}</p>
-        <div style={Object.assign({},fd(v,id,0.45),{marginTop:22})}><a href={href} onClick={function(e){e.preventDefault();track("project_click",{project:num,href:href});if(href&&href.indexOf('http')===0){window.open(href,'_blank','noopener');}else if(href&&href.charAt(0)==='/'){window.location.href=new URL('.'+href,document.baseURI).href;}else if(onArt){onArt();}}} style={{fontFamily:D,fontSize:14,fontWeight:700,color:B,textDecoration:"none",border:"2px solid "+B,borderRadius:8,padding:"10px 22px",display:"inline-block"}}>{cta} →</a></div>
+        <div style={Object.assign({},fd(v,id,0.45),{marginTop:22})}><a href={href} target={href&&href.indexOf('http')===0?"_blank":undefined} rel="noopener" onClick={function(e){track("project_click",{project:num,href:href});if(href&&href.indexOf('http')===0){return;}e.preventDefault();if(href&&href.charAt(0)==='/'){window.location.href=new URL('.'+href,document.baseURI).href;}else if(onArt){onArt();}}} style={{fontFamily:D,fontSize:14,fontWeight:700,color:B,textDecoration:"none",border:"2px solid "+B,borderRadius:8,padding:"10px 22px",display:"inline-block"}}>{cta} →</a></div>
       </div>
     </div>
   );}
@@ -263,7 +264,7 @@ function ContactPage(){
       <div style={{maxWidth:480}}>
         
         <div style={{fontSize:"calc(clamp(13px,2vw,16px) + var(--mb,0px))",fontWeight:500,color:INK,opacity:0.8,lineHeight:1.6}}>
-          <p style={{marginBottom:14}}>If you want to discuss design, tech, culture, or debate whether <span style={{fontFamily:'"Comic Sans MS","Comic Sans",cursive'}}>Comic Sans</span> (the font) is ever acceptable, <a href="https://www.linkedin.com/in/nguyen-amy" target="_blank" rel="noopener" onClick={function(){track("contact_click",{to:"linkedin"});}} style={{color:B,fontWeight:700,textDecoration:"none",background:P[2],padding:"2px 5px",borderRadius:3}}>message me on LinkedIn</a>.</p>
+          <p style={{marginBottom:14}}>If you want to discuss design, tech, culture, or debate whether <span style={{fontFamily:'"Comic Sans MS","Comic Sans","Comic Neue",cursive'}}>Comic Sans</span> (the font) is ever acceptable, <a href="https://www.linkedin.com/in/nguyen-amy" target="_blank" rel="noopener" onClick={function(){track("contact_click",{to:"linkedin"});}} style={{color:B,fontWeight:700,textDecoration:"none",background:P[2],padding:"2px 5px",borderRadius:3}}>message me on LinkedIn</a>.</p>
           <p style={{margin:0}}>And if you're also a reader, check out what I'm reading on <a href="https://goodreads.com/amynlha" target="_blank" rel="noopener" onClick={function(){track("contact_click",{to:"goodreads"});}} style={{color:B,fontWeight:700,textDecoration:"none",background:P[0],padding:"2px 5px",borderRadius:3}}>Goodreads</a>. I also run a <a href="https://www.instagram.com/bibliotheca.aurelia/" target="_blank" rel="noopener" onClick={function(){track("contact_click",{to:"bookstagram"});}} style={{color:B,fontWeight:700,textDecoration:"none",background:P[1],padding:"2px 5px",borderRadius:3}}>bookstagram</a> for classic literature and more modern literary fiction.</p>
         </div>
       </div>
