@@ -3,6 +3,31 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+		<meta name="site-build" content="2026-11-18a" />
+		<script>
+		(function(){
+			var BUILD='2026-11-18a';
+			var ua=navigator.userAgent||'';
+			// In-app browsers (Instagram, Facebook, LinkedIn...) ignore target=_blank, so the tap does nothing. Open those links in the same view there.
+			if(/Instagram|FBAN|FBAV|FB_IAB|FBIOS|LinkedInApp|Line\/|Twitter|Snapchat|TikTok|musical_ly|BytedanceWebview|Pinterest/i.test(ua)){
+				document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[target="_blank"]');if(!a||e.defaultPrevented)return;e.preventDefault();window.location.href=a.href;},false);
+			}
+			// Never show a stale cached copy: if the server has a newer build, load it.
+			var last=0;
+			function check(){
+				var now=Date.now();if(now-last<30000)return;last=now;
+				fetch(location.pathname+'?__b='+now,{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){
+					var m=t.match(/name="site-build" content="([^"]+)"/);if(!m||m[1]===BUILD)return;
+					try{if(sessionStorage.getItem('site-build-reload')===m[1])return;sessionStorage.setItem('site-build-reload',m[1]);}catch(e){}
+					var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.href);
+				}).catch(function(){});
+			}
+			try{var cu=new URL(location.href);if(cu.searchParams.has('v')){cu.searchParams.delete('v');history.replaceState(history.state,'',cu.pathname+cu.search+cu.hash);}}catch(e){}
+			check();
+			window.addEventListener('pageshow',function(e){if(e.persisted){last=0;check();}});
+			document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')check();});
+		})();
+		</script>
 		<meta name="color-scheme" content="light" />
 		<meta name="theme-color" content="#FFFFFF" />
 		<title>Amy Nguyen</title>
